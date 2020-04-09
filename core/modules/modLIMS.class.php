@@ -89,7 +89,7 @@ class modLIMS extends DolibarrModules
             // Set this to 1 if module has its own barcode directory (core/modules/barcode)
             'barcode' => 0,
             // Set this to 1 if module has its own models directory (core/modules/xxx)
-            'models' => 0,
+            'models' => 1,
             // Set this to 1 if module has its own theme directory (theme)
             'theme' => 0,
             // Set this to relative path of css file if module has its own css file
@@ -222,8 +222,8 @@ class modLIMS extends DolibarrModules
             //  0 => array(
             //      'label' => 'MyJob label',
             //      'jobtype' => 'method',
-            //      'class' => '/lims/class/myobject.class.php',
-            //      'objectname' => 'MyObject',
+            //      'class' => '/lims/class/samples.class.php',
+            //      'objectname' => 'Samples',
             //      'method' => 'doScheduledJob',
             //      'parameters' => '',
             //      'comment' => 'Comment',
@@ -246,17 +246,17 @@ class modLIMS extends DolibarrModules
         /* BEGIN MODULEBUILDER PERMISSIONS */
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
         $this->rights[$r][1] = 'Read objects of LIMS'; // Permission label
-        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
         $this->rights[$r][1] = 'Create/Update objects of LIMS'; // Permission label
-        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
         $this->rights[$r][1] = 'Delete objects of LIMS'; // Permission label
-        $this->rights[$r][4] = 'myobject'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         /* END MODULEBUILDER PERMISSIONS */
@@ -276,106 +276,149 @@ class modLIMS extends DolibarrModules
             'langs'=>'lims@lims', // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000 + $r,
             'enabled'=>'$conf->lims->enabled', // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->lims->myobject->read', // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->lims->samples->read', // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
         );
         /* END MODULEBUILDER TOPMENU */
-        /* BEGIN MODULEBUILDER LEFTMENU MYOBJECT
+        /* BEGIN MODULEBUILDER LEFTMENU SAMPLES
         $this->menu[$r++]=array(
             'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',                          // This is a Top menu entry
-            'titre'=>'MyObject',
+            'titre'=>'Samples',
             'mainmenu'=>'lims',
-            'leftmenu'=>'myobject',
+            'leftmenu'=>'samples',
             'url'=>'/lims/limsindex.php',
             'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled.
-            'perms'=>'$user->rights->lims->myobject->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->lims->samples->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
         $this->menu[$r++]=array(
-            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=samples',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',			                // This is a Left menu entry
-            'titre'=>'List MyObject',
+            'titre'=>'List Samples',
             'mainmenu'=>'lims',
-            'leftmenu'=>'lims_myobject_list',
-            'url'=>'/lims/myobject_list.php',
+            'leftmenu'=>'lims_samples_list',
+            'url'=>'/lims/samples_list.php',
             'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'$user->rights->lims->myobject->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->lims->samples->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
         $this->menu[$r++]=array(
-            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=myobject',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=samples',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
             'type'=>'left',			                // This is a Left menu entry
-            'titre'=>'New MyObject',
+            'titre'=>'New Samples',
             'mainmenu'=>'lims',
-            'leftmenu'=>'lims_myobject_new',
-            'url'=>'/lims/myobject_page.php?action=create',
+            'leftmenu'=>'lims_samples_new',
+            'url'=>'/lims/samples_page.php?action=create',
             'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
             'position'=>1000+$r,
             'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'perms'=>'$user->rights->lims->myobject->write',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'$user->rights->lims->samples->write',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
             'target'=>'',
             'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
         );
-        END MODULEBUILDER LEFTMENU MYOBJECT */
+        */
+
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List Samples',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_samples',
+            'url'=>'/lims/samples_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New Samples',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_samples',
+            'url'=>'/lims/samples_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );
+
+		/* END MODULEBUILDER LEFTMENU SAMPLES */
 
         // Exports profiles provided by this module
         $r = 1;
-        /* BEGIN MODULEBUILDER EXPORT MYOBJECT */
+        /* BEGIN MODULEBUILDER EXPORT SAMPLES */
         /*
         $langs->load("lims@lims");
         $this->export_code[$r]=$this->rights_class.'_'.$r;
-        $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-        $this->export_icon[$r]='myobject@lims';
+        $this->export_label[$r]='SamplesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+        $this->export_icon[$r]='samples@lims';
         // Define $this->export_fields_array, $this->export_TypeFields_array and $this->export_entities_array
-        $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@lims';
+        $keyforclass = 'Samples'; $keyforclassfile='/mymobule/class/samples.class.php'; $keyforelement='samples@lims';
         include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
         //$this->export_fields_array[$r]['t.fieldtoadd']='FieldToAdd'; $this->export_TypeFields_array[$r]['t.fieldtoadd']='Text';
         //unset($this->export_fields_array[$r]['t.fieldtoremove']);
-   		//$keyforclass = 'MyObjectLine'; $keyforclassfile='/lims/class/myobject.class.php'; $keyforelement='myobjectline@lims'; $keyforalias='tl';
+   		//$keyforclass = 'SamplesLine'; $keyforclassfile='/lims/class/samples.class.php'; $keyforelement='samplesline@lims'; $keyforalias='tl';
 		//include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-        $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@lims';
+        $keyforselect='samples'; $keyforaliasextra='extra'; $keyforelement='samples@lims';
         include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$keyforselect='myobjectline'; $keyforaliasextra='extraline'; $keyforelement='myobjectline@lims';
+        //$keyforselect='samplesline'; $keyforaliasextra='extraline'; $keyforelement='samplesline@lims';
         //include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
-        //$this->export_dependencies_array[$r] = array('myobjectline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
+        //$this->export_dependencies_array[$r] = array('samplesline'=>array('tl.rowid','tl.ref')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
         //$this->export_special_array[$r] = array('t.field'=>'...');
         //$this->export_examplevalues_array[$r] = array('t.field'=>'Example');
         //$this->export_help_array[$r] = array('t.field'=>'FieldDescHelp');
         $this->export_sql_start[$r]='SELECT DISTINCT ';
-        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
-        //$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'myobject_line as tl ON tl.fk_myobject = t.rowid';
+        $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'samples as t';
+        //$this->export_sql_end[$r]  =' LEFT JOIN '.MAIN_DB_PREFIX.'samples_line as tl ON tl.fk_samples = t.rowid';
         $this->export_sql_end[$r] .=' WHERE 1 = 1';
-        $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
+        $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('samples').')';
         $r++; */
-        /* END MODULEBUILDER EXPORT MYOBJECT */
+        /* END MODULEBUILDER EXPORT SAMPLES */
 
         // Imports profiles provided by this module
         $r = 1;
-        /* BEGIN MODULEBUILDER IMPORT MYOBJECT */
+        /* BEGIN MODULEBUILDER IMPORT SAMPLES */
         /*
          $langs->load("lims@lims");
          $this->export_code[$r]=$this->rights_class.'_'.$r;
-         $this->export_label[$r]='MyObjectLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
-         $this->export_icon[$r]='myobject@lims';
-         $keyforclass = 'MyObject'; $keyforclassfile='/mymobule/class/myobject.class.php'; $keyforelement='myobject@lims';
+         $this->export_label[$r]='SamplesLines';	// Translation key (used only if key ExportDataset_xxx_z not found)
+         $this->export_icon[$r]='samples@lims';
+         $keyforclass = 'Samples'; $keyforclassfile='/mymobule/class/samples.class.php'; $keyforelement='samples@lims';
          include DOL_DOCUMENT_ROOT.'/core/commonfieldsinexport.inc.php';
-         $keyforselect='myobject'; $keyforaliasextra='extra'; $keyforelement='myobject@lims';
+         $keyforselect='samples'; $keyforaliasextra='extra'; $keyforelement='samples@lims';
          include DOL_DOCUMENT_ROOT.'/core/extrafieldsinexport.inc.php';
          //$this->export_dependencies_array[$r]=array('mysubobject'=>'ts.rowid', 't.myfield'=>array('t.myfield2','t.myfield3')); // To force to activate one or several fields if we select some fields that need same (like to select a unique key if we ask a field of a child to avoid the DISTINCT to discard them, or for computed field than need several other fields)
          $this->export_sql_start[$r]='SELECT DISTINCT ';
-         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'myobject as t';
+         $this->export_sql_end[$r]  =' FROM '.MAIN_DB_PREFIX.'samples as t';
          $this->export_sql_end[$r] .=' WHERE 1 = 1';
-         $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('myobject').')';
+         $this->export_sql_end[$r] .=' AND t.entity IN ('.getEntity('samples').')';
          $r++; */
-        /* END MODULEBUILDER IMPORT MYOBJECT */
+        /* END MODULEBUILDER IMPORT SAMPLES */
     }
 
     /**
@@ -409,9 +452,9 @@ class modLIMS extends DolibarrModules
 
         // ODT template
         /*
-        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/lims/template_myobjects.odt';
+        $src=DOL_DOCUMENT_ROOT.'/install/doctemplates/lims/template_sampless.odt';
         $dirodt=DOL_DATA_ROOT.'/doctemplates/lims';
-        $dest=$dirodt.'/template_myobjects.odt';
+        $dest=$dirodt.'/template_sampless.odt';
 
         if (file_exists($src) && ! file_exists($dest))
         {
