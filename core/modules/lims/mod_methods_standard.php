@@ -36,7 +36,7 @@ class mod_methods_standard extends ModeleNumRefMethods
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'METHODS';
+	public $prefix = 'ME';
 
 	/**
 	 * @var string Error code (or message)

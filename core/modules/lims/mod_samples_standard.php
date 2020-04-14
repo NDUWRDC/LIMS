@@ -36,7 +36,7 @@ class mod_samples_standard extends ModeleNumRefSamples
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'SAMPLES';
+	public $prefix = 'SA';
 
 	/**
 	 * @var string Error code (or message)

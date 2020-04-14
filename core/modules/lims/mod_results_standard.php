@@ -36,7 +36,7 @@ class mod_results_standard extends ModeleNumRefResults
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'RESULTS';
+	public $prefix = 'RE';
 
 	/**
 	 * @var string Error code (or message)
