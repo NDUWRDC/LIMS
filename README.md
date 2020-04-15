@@ -1,4 +1,4 @@
-# LIMS FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
+# LABORATORY INVENTORY MANAGEMENT SYSTEM FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
 ## Features
 
