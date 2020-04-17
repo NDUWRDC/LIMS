@@ -36,8 +36,12 @@ class mod_samples_standard extends ModeleNumRefSamples
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
+    
 	public $prefix = 'SA';
-
+    //if ($conf->global->$LIMS_PREFIX_SAMPLES != ''){
+    //    $prefix = $conf->global->$LIMS_PREFIX_SAMPLES;
+    //}
+    
 	/**
 	 * @var string Error code (or message)
 	 */
