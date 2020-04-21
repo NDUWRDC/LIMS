@@ -22,8 +22,11 @@
  *  \ingroup    lims
  *  \brief      File of class to manage Samples numbering rules standard
  */
+
 dol_include_once('/lims/core/modules/lims/modules_samples.php');
 
+dol_include_once('/lims/class/samples.class.php');
+dol_include_once('/lims/lib/lims_samples.lib.php');
 
 /**
  *	Class to manage customer order numbering rules standard
@@ -36,12 +39,8 @@ class mod_samples_standard extends ModeleNumRefSamples
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-    
-	public $prefix = 'SA';
-    //if ($conf->global->$LIMS_PREFIX_SAMPLES != ''){
-    //    $prefix = $conf->global->$LIMS_PREFIX_SAMPLES;
-    //}
-    
+	public $prefix;
+	
 	/**
 	 * @var string Error code (or message)
 	 */
@@ -126,7 +125,9 @@ class mod_samples_standard extends ModeleNumRefSamples
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_SAMPLES == '' ? 'SA' : $conf->global->LIMS_PREFIX_SAMPLES);
+
 		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."lims_samples";
