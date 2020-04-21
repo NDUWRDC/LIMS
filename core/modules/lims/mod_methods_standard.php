@@ -122,7 +122,10 @@ class mod_methods_standard extends ModeleNumRefMethods
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_METHODS == '' ? 'ME' : $conf->global->LIMS_PREFIX_METHODS);
+
+		// First we get the max. value
 		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."lims_methods";

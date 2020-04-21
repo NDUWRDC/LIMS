@@ -122,7 +122,10 @@ class mod_results_standard extends ModeleNumRefResults
 	{
 		global $db, $conf;
 
-		// D'abord on recupere la valeur max
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_RESULTS == '' ? 'RE' : $conf->global->LIMS_PREFIX_RESULTS);
+
+		// First we get the max. value
 		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
 		$sql .= " FROM ".MAIN_DB_PREFIX."lims_results";

@@ -54,8 +54,9 @@ $action = GETPOST('action', 'alpha');
 $backtopage = GETPOST('backtopage', 'alpha');
 
 $arrayofparameters = array(
-	'LIMS_MYPARAM1'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'LIMS_MYPARAM2'=>array('css'=>'minwidth500', 'enabled'=>1)
+	'LIMS_PREFIX_SAMPLES'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'LIMS_PREFIX_METHODS'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'LIMS_PREFIX_RESULTS'=>array('css'=>'minwidth200', 'enabled'=>1)
 );
 
 
