@@ -154,32 +154,32 @@ public $fields=array(
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'lims_samplesline';
+	public $table_element_line = 'lims_results';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_samples';
+	public $fk_element = 'fk_samples';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Samplesline';
+	public $class_element_line = 'results';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array();
+	protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//protected $childtablesoncascade=array('lims_samplesdet');
+	protected $childtablesoncascade=array('lims_results');
 
 	/**
 	 * @var SamplesLine[]     Array of subtable lines
 	 */
-	//public $lines = array();
+	public $lines = array();
 
 
 
@@ -1055,8 +1055,681 @@ public $fields=array(
 /**
  * Class SamplesLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class SamplesLine
+class SamplesLine //extends CommonInvoiceLine 
 {
-	// To complete with content of an object SamplesLine
-	// We should have a field rowid, fk_samples and position
+	// Inherited from CommonInvoiceLine:
+	// public $qty;
+	// public $subprice 			// @var float	Unit price before taxes
+	// public $product_type = 0;	// @var int		Type of the product. 0 for product 1 for service
+	// public $fk_product;			// @var int		Id of corresponding product
+	// public $vat_src_code;		// @var string	VAT code
+	// public $tva_tx;	 			// @var float	VAT %
+	// public $localtax1_tx;		// @var float	Local tax 1 %
+	// public $localtax2_tx;		// @var float	Local tax 2 %
+	// public $remise_percent;		// @var float	Percent of discount
+	// public $total_ht;			// @var float	Total amount before taxes
+	// public $total_tva;				// @var float	Total VAT amount
+	// public $total_localtax1;		// @var float	Total local tax 1 amount
+	// public $total_localtax2;		// @var float	Total local tax 2 amount
+	// public $total_ttc;			// @var float	Total amount with taxes
+	// public $info_bits = 0;		// @var int	List of cumulative options:
+
+	
+	/////
+	// @var string ID to identify managed object
+	///
+	public $element = 'results';
+	
+	/////
+	 // @var string Name of table without prefix where object is stored
+	 ///
+	public $table_element = 'results';
+	
+	public $oldline;
+
+	//! From llx_lims_results
+	//! Id sample
+	public $fk_samples;
+	
+	//! Id parent line  -- NOT USED FOR NOW
+	// public $fk_parent_line; 
+	
+	public $label;
+	//! Description ligne
+	public $desc;
+
+	public $rang = 0;
+
+	public $fk_product;
+    
+	/*   COPIED class FactureLigne extends CommonInvoiceLine
+	**************************************************************************
+
+
+	public $origin;
+	public $origin_id;
+
+	public $fk_code_ventilation = 0;
+
+	public $date_start;
+	public $date_end;
+
+	// From llx_product
+	/////
+	 // @deprecated
+	 // @see $product_ref
+	 ///
+	public $ref; // Product ref (deprecated)
+	public $product_ref; // Product ref
+	/////
+	 // @deprecated
+	 // @see $product_label
+	 ///
+	public $libelle; // Product label (deprecated)
+	public $product_label; // Product label
+	public $product_desc; // Description produit
+
+	public $skip_update_total; // Skip update price total for special lines
+
+	/////
+	 // @var int Situation advance percentage
+	 ///
+	public $situation_percent;
+
+	/////
+	 // @var int Previous situation line id reference
+	 ///
+	public $fk_prev_id;
+
+	// Multicurrency
+	public $fk_multicurrency;
+	public $multicurrency_code;
+	public $multicurrency_subprice;
+	public $multicurrency_total_ht;
+	public $multicurrency_total_tva;
+	public $multicurrency_total_ttc;
+
+	/////
+	 //	Load invoice line from database
+	 //
+	 //	@param	int		$rowid      id of invoice line to get
+	 //	@return	int					<0 if KO, >0 if OK
+	 ///
+    public function fetch($rowid)
+	{
+		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.vat_src_code, fd.tva_tx,';
+		$sql .= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
+		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
+		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
+		$sql .= ' fd.fk_code_ventilation,';
+		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
+		$sql .= ' fd.situation_percent, fd.fk_prev_id,';
+		$sql .= ' fd.multicurrency_subprice,';
+		$sql .= ' fd.multicurrency_total_ht,';
+		$sql .= ' fd.multicurrency_total_tva,';
+		$sql .= ' fd.multicurrency_total_ttc,';
+		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
+		$sql .= ' WHERE fd.rowid = '.$rowid;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+
+			$this->rowid = $objp->rowid;
+			$this->id = $objp->rowid;
+			$this->fk_facture = $objp->fk_facture;
+			$this->fk_parent_line = $objp->fk_parent_line;
+			$this->label				= $objp->custom_label;
+			$this->desc					= $objp->description;
+			$this->qty = $objp->qty;
+			$this->subprice = $objp->subprice;
+			$this->vat_src_code = $objp->vat_src_code;
+			$this->tva_tx = $objp->tva_tx;
+			$this->localtax1_tx			= $objp->localtax1_tx;
+			$this->localtax2_tx			= $objp->localtax2_tx;
+			$this->remise_percent = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->fk_product			= $objp->fk_product;
+			$this->product_type = $objp->product_type;
+			$this->date_start			= $this->db->jdate($objp->date_start);
+			$this->date_end				= $this->db->jdate($objp->date_end);
+			$this->info_bits			= $objp->info_bits;
+			$this->tva_npr = ($objp->info_bits & 1 == 1) ? 1 : 0;
+			$this->special_code = $objp->special_code;
+			$this->total_ht				= $objp->total_ht;
+			$this->total_tva			= $objp->total_tva;
+			$this->total_localtax1		= $objp->total_localtax1;
+			$this->total_localtax2		= $objp->total_localtax2;
+			$this->total_ttc			= $objp->total_ttc;
+			$this->fk_code_ventilation = $objp->fk_code_ventilation;
+			$this->rang					= $objp->rang;
+			$this->fk_fournprice = $objp->fk_fournprice;
+			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
+			$this->pa_ht				= $marginInfos[0];
+			$this->marge_tx				= $marginInfos[1];
+			$this->marque_tx			= $marginInfos[2];
+
+			$this->ref = $objp->product_ref; // deprecated
+			$this->product_ref = $objp->product_ref;
+			$this->libelle				= $objp->product_libelle; // deprecated
+			$this->product_label		= $objp->product_libelle;
+			$this->product_desc			= $objp->product_desc;
+			$this->fk_unit				= $objp->fk_unit;
+			$this->fk_user_modif		= $objp->fk_user_modif;
+			$this->fk_user_author = $objp->fk_user_author;
+
+			$this->situation_percent    = $objp->situation_percent;
+			$this->fk_prev_id           = $objp->fk_prev_id;
+
+			$this->multicurrency_subprice = $objp->multicurrency_subprice;
+			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
+			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
+			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+
+			$this->db->free($result);
+
+			return 1;
+		}
+		else
+		{
+		    $this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+
+	/////
+	 //	Insert line into database
+	 //
+	 //	@param      int		$notrigger		                 1 no triggers
+	 //  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
+	 //	@return		int						                 <0 if KO, >0 if OK
+	 ///
+    public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
+	{
+		global $langs, $user, $conf;
+
+		$error = 0;
+
+        $pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+
+        dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
+
+		// Clean parameters
+		$this->desc = trim($this->desc);
+		if (empty($this->tva_tx)) $this->tva_tx = 0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
+		if (empty($this->localtax1_type)) $this->localtax1_type = 0;
+		if (empty($this->localtax2_type)) $this->localtax2_type = 0;
+		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
+		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
+		if (empty($this->rang)) $this->rang = 0;
+		if (empty($this->remise_percent)) $this->remise_percent = 0;
+		if (empty($this->info_bits)) $this->info_bits = 0;
+		if (empty($this->subprice)) $this->subprice = 0;
+		if (empty($this->special_code)) $this->special_code = 0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
+		if (empty($this->fk_prev_id)) $this->fk_prev_id = 0;
+		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
+
+		if (empty($this->pa_ht)) $this->pa_ht = 0;
+		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice = 0;
+		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht = 0;
+		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva = 0;
+		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc = 0;
+
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
+		}
+
+		// Check parameters
+		if ($this->product_type < 0)
+		{
+			$this->error = 'ErrorProductTypeMustBe0orMore';
+			return -1;
+		}
+		if (!empty($this->fk_product))
+		{
+			// Check product exists
+			$result = Product::isExistingObject('product', $this->fk_product);
+			if ($result <= 0)
+			{
+				$this->error = 'ErrorProductIdDoesNotExists';
+				dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+				return -1;
+			}
+		}
+
+		$this->db->begin();
+
+		// Insertion dans base de la ligne
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
+		$sql .= ' (fk_facture, fk_parent_line, label, description, qty,';
+		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
+		$sql .= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
+		$sql .= ' date_start, date_end, fk_code_ventilation, ';
+		$sql .= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
+		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
+		$sql .= ' situation_percent, fk_prev_id,';
+		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
+		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
+		$sql .= ')';
+		$sql .= " VALUES (".$this->fk_facture.",";
+		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
+		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
+		$sql .= " '".$this->db->escape($this->desc)."',";
+		$sql .= " ".price2num($this->qty).",";
+        $sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
+		$sql .= " ".price2num($this->tva_tx).",";
+		$sql .= " ".price2num($this->localtax1_tx).",";
+		$sql .= " ".price2num($this->localtax2_tx).",";
+		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
+		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
+		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
+		$sql .= " ".((int) $this->product_type).",";
+		$sql .= " ".price2num($this->remise_percent).",";
+		$sql .= " ".price2num($this->subprice).",";
+		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
+		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
+		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
+		$sql .= ' '.$this->fk_code_ventilation.',';
+		$sql .= ' '.$this->rang.',';
+		$sql .= ' '.$this->special_code.',';
+		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
+		$sql .= ' '.price2num($this->pa_ht).',';
+		$sql .= " '".$this->db->escape($this->info_bits)."',";
+		$sql .= " ".price2num($this->total_ht).",";
+		$sql .= " ".price2num($this->total_tva).",";
+		$sql .= " ".price2num($this->total_ttc).",";
+		$sql .= " ".price2num($this->total_localtax1).",";
+		$sql .= " ".price2num($this->total_localtax2);
+		$sql .= ", ".$this->situation_percent;
+		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
+		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", ".$user->id;
+		$sql .= ", ".$user->id;
+		$sql .= ", ".(int) $this->fk_multicurrency;
+		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
+		$sql .= ", ".price2num($this->multicurrency_subprice);
+		$sql .= ", ".price2num($this->multicurrency_total_ht);
+		$sql .= ", ".price2num($this->multicurrency_total_tva);
+		$sql .= ", ".price2num($this->multicurrency_total_ttc);
+		$sql .= ')';
+
+		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
+			$this->rowid = $this->id; // For backward compatibility
+
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+            	$result = $this->insertExtraFields();
+            	if ($result < 0)
+            	{
+            		$error++;
+            	}
+            }
+
+			// Si fk_remise_except defini, on lie la remise a la facture
+			// ce qui la flague comme "consommee".
+			if ($this->fk_remise_except)
+			{
+				$discount = new DiscountAbsolute($this->db);
+				$result = $discount->fetch($this->fk_remise_except);
+				if ($result >= 0)
+				{
+					// Check if discount was found
+					if ($result > 0)
+					{
+					    // Check if discount not already affected to another invoice
+						if ($discount->fk_facture_line > 0)
+						{
+						    if (empty($noerrorifdiscountalreadylinked))
+						    {
+    							$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
+    							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+    							$this->db->rollback();
+    							return -3;
+						    }
+						}
+						else
+						{
+							$result = $discount->link_to_invoice($this->rowid, 0);
+							if ($result < 0)
+							{
+								$this->error = $discount->error;
+								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+								$this->db->rollback();
+								return -3;
+							}
+						}
+					}
+					else
+					{
+						$this->error = $langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
+						dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+						$this->db->rollback();
+						return -3;
+					}
+				}
+				else
+				{
+					$this->error = $discount->error;
+					dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+					$this->db->rollback();
+					return -3;
+				}
+			}
+
+			if (!$notrigger)
+			{
+                // Call trigger
+                $result = $this->call_trigger('LINEBILL_INSERT', $user);
+                if ($result < 0)
+                {
+					$this->db->rollback();
+					return -2;
+				}
+                // End call triggers
+			}
+
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+	/////
+	 //	Update line into database
+	 //
+	 //	@param		User	$user		User object
+	 //	@param		int		$notrigger	Disable triggers
+	 //	@return		int					<0 if KO, >0 if OK
+	 ///
+    public function update($user = '', $notrigger = 0)
+	{
+		global $user, $conf;
+
+		$error = 0;
+
+		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
+
+		// Clean parameters
+		$this->desc = trim($this->desc);
+		if (empty($this->tva_tx)) $this->tva_tx = 0;
+		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
+		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
+		if (empty($this->localtax1_type)) $this->localtax1_type = 0;
+		if (empty($this->localtax2_type)) $this->localtax2_type = 0;
+		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
+		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
+		if (empty($this->remise_percent)) $this->remise_percent = 0;
+		if (empty($this->info_bits)) $this->info_bits = 0;
+		if (empty($this->special_code)) $this->special_code = 0;
+		if (empty($this->product_type)) $this->product_type = 0;
+		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
+		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
+		if (empty($this->pa_ht)) $this->pa_ht = 0;
+
+		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice = 0;
+		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht = 0;
+		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva = 0;
+		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc = 0;
+
+		// Check parameters
+		if ($this->product_type < 0) return -1;
+
+		// if buy price not defined, define buyprice as configured in margin admin
+		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
+		{
+			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
+			{
+				return $result;
+			}
+			else
+			{
+				$this->pa_ht = $result;
+			}
+		}
+
+		$this->db->begin();
+
+        // Mise a jour ligne en base
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+        $sql .= " description='".$this->db->escape($this->desc)."'";
+        $sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
+        $sql .= ", subprice=".price2num($this->subprice)."";
+        $sql .= ", remise_percent=".price2num($this->remise_percent)."";
+        if ($this->fk_remise_except) $sql .= ", fk_remise_except=".$this->fk_remise_except;
+        else $sql .= ", fk_remise_except=null";
+		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
+        $sql .= ", tva_tx=".price2num($this->tva_tx)."";
+        $sql .= ", localtax1_tx=".price2num($this->localtax1_tx)."";
+        $sql .= ", localtax2_tx=".price2num($this->localtax2_tx)."";
+		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
+		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
+        $sql .= ", qty=".price2num($this->qty);
+        $sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
+        $sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
+        $sql .= ", product_type=".$this->product_type;
+        $sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
+        $sql .= ", special_code='".$this->db->escape($this->special_code)."'";
+        if (empty($this->skip_update_total))
+        {
+        	$sql .= ", total_ht=".price2num($this->total_ht);
+        	$sql .= ", total_tva=".price2num($this->total_tva);
+        	$sql .= ", total_ttc=".price2num($this->total_ttc);
+        	$sql .= ", total_localtax1=".price2num($this->total_localtax1);
+        	$sql .= ", total_localtax2=".price2num($this->total_localtax2);
+        }
+		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
+		$sql .= ", buy_price_ht='".price2num($this->pa_ht)."'";
+		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
+		if (!empty($this->rang)) $sql .= ", rang=".$this->rang;
+		$sql .= ", situation_percent=".$this->situation_percent;
+		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
+		$sql .= ", fk_user_modif =".$user->id;
+
+		// Multicurrency
+		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
+        $sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
+        $sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
+        $sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
+
+		$sql .= " WHERE rowid = ".$this->rowid;
+
+		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	{
+        		$this->id = $this->rowid;
+        		$result = $this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+
+			if (!$error && !$notrigger)
+			{
+                // Call trigger
+                $result = $this->call_trigger('LINEBILL_UPDATE', $user);
+                if ($result < 0)
+ 				{
+					$this->db->rollback();
+					return -2;
+				}
+                // End call triggers
+			}
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+	/////
+	 // 	Delete line in database
+	 //  TODO Add param User $user and notrigger (see skeleton)
+     //
+	 //	@return	    int		           <0 if KO, >0 if OK
+	 ///
+    public function delete()
+	{
+		global $user;
+
+		$this->db->begin();
+
+		// Call trigger
+		$result = $this->call_trigger('LINEBILL_DELETE', $user);
+		if ($result < 0)
+		{
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
+
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/////
+     //	Update DB line fields total_xxx
+	 //	Used by migration
+	 //
+	 //	@return		int		<0 if KO, >0 if OK
+	 ///
+    public function update_total()
+	{
+        // phpcs:enable
+		$this->db->begin();
+		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
+
+		// Clean parameters
+		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
+		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
+		$sql .= " total_ht=".price2num($this->total_ht)."";
+		$sql .= ",total_tva=".price2num($this->total_tva)."";
+		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
+		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
+		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql .= " WHERE rowid = ".$this->rowid;
+
+		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
+
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	//
+	 // Returns situation_percent of the previous line.
+	 // Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
+	 //
+	 // @param  int     $invoiceid      Invoice id
+	 // @param  bool    $include_credit_note		Include credit note or not
+	 // @return int                     >= 0
+	 ///
+	 
+    public function get_prev_progress($invoiceid, $include_credit_note = true)
+	{
+        // phpcs:enable
+		global $invoicecache;
+		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
+			return 0;
+		} else {
+		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
+			if (!isset($invoicecache[$invoiceid])) {
+				$invoicecache[$invoiceid] = new Facture($this->db);
+				$invoicecache[$invoiceid]->fetch($invoiceid);
+			}
+			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) return 0;
+
+			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.$this->fk_prev_id;
+			$resql = $this->db->query($sql);
+			if ($resql && $resql->num_rows > 0) {
+				$res = $this->db->fetch_array($resql);
+
+				$returnPercent = floatval($res['situation_percent']);
+
+				if ($include_credit_note) {
+				    $sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
+				    $sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
+				    $sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
+				    $sql .= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
+				    $sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
+
+				    $res = $this->db->query($sql);
+				    if ($res) {
+				        while ($obj = $this->db->fetch_object($res)) {
+				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
+				        }
+				    }
+				}
+
+				return $returnPercent;
+			} else {
+				$this->error = $this->db->error();
+				dol_syslog(get_class($this)."::select Error ".$this->error, LOG_ERR);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
+
+
+	*/
+
+
 }

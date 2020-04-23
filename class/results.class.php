@@ -93,7 +93,7 @@ class Results extends CommonObject
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-			'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'fk_samples' => array('type'=>'integer:Samples:lims/class/samples.class.php', 'label'=>'Sample', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Technician', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>3, 'index'=>1, 'help'=>"Responsible lab technician",),
@@ -111,6 +111,7 @@ class Results extends CommonObject
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1010, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1011, 'notnull'=>-1, 'visible'=>-1,),
+		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
 	);
 	public $rowid;
 	public $ref;
@@ -130,6 +131,7 @@ class Results extends CommonObject
 	public $import_key;
 	public $status;
 	public $model_pdf;
+	public $rang;
 	// END MODULEBUILDER PROPERTIES
 
 

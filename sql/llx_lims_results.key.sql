@@ -17,8 +17,8 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_rowid (rowid);
 ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_ref (ref);
-ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_fk_soc (fk_soc);
-ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_fk_project (fk_project);
+ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_fk_user (fk_user);
+ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_fk_method (fk_method);
 ALTER TABLE llx_lims_results ADD CONSTRAINT llx_lims_results_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_status (status);
 -- END MODULEBUILDER INDEXES
