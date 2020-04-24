@@ -1057,23 +1057,7 @@ public $fields=array(
  */
 class SamplesLine //extends CommonInvoiceLine 
 {
-	// Inherited from CommonInvoiceLine:
-	// public $qty;
-	// public $subprice 			// @var float	Unit price before taxes
-	// public $product_type = 0;	// @var int		Type of the product. 0 for product 1 for service
 	// public $fk_product;			// @var int		Id of corresponding product
-	// public $vat_src_code;		// @var string	VAT code
-	// public $tva_tx;	 			// @var float	VAT %
-	// public $localtax1_tx;		// @var float	Local tax 1 %
-	// public $localtax2_tx;		// @var float	Local tax 2 %
-	// public $remise_percent;		// @var float	Percent of discount
-	// public $total_ht;			// @var float	Total amount before taxes
-	// public $total_tva;				// @var float	Total VAT amount
-	// public $total_localtax1;		// @var float	Total local tax 1 amount
-	// public $total_localtax2;		// @var float	Total local tax 2 amount
-	// public $total_ttc;			// @var float	Total amount with taxes
-	// public $info_bits = 0;		// @var int	List of cumulative options:
-
 	
 	/////
 	// @var string ID to identify managed object
@@ -1088,89 +1072,70 @@ class SamplesLine //extends CommonInvoiceLine
 	public $oldline;
 
 	//! From llx_lims_results
-	//! Id sample
+	//! Id sample @var integer NOT NULL
 	public $fk_samples;
+	//! Id user who did the test @var integer NOT NULL
+	public $fk_user;
+	//! Id method applied to get test result @var integer NOT NULL
+	public $fk_method;
+	//! Id product - to be linked with lims_methods
+	//public $fk_product;
+	// public $product_type = 0;	// @var int		Type of the product. 0 for product 1 for service
+	//! Result of test @var real NOT NULL
+	public $result;
+	//! Start time of test @var datetime NOT NULL
+	public $date_start;
+	//! End time of test @var datetime NOT NULL
+	public $date_end;
+	//! Abnormalities with this test @var text
+	public $abnormalities;
 	
 	//! Id parent line  -- NOT USED FOR NOW
 	// public $fk_parent_line; 
-	
-	public $label;
-	//! Description ligne
-	public $desc;
 
 	public $rang = 0;
 
-	public $fk_product;
-    
-	/*   COPIED class FactureLigne extends CommonInvoiceLine
-	**************************************************************************
 
-
-	public $origin;
+	public $origin;		// Should be used with templates or copying 
 	public $origin_id;
 
-	public $fk_code_ventilation = 0;
-
-	public $date_start;
-	public $date_end;
-
+	// From llx_lims_methods
+	/////
+	public $methods_ref;			// Method ref
+	public $methods_label;			// Method label				@ var varchar(255)
+	public $methods_standard;		// Method standard			@ var varchar(128)
+	//public $methods_fk_product;	// Pointer to sales item	@ var int
+	public $methods_unit;			// Unit						@ var varchar(14)
+	public $methods_accuracy;		// Accuracy					@ var varchar(14)
+	public $methods_lower_range;	// Lower range				@ var real
+	public $methods_upper_range;	// Upper range				@ var real
+	public $methods_resolution;		// Resolution				@ var integer
+	
+	
 	// From llx_product
 	/////
-	 // @deprecated
-	 // @see $product_ref
-	 ///
-	public $ref; // Product ref (deprecated)
-	public $product_ref; // Product ref
-	/////
-	 // @deprecated
-	 // @see $product_label
-	 ///
-	public $libelle; // Product label (deprecated)
-	public $product_label; // Product label
-	public $product_desc; // Description produit
+	//public $product_ref;	// Product ref
+	//public $product_label;	// Product label
+	//public $product_desc;	// Description product
 
-	public $skip_update_total; // Skip update price total for special lines
 
 	/////
-	 // @var int Situation advance percentage
-	 ///
-	public $situation_percent;
-
-	/////
-	 // @var int Previous situation line id reference
-	 ///
-	public $fk_prev_id;
-
-	// Multicurrency
-	public $fk_multicurrency;
-	public $multicurrency_code;
-	public $multicurrency_subprice;
-	public $multicurrency_total_ht;
-	public $multicurrency_total_tva;
-	public $multicurrency_total_ttc;
-
-	/////
-	 //	Load invoice line from database
+	 //	Load results line from database
 	 //
-	 //	@param	int		$rowid      id of invoice line to get
-	 //	@return	int					<0 if KO, >0 if OK
+	 //	@param	int			$rowid      id of results line to get
+	 //	@return	int			<0 if KO, >0 if OK
 	 ///
     public function fetch($rowid)
 	{
-		$sql = 'SELECT fd.rowid, fd.fk_facture, fd.fk_parent_line, fd.fk_product, fd.product_type, fd.label as custom_label, fd.description, fd.price, fd.qty, fd.vat_src_code, fd.tva_tx,';
-		$sql .= ' fd.localtax1_tx, fd. localtax2_tx, fd.remise, fd.remise_percent, fd.fk_remise_except, fd.subprice,';
-		$sql .= ' fd.date_start as date_start, fd.date_end as date_end, fd.fk_product_fournisseur_price as fk_fournprice, fd.buy_price_ht as pa_ht,';
-		$sql .= ' fd.info_bits, fd.special_code, fd.total_ht, fd.total_tva, fd.total_ttc, fd.total_localtax1, fd.total_localtax2, fd.rang,';
-		$sql .= ' fd.fk_code_ventilation,';
-		$sql .= ' fd.fk_unit, fd.fk_user_author, fd.fk_user_modif,';
-		$sql .= ' fd.situation_percent, fd.fk_prev_id,';
-		$sql .= ' fd.multicurrency_subprice,';
-		$sql .= ' fd.multicurrency_total_ht,';
-		$sql .= ' fd.multicurrency_total_tva,';
-		$sql .= ' fd.multicurrency_total_ttc,';
-		$sql .= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as fd';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON fd.fk_product = p.rowid';
+		$sql = 'SELECT fd.rowid, fd.fk_samples, fd.fk_method, fd.fk_user, fd.abnormalities, fd.result,';
+		$sql .= ' fd.start as date_start, fd.end as date_end,';
+		$sql .= ' fd.rang,';
+		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
+		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
+		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
+		$sql .= ' m.lower_range as methods_lower_range, m.upper_range as methods_upper_range, m.resolution as methods_resolution';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
 		$sql .= ' WHERE fd.rowid = '.$rowid;
 
 		$result = $this->db->query($sql);
@@ -1178,56 +1143,36 @@ class SamplesLine //extends CommonInvoiceLine
 		{
 			$objp = $this->db->fetch_object($result);
 
-			$this->rowid = $objp->rowid;
-			$this->id = $objp->rowid;
-			$this->fk_facture = $objp->fk_facture;
-			$this->fk_parent_line = $objp->fk_parent_line;
-			$this->label				= $objp->custom_label;
-			$this->desc					= $objp->description;
-			$this->qty = $objp->qty;
-			$this->subprice = $objp->subprice;
-			$this->vat_src_code = $objp->vat_src_code;
-			$this->tva_tx = $objp->tva_tx;
-			$this->localtax1_tx			= $objp->localtax1_tx;
-			$this->localtax2_tx			= $objp->localtax2_tx;
-			$this->remise_percent = $objp->remise_percent;
-			$this->fk_remise_except = $objp->fk_remise_except;
-			$this->fk_product			= $objp->fk_product;
-			$this->product_type = $objp->product_type;
-			$this->date_start			= $this->db->jdate($objp->date_start);
-			$this->date_end				= $this->db->jdate($objp->date_end);
-			$this->info_bits			= $objp->info_bits;
-			$this->tva_npr = ($objp->info_bits & 1 == 1) ? 1 : 0;
-			$this->special_code = $objp->special_code;
-			$this->total_ht				= $objp->total_ht;
-			$this->total_tva			= $objp->total_tva;
-			$this->total_localtax1		= $objp->total_localtax1;
-			$this->total_localtax2		= $objp->total_localtax2;
-			$this->total_ttc			= $objp->total_ttc;
-			$this->fk_code_ventilation = $objp->fk_code_ventilation;
-			$this->rang					= $objp->rang;
-			$this->fk_fournprice = $objp->fk_fournprice;
-			$marginInfos				= getMarginInfos($objp->subprice, $objp->remise_percent, $objp->tva_tx, $objp->localtax1_tx, $objp->localtax2_tx, $this->fk_fournprice, $objp->pa_ht);
-			$this->pa_ht				= $marginInfos[0];
-			$this->marge_tx				= $marginInfos[1];
-			$this->marque_tx			= $marginInfos[2];
+			$this->rowid				 = $objp->rowid;
+			$this->id					 = $objp->rowid;
+			$this->fk_samples			 = $objp->fk_samples;
+			$this->fk_method			 = $objp->fk_method;
+			$this->fk_user				 = $objp->fk_user;
+			//$this->fk_parent_line		 = $objp->fk_parent_line;
+			$this->abnormalities		 = $objp->abnormalities;
+			$this->result				 = $objp->result;
 
-			$this->ref = $objp->product_ref; // deprecated
-			$this->product_ref = $objp->product_ref;
-			$this->libelle				= $objp->product_libelle; // deprecated
-			$this->product_label		= $objp->product_libelle;
-			$this->product_desc			= $objp->product_desc;
-			$this->fk_unit				= $objp->fk_unit;
-			$this->fk_user_modif		= $objp->fk_user_modif;
-			$this->fk_user_author = $objp->fk_user_author;
+			$this->date_start			 = $this->db->jdate($objp->date_start);
+			$this->date_end				 = $this->db->jdate($objp->date_end);
+			$this->rang					 = $objp->rang;
+			
+			$this->methods_ref			 = $objp->methods_ref;
+			$this->methods_label		 = $objp->methods_label;
+			$this->methods_standard		 = $objp->methods_standard;
+			$this->methods_unit			 = $objp->methods_unit;
+			$this->methods_accuracy		 = $objp->methods_accuracy;
+			$this->methods_lower_range	 = $objp->methods_lower_range;
+			$this->methods_upper_range	 = $objp->methods_upper_range;
+			$this->methods_resolution	 = $objp->methods_resolution;
 
-			$this->situation_percent    = $objp->situation_percent;
-			$this->fk_prev_id           = $objp->fk_prev_id;
-
-			$this->multicurrency_subprice = $objp->multicurrency_subprice;
-			$this->multicurrency_total_ht = $objp->multicurrency_total_ht;
-			$this->multicurrency_total_tva = $objp->multicurrency_total_tva;
-			$this->multicurrency_total_ttc = $objp->multicurrency_total_ttc;
+			//$this->product_type			 = $objp->product_type;
+			//$this->methods_fk_product	 = $objp->methods_fk_product;		// Pointer to sales item	@ var int
+			//$this->product_ref 		 = $objp->product_ref;
+			//$this->product_label		 = $objp->product_libelle;
+			//$this->product_desc		 = $objp->product_desc;
+			
+			$this->fk_user_modif		 = $objp->fk_user_modif;
+			$this->fk_user_creat		 = $objp->fk_user_creat;
 
 			$this->db->free($result);
 
@@ -1239,6 +1184,8 @@ class SamplesLine //extends CommonInvoiceLine
 			return -1;
 		}
 	}
+	/*   COPIED class FactureLigne extends CommonInvoiceLine
+	**************************************************************************
 
 	/////
 	 //	Insert line into database
@@ -1259,41 +1206,10 @@ class SamplesLine //extends CommonInvoiceLine
 
 		// Clean parameters
 		$this->desc = trim($this->desc);
-		if (empty($this->tva_tx)) $this->tva_tx = 0;
-		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
-		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
-		if (empty($this->localtax1_type)) $this->localtax1_type = 0;
-		if (empty($this->localtax2_type)) $this->localtax2_type = 0;
-		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
-		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
 		if (empty($this->rang)) $this->rang = 0;
-		if (empty($this->remise_percent)) $this->remise_percent = 0;
-		if (empty($this->info_bits)) $this->info_bits = 0;
-		if (empty($this->subprice)) $this->subprice = 0;
-		if (empty($this->special_code)) $this->special_code = 0;
-		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
-		if (empty($this->fk_prev_id)) $this->fk_prev_id = 0;
-		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
-
-		if (empty($this->pa_ht)) $this->pa_ht = 0;
-		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice = 0;
-		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht = 0;
-		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva = 0;
-		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc = 0;
-
-		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
-		{
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
-			{
-				return $result;
-			}
-			else
-			{
-				$this->pa_ht = $result;
-			}
-		}
-
+		//if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
+		
+		
 		// Check parameters
 		if ($this->product_type < 0)
 		{
@@ -1629,105 +1545,6 @@ class SamplesLine //extends CommonInvoiceLine
 			return -1;
 		}
 	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	/////
-     //	Update DB line fields total_xxx
-	 //	Used by migration
-	 //
-	 //	@return		int		<0 if KO, >0 if OK
-	 ///
-    public function update_total()
-	{
-        // phpcs:enable
-		$this->db->begin();
-		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
-
-		// Clean parameters
-		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
-		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
-
-		// Mise a jour ligne en base
-		$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-		$sql .= " total_ht=".price2num($this->total_ht)."";
-		$sql .= ",total_tva=".price2num($this->total_tva)."";
-		$sql .= ",total_localtax1=".price2num($this->total_localtax1)."";
-		$sql .= ",total_localtax2=".price2num($this->total_localtax2)."";
-		$sql .= ",total_ttc=".price2num($this->total_ttc)."";
-		$sql .= " WHERE rowid = ".$this->rowid;
-
-		dol_syslog(get_class($this)."::update_total", LOG_DEBUG);
-
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$this->db->commit();
-			return 1;
-		}
-		else
-		{
-			$this->error = $this->db->error();
-			$this->db->rollback();
-			return -2;
-		}
-	}
-
-    // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
-	//
-	 // Returns situation_percent of the previous line.
-	 // Warning: If invoice is a replacement invoice, this->fk_prev_id is id of the replaced line.
-	 //
-	 // @param  int     $invoiceid      Invoice id
-	 // @param  bool    $include_credit_note		Include credit note or not
-	 // @return int                     >= 0
-	 ///
-	 
-    public function get_prev_progress($invoiceid, $include_credit_note = true)
-	{
-        // phpcs:enable
-		global $invoicecache;
-		if (is_null($this->fk_prev_id) || empty($this->fk_prev_id) || $this->fk_prev_id == "") {
-			return 0;
-		} else {
-		    // If invoice is not a situation invoice, this->fk_prev_id is used for something else
-			if (!isset($invoicecache[$invoiceid])) {
-				$invoicecache[$invoiceid] = new Facture($this->db);
-				$invoicecache[$invoiceid]->fetch($invoiceid);
-			}
-			if ($invoicecache[$invoiceid]->type != Facture::TYPE_SITUATION) return 0;
-
-			$sql = 'SELECT situation_percent FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid='.$this->fk_prev_id;
-			$resql = $this->db->query($sql);
-			if ($resql && $resql->num_rows > 0) {
-				$res = $this->db->fetch_array($resql);
-
-				$returnPercent = floatval($res['situation_percent']);
-
-				if ($include_credit_note) {
-				    $sql = 'SELECT fd.situation_percent FROM '.MAIN_DB_PREFIX.'facturedet fd';
-				    $sql .= ' JOIN '.MAIN_DB_PREFIX.'facture f ON (f.rowid = fd.fk_facture) ';
-				    $sql .= ' WHERE fd.fk_prev_id ='.$this->fk_prev_id;
-				    $sql .= ' AND f.situation_cycle_ref = '.$tmpinvoice->situation_cycle_ref; // Prevent cycle outed
-				    $sql .= ' AND f.type = '.Facture::TYPE_CREDIT_NOTE;
-
-				    $res = $this->db->query($sql);
-				    if ($res) {
-				        while ($obj = $this->db->fetch_object($res)) {
-				            $returnPercent = $returnPercent + floatval($obj->situation_percent);
-				        }
-				    }
-				}
-
-				return $returnPercent;
-			} else {
-				$this->error = $this->db->error();
-				dol_syslog(get_class($this)."::select Error ".$this->error, LOG_ERR);
-				$this->db->rollback();
-				return -1;
-			}
-		}
-	}
-
 
 	*/
 

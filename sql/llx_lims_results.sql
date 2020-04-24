@@ -25,15 +25,11 @@ CREATE TABLE llx_lims_results(
 	start datetime NOT NULL, 
 	end datetime NOT NULL, 
 	abnormalities text, 
-	note_public text, 
-	note_private text, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	status smallint NOT NULL, 
-	model_pdf varchar(255), 
 	rang integer NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
