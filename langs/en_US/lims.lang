@@ -52,3 +52,20 @@ MyPageName = My page name
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
+
+#
+#
+#
+
+MethodMethod = Method
+MethodAccuracy = Accuracy
+MethodLimitTitle = Meas. Range
+MethodLowerLimit = Lower
+MethodUpperLimit = Upper
+ResultAbnormality = Abnormalities
+StandardLimitTitle = Standard Limit
+StandardLowerLimit = Lower
+StandardUpperLimit = Upper
+Result = Result
+ResultID = Test-ID
+MethodUnit = Unit

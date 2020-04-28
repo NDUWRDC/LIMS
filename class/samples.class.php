@@ -24,8 +24,14 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
+
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Samples
@@ -164,7 +170,7 @@ public $fields=array(
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'results';
+	public $class_element_line = 'lims_results';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -341,26 +347,119 @@ public $fields=array(
 	 */
 	public function fetch($id, $ref = null)
 	{
+		// Original code provided by Module Builder
 		$result = $this->fetchCommon($id, $ref);
+		require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
+		
+		
+		// The following is in adaption to facture.class.php -> Facture::fetch
+		/*
+		global $conf;
+		
+		$rowid = $id;
+		
+		if (empty($rowid) && empty($ref) ) return -1;
+		
+		$sql = 'SELECT s.rowid, s.fk_samples, s.fk_method, s.fk_user, s.abnormalities, s.result,';
+		$sql .= ' s.start as date_start, s.end as date_end,';
+		$sql .= ' fd.rang,';
+		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
+		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
+		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
+		$sql .= ' m.lower_range as methods_lower_range, m.upper_range as methods_upper_range, m.resolution as methods_resolution';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
+		$sql .= ' WHERE fd.rowid = '.$rowid;
+		
+		$sql = 'SELECT s.rowid, s.ref, s.fk_soc, s.fk_propal, s.fk_facture, s.fk_socpeople, s.fk_user,';
+		$sql .= ' s.label, s.volume, s.qty, s.date, s.place, s.place_lon, s.place_lat, s.date_arrival,';
+		$sql .= ' s.fk_project, s.description, s.note_public, s.note_private, s.date_creation, s.tms,';
+		$sql .= ' s.fk_user_creat, s.fk_user_modif, s.import_key, s.model_pdf, s.status';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_samples as s';
+		*/
+		/*
+		if ($rowid) $sql .= " WHERE s.rowid=".$rowid;
+		else {
+			$sql .= ' WHERE s.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
+			if ($ref)     $sql .= " AND f.ref='".$this->db->escape($ref)."'";
+			if ($ref_ext) $sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
+			if ($notused) $sql .= " AND f.ref_int='".$this->db->escape($notused)."'"; // deprecated
+		}
+		*/
+		/*
+		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$objp = $this->db->fetch_object($result);
+				$this->rowid				 = $objp->rowid;
+				$this->id					 = $objp->rowid;
+				$this->fk_samples			 = $objp->fk_samples;
+				$this->fk_method			 = $objp->fk_method;
+				$this->fk_user				 = $objp->fk_user;
+				//$this->fk_parent_line		 = $objp->fk_parent_line;
+				$this->abnormalities		 = $objp->abnormalities;
+				$this->result				 = $objp->result;
+
+				$this->date_start			 = $this->db->jdate($objp->date_start);
+				$this->date_end				 = $this->db->jdate($objp->date_end);
+				$this->rang					 = $objp->rang;
+				
+				$this->methods_ref			 = $objp->methods_ref;
+				$this->methods_label		 = $objp->methods_label;
+				$this->methods_standard		 = $objp->methods_standard;
+				$this->methods_unit			 = $objp->methods_unit;
+				$this->methods_accuracy		 = $objp->methods_accuracy;
+				$this->methods_lower_range	 = $objp->methods_lower_range;
+				$this->methods_upper_range	 = $objp->methods_upper_range;
+				$this->methods_resolution	 = $objp->methods_resolution;
+
+				//$this->product_type			 = $objp->product_type;
+				//$this->methods_fk_product	 = $objp->methods_fk_product;		// Pointer to sales item	@ var int
+				//$this->product_ref 		 = $objp->product_ref;
+				//$this->product_label		 = $objp->product_libelle;
+				//$this->product_desc		 = $objp->product_desc;
+				
+				$this->fk_user_modif		 = $objp->fk_user_modif;
+				$this->fk_user_creat		 = $objp->fk_user_creat;
+				
+				$this->extraparams = (array) json_decode($obj->extraparams, true);
+
+				// Retreive all extrafield
+				// fetch optionals attributes and labels
+				$this->fetch_optionals();
+				
+				// Lines
+				$this->lines = array();
+
+				$result = $this->fetchLines();
+				if ($result < 0)
+				{
+					$this->error = $this->db->error();
+					// $this->db->free($result);  //REQUIRED? 
+					return -3;
+				}
+				return 1;
+			}
+			else
+			{
+				$this->error = 'Sample with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
+				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
+				return 0;
+			}
+		}
+		else
+		{
+		    $this->error = $this->db->lasterror();
+			return -1;
+		}*/
 	}
 
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		$this->lines = array();
-
-		$result = $this->fetchLinesCommon();
-		return $result;
-	}
-
-
-	/**
+	 /**  
 	 * Load list of objects in memory from the database.
 	 *
 	 * @param  string      $sortorder    Sort Order
@@ -380,7 +479,10 @@ public $fields=array(
 		$records = array();
 
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList();
+		//if (isset($this->fields['rowid']))
+			$sql .= $this->getFieldList();
+		//else	
+		//	dol_syslog("DAVID this->fields['rowid']".$this->fields['rowid'], LOG_DEBUG);
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
 		else $sql .= ' WHERE 1 = 1';
@@ -405,7 +507,6 @@ public $fields=array(
 		if (count($sqlwhere) > 0) {
 			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
-
 		if (!empty($sortfield)) {
 			$sql .= $this->db->order($sortfield, $sortorder);
 		}
@@ -437,6 +538,61 @@ public $fields=array(
 
 			return -1;
 		}
+	}
+
+	/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		/*$results = new Results($this->db); 
+		$this->lines = array(); //original
+		$this->fields = $results->fields;
+		dol_syslog(__METHOD__.'fetchLines var_dump($this->fields)='.var_export($this->fields, true), LOG_DEBUG);
+		$result = $this->fetchLinesCommon();
+		//$result = $this->fetchLinesCommon(); // original,  CommonObject::fetchLinesCommon($morewhere = '') 
+		*/
+		$results = new Results($this->db);
+		$morewhere = '';
+		$objectlineclassname = 'Results';
+		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
+		$objectline = new $objectlineclassname($this->db);
+		$sql = 'SELECT '.$objectline->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		if ($morewhere)   $sql .= $morewhere;
+		dol_syslog(__METHOD__.' 121212 $sql='.$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
+			$i = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
+				{
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[$i] = $newline;
+				}
+				$i++;
+			}
+			
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		
+		return $result;
 	}
 
 	/**
@@ -901,10 +1057,21 @@ public $fields=array(
 	 */
 	public function getLinesArray()
 	{
-	    $this->lines = array();
+		
+		//return $this->fetch_lines();  // Original
+		return $this->fetchLines();
+		
+		/*
+	    // Copied from facture.class.php 
+		$this->lines = array();
 
 	    $objectline = new SamplesLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
+		
+		//dol_syslog("DAVID ".get_class($this)."::getLinesArray objectline = ".var_export($objectline), LOG_DEBUG);
+		dol_syslog("DAVID234 ".get_class($this)."::getLinesArray this->db.database_name = ".$this->db->database_name, LOG_DEBUG);
+		dol_syslog("DAVID12 ".get_class($this)."::getLinesArray customsql=>fk_samples =  this.id".var_dump(array('customsql'=>'fk_samples = '.$this->id)), LOG_DEBUG);
+
+	    $result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
 
 	    if (is_numeric($result))
 	    {
@@ -917,6 +1084,7 @@ public $fields=array(
 	        $this->lines = $result;
 	        return $this->lines;
 	    }
+		*/
 	}
 
 	/**
@@ -1050,12 +1218,277 @@ public $fields=array(
 
 		return $error;
 	}
+	
+	/* This is to show array of line of details */
+	// COPIED FROM CommonObject.class.php
+
+	/**
+	 *	Return HTML table for object lines
+	 *	TODO Move this into an output class file (htmlline.class.php)
+	 *	If lines are into a template, title must also be into a template
+	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
+	 *
+	 *	@param	string		$action				Action code
+	 *	@param  string		$seller            	Object of seller third party
+	 *	@param  string  	$buyer             	Object of buyer third party
+	 *	@param	int			$selected		   	Object line selected
+	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
+	 *  @param	string		$defaulttpldir		Directory where to find the template
+	 *	@return	void
+	 */
+	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
+	{
+		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
+		// TODO We should not use global var for this
+		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
+		// Define usemargins
+		$usemargins = 0;
+		//if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;  // Original
+		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('lims_samples', 'lims_results', 'propal', 'commande'))) $usemargins = 1;
+		
+		dol_syslog(__METHOD__.' number of lines='.count($this->lines), LOG_DEBUG);
+		
+		// Line extrafield
+		
+		if (!is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line);
+		
+		// Print table header
+		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_title.tpl.php';
+		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
+		include $tpl;
+		/*
+		ToDo: handle hooks and extrafields
+		
+		$parameters = array('num'=>$num, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$this->table_element_line);
+		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+		if (empty($reshook))
+		{
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
+			
+			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+			foreach ($dirtpls as $module => $reldir)
+			{
+				dol_syslog(__METHOD__.' module='.$module, LOG_DEBUG);
+				if (!empty($module))
+				{
+					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
+				}
+				dol_syslog(__METHOD__.' $tmpl='.$tpl, LOG_DEBUG);
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl; // for debug
+				}
+				if ($res) break;
+			}
+			
+		}*/
+
+		$i = 0;
+
+		print "<!-- begin printObjectLines() LIMS --><tbody>\n";
+		foreach ($this->lines as $line)
+		{
+			//Line extrafield
+			$line->fetch_optionals();
+
+			/* ToDo: Add hook handling
+			
+			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
+			if (is_object($hookmanager))   // Old code is commented on preceding line.
+			{
+				if (empty($line->fk_parent_line))
+				{
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
+					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				}
+				else
+				{
+					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
+					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
+				}
+			}
+			
+			if (empty($reshook))
+			*/
+			$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+
+			$i++;
+		}
+		print "</tbody><!-- end printObjectLines() LIMS -->\n";
+	}
+
+	/** COPIED FROM CommonObject.class.php
+	 *	Return HTML content of a detail line
+	 *	TODO Move this into an output class file (htmlline.class.php)
+	 *
+	 *	@param	string      		$action				GET/POST action
+	 *	@param  CommonObjectLine 	$line			    Selected object line to output
+	 *	@param  string	    		$var               	Is it a an odd line (true)
+	 *	@param  int		    		$num               	Number of line (0)
+	 *	@param  int		    		$i					I
+	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
+	 *	@param  string	    		$seller            	Object of seller third party
+	 *	@param  string	    		$buyer             	Object of buyer third party
+	 *	@param	int					$selected		   	Object line selected
+	 *  @param  Extrafields			$extrafields		Object of extrafields
+	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
+	 *	@return	void
+	 */
+	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
+	{
+		global $conf, $langs, $user, $object, $hookmanager;
+		global $form;
+		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
+		
+		$method = new Methods($this->db);
+		dol_syslog(__METHOD__.'Fetch $line->fk_method='.$line->fk_method, LOG_DEBUG);
+		$method->fetch($line->fk_method);
+
+		$product = new Product ($this->db);
+		dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		$product->fetch($method->fk_product);
+
+		$object_rights = $this->getRights();
+
+		$element = $this->element;
+
+		$text = ''; 
+		$description = '';  //pop-up text
+		
+		dol_syslog(__METHOD__.' !!printObjectLine this->element'.$element, LOG_DEBUG);
+		// Line in view mode
+		if ($action != 'editline' || $selected != $line->id)
+		{
+			dol_syslog(__METHOD__.' action!=editline || selected!=line->id', LOG_DEBUG);
+			// Sample (this) -> Result (line) -> Method -> Product
+			if ($line->fk_method > 0)
+			{
+				$product_static = new Product($this->db);
+				//$result_static->$line;
+				// ToDo: get reference to $line->method->product->ref/label
+				//$product_static->ref = $line->ref; //can change ref in hook
+				//$product_static->label = $line->label; //can change label in hook
+
+				$text = $product->getNomUrl(1);
+
+				// Define output language and label
+				if (!empty($conf->global->MAIN_MULTILANGS))
+				{
+					if (property_exists($this, 'socid') && !is_object($this->thirdparty))
+					{
+						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
+						return;
+					}
+
+					//$prod = new Product($this->db);  // Original
+					//$prod->fetch($line->fk_product); // Original
+
+					$outputlangs = $langs;
+					$newlang = '';
+					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang) && is_object($this->thirdparty)) $newlang = $this->thirdparty->default_lang; // To use language of customer
+					if (!empty($newlang))
+					{
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+					}
+
+					$label = (!empty($method->multilangs[$outputlangs->defaultlang]["label"])) ? $method->multilangs[$outputlangs->defaultlang]["label"] : $method->label;
+				}
+				else
+				{
+					//$label = $method->label; //$line->product_label;
+				}
+
+				//$text .= ' - '.(!empty($method->label) ? $product->label : $label);
+				//$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($product->description)); // Description is what to show on popup. We shown nothing if already into desc.
+			}
+
+			//$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+
+			// Print table line
+			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_view.tpl.php';
+			dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
+			include $tpl;
+			
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
+			
+			/*
+			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+			foreach ($dirtpls as $module => $reldir)
+			{
+				if (!empty($module))
+				{
+					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
+				}
+
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl; // for debug
+				}
+				if ($res) break;
+			}
+			*/
+		}
+
+		// Line in update mode
+		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
+		{
+			dol_syslog(__METHOD__.' action==editline && selected==line->id', LOG_DEBUG);
+			
+			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
+
+			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
+
+			// Output template part (modules that overwrite templates must declare this into descriptor)
+			// Use global variables + $dateSelector + $seller and $buyer
+			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
+			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+			foreach ($dirtpls as $module => $reldir)
+			{
+				if (!empty($module))
+				{
+					$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
+				}
+				else
+				{
+					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
+				}
+
+				if (empty($conf->file->strict_mode)) {
+					$res = @include $tpl;
+				} else {
+					$res = include $tpl; // for debug
+				}
+				if ($res) break;
+			}
+		}
+	}
 }
 
 /**
  * Class SamplesLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class SamplesLine //extends CommonInvoiceLine 
+class SamplesLine extends CommonObjectLine //CommonInvoiceLine// 
 {
 	// public $fk_product;			// @var int		Id of corresponding product
 	
@@ -1067,7 +1500,7 @@ class SamplesLine //extends CommonInvoiceLine
 	/////
 	 // @var string Name of table without prefix where object is stored
 	 ///
-	public $table_element = 'results';
+	public $table_element = 'lims_results';
 	
 	public $oldline;
 
@@ -1104,7 +1537,7 @@ class SamplesLine //extends CommonInvoiceLine
 	public $methods_ref;			// Method ref
 	public $methods_label;			// Method label				@ var varchar(255)
 	public $methods_standard;		// Method standard			@ var varchar(128)
-	//public $methods_fk_product;	// Pointer to sales item	@ var int
+	public $methods_fk_product;		// Pointer to sales item	@ var int
 	public $methods_unit;			// Unit						@ var varchar(14)
 	public $methods_accuracy;		// Accuracy					@ var varchar(14)
 	public $methods_lower_range;	// Lower range				@ var real
@@ -1184,6 +1617,8 @@ class SamplesLine //extends CommonInvoiceLine
 			return -1;
 		}
 	}
+	
+	
 	/*   COPIED class FactureLigne extends CommonInvoiceLine
 	**************************************************************************
 
@@ -1193,9 +1628,9 @@ class SamplesLine //extends CommonInvoiceLine
 	 //	@param      int		$notrigger		                 1 no triggers
 	 //  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
 	 //	@return		int						                 <0 if KO, >0 if OK
-	 ///
+	 */
     public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
-	{
+	{/*
 		global $langs, $user, $conf;
 
 		$error = 0;
@@ -1371,18 +1806,18 @@ class SamplesLine //extends CommonInvoiceLine
 			$this->error = $this->db->lasterror();
 			$this->db->rollback();
 			return -2;
-		}
+		}*/
 	}
 
-	/////
+	 /*
 	 //	Update line into database
 	 //
 	 //	@param		User	$user		User object
 	 //	@param		int		$notrigger	Disable triggers
 	 //	@return		int					<0 if KO, >0 if OK
-	 ///
+	 */
     public function update($user = '', $notrigger = 0)
-	{
+	{/*
 		global $user, $conf;
 
 		$error = 0;
@@ -1506,17 +1941,17 @@ class SamplesLine //extends CommonInvoiceLine
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
-		}
+		}*/
 	}
 
-	/////
-	 // 	Delete line in database
-	 //  TODO Add param User $user and notrigger (see skeleton)
-     //
-	 //	@return	    int		           <0 if KO, >0 if OK
-	 ///
+	/*
+	// 	Delete line in database
+	//  TODO Add param User $user and notrigger (see skeleton)
+	//
+	//	@return	    int		           <0 if KO, >0 if OK
+	*/
     public function delete()
-	{
+	{/*
 		global $user;
 
 		$this->db->begin();
@@ -1543,10 +1978,79 @@ class SamplesLine //extends CommonInvoiceLine
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
+		}*/
+	}
+	// COPIED from class Samples
+//   $result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
+		
+		//$sample = new Samples($db);
+		//dol_syslog("DAVID Samples->this->fields=".var_dump($sample->fields), LOG_DEBUG);
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+		
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList(); // default: $this->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_'.$this->table_element.' as t';
+		dol_syslog("DAVID 232323 sql=".$sql, LOG_DEBUG);
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid') {
+					$sqlwhere[] = $key.'='.$value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+		if (!empty($sortfield)) {
+		//	$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+            $i = 0;
+			while ($i < min($limit, $num))
+			{
+			    $obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
 		}
 	}
-
-	*/
-
 
 }

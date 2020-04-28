@@ -90,12 +90,15 @@ $diroutputmassaction = $conf->lims->dir_output.'/temp/massgeneration/'.$user->id
 $hookmanager->initHooks(array('samplescard', 'globalcard')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
+dol_syslog('Fetch optionals attributes and labels', LOG_DEBUG);
 $extrafields->fetch_name_optionals_label($object->table_element);
 
+dol_syslog('extrafields->getOptionalsFromPost', LOG_DEBUG);
 $search_array_options = $extrafields->getOptionalsFromPost($object->table_element, '', 'search_');
 
 // Initialize array of search criterias
 $search_all = trim(GETPOST("search_all", 'alpha'));
+dol_syslog('$search = array()', LOG_DEBUG);
 $search = array();
 foreach ($object->fields as $key => $val)
 {
@@ -105,8 +108,9 @@ foreach ($object->fields as $key => $val)
 if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
+dol_syslog('Load object', LOG_DEBUG);
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-
+dol_syslog('After load object', LOG_DEBUG);
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
@@ -124,7 +128,7 @@ $upload_dir = $conf->lims->multidir_output[isset($object->entity) ? $object->ent
 /*
  * Actions
  */
-
+dol_syslog('$parameters = array();', LOG_DEBUG);
 $parameters = array();
 $reshook = $hookmanager->executeHooks('doActions', $parameters, $object, $action); // Note that $action and $object may have been modified by some hooks
 if ($reshook < 0) setEventMessages($hookmanager->error, $hookmanager->errors, 'errors');
@@ -164,6 +168,7 @@ if (empty($reshook))
     }
     if ($action == 'classin' && $permissiontoadd)
     {
+		dol_syslog('setProject(GETPOST(projectid, int)', LOG_DEBUG);
     	$object->setProject(GETPOST('projectid', 'int'));
     }
 
@@ -182,7 +187,7 @@ if (empty($reshook))
  *
  * Put here all code to build page
  */
-
+dol_syslog('$form = new Form($db)',LOG_DEBUG);
 $form = new Form($db);
 $formfile = new FormFile($db);
 if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
@@ -277,7 +282,9 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-    $res = $object->fetch_optionals();
+	dol_syslog('Part to show record: object->fetch_optionals', LOG_DEBUG);
+	
+	$res = $object->fetch_optionals();
 
 	$head = samplesPrepareHead($object);
 	dol_fiche_head($head, 'card', $langs->trans("Samples"), -1, $object->picto);
@@ -339,7 +346,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldval("Description", 'description', $object->description, $object, $user->rights->lims->samples->creer, 'string', '', null, null, '', 1);
 	// Thirdparty -> Needs to be changed to 'Customer'
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
-
+	
 	// Project
 	if (! empty($conf->projet->enabled))
 	{
@@ -354,7 +361,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
 				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
 				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
-				dol_syslog("DAVID", LOG_INFO);
 				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
 				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
 				$morehtmlref .= '</form>';
@@ -374,7 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	
 	$morehtmlref .= '</div>';
 
-
+	dol_syslog(__METHOD__.' dol_banner_tab', LOG_DEBUG);
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
 
@@ -400,20 +406,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
-
 	dol_fiche_end();
-
 
 	/*
 	 * Lines
 	 */
-
+	dol_syslog(__METHOD__.' $object->table_element_line='.var_export($object->table_element_line, true), LOG_DEBUG);
 	if (!empty($object->table_element_line))
 	{
-    	// Show object lines
-    	$result = $object->getLinesArray();
+		// Show object lines
+		dol_syslog(__METHOD__.' before object->getLinesArray', LOG_DEBUG);
+		$result = $object->getLinesArray();
+		dol_syslog(__METHOD__.' object->getLinesArray='.var_export($result, true), LOG_DEBUG);
 
-    	print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
+		print '	<form name="addproduct" id="addproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$object->id.(($action != 'editline') ? '#addline' : '#line_'.GETPOST('lineid', 'int')).'" method="POST">
     	<input type="hidden" name="token" value="' . newToken().'">
     	<input type="hidden" name="action" value="' . (($action != 'editline') ? 'addline' : 'updateline').'">
     	<input type="hidden" name="mode" value="">
