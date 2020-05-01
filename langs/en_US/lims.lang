@@ -69,3 +69,6 @@ StandardUpperLimit = Upper
 Result = Result
 ResultID = Test-ID
 MethodUnit = Unit
+AddLineTitle = Product - Method
+TestDuration = Test performed in this period:
+TestingTechnician = Test perfomed by:

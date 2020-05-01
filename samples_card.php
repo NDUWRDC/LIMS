@@ -157,7 +157,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Action to move up and down lines of object
-    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+    include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
 
     // Action to build doc
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -304,6 +304,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Clone confirmation
 	if ($action == 'clone') {
 		// Create an array for form
+		dol_syslog('action=clone', LOG_DEBUG);
+	
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
@@ -489,7 +491,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
             // Modify
             if ($permissiontoadd)
     		{
-    			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+    			//print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=modif">'.$langs->trans("Modify").'</a>'."\n";
     		}
     		else
     		{

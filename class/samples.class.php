@@ -27,6 +27,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+//require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
 
@@ -1257,6 +1258,7 @@ public $fields=array(
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
 		
+		// ToDO: fix path creation
 		// Print table header
 		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_title.tpl.php';
 		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
@@ -1418,6 +1420,7 @@ public $fields=array(
 
 			//$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 
+			// ToDo : Fix path building
 			// Print table line
 			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_view.tpl.php';
 			dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
@@ -1483,6 +1486,105 @@ public $fields=array(
 			}
 		}
 	}
+
+	//copied from Form::select_produits_list
+	// Create a html dropdown menu with values in the form of:
+	//<option value="product->ID" data-select2-id="number-of-list">'Product->ref' - 'Method->label'</option>
+	public function DropDownProductMethod($sql, $key, $obj, $morecss='')
+	{
+		global $langs, $conf, $user, $db;
+
+		$out = '';
+		$outarray = array();
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		$result = $obj->db->query($sql);
+		
+		if ($result)
+		{
+			$num = $obj->db->num_rows($result);
+			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$key.'" id="'.$key.'">';
+		}
+		
+		$i = 0;
+		while ($num && $i < $num)
+		{
+			$opt = '';
+			$objp = $this->db->fetch_object($result);
+			dol_syslog(__METHOD__.' $objp='.var_export($objp, true), LOG_DEBUG);
+			$opt = '<option value="'.$objp->rowid.'"';
+			$opt .= ($objp->rowid == $selected) ? ' selected' : '';
+			$opt .= '>';
+			$opt .= $objp->ref;
+			$opt .= ' - ';
+			$opt .= $objp->mlabel;
+			$opt .= "</option>\n";
+			
+			$out .= $opt;
+			$i++;
+		}
+		if ($num)
+			$out .= '</select>';
+
+		$this->db->free($result);
+		
+		return $out;
+	}
+
+	//COPIED from CommonObject.class.php
+
+	/* This is to show add lines */
+
+	/**
+	 *	Show add free and predefined products/services form
+	 *
+	 *  @param	int		        $dateSelector       1=Show also date range input fields
+	 *  @param	Societe			$seller				Object thirdparty who sell
+	 *  @param	Societe			$buyer				Object thirdparty who buy
+	 *  @param	string			$defaulttpldir		Directory where to find the template
+	 *	@return	void
+	 */
+	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
+	{
+		global $conf, $user, $langs, $object, $hookmanager, $extrafields;
+		global $form;
+
+		// Line extrafield
+		if (!is_object($extrafields))
+		{
+			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
+			$extrafields = new ExtraFields($this->db);
+		}
+		$extrafields->fetch_name_optionals_label($this->table_element_line);
+
+		// Output template part (modules that overwrite templates must declare this into descriptor)
+		// Use global variables + $dateSelector + $seller and $buyer
+		// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook 'formAddObjectLine'.
+		dol_include_once('/lims/class/samples.class.php');
+		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_create.tpl.php';
+		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
+		include $tpl;
+		
+		/*$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
+		foreach ($dirtpls as $module => $reldir)
+		{
+			if (!empty($module))
+			{
+				$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
+			}
+			else
+			{
+				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
+			}
+
+			if (empty($conf->file->strict_mode)) {
+				$res = @include $tpl;
+			} else {
+				$res = include $tpl; // for debug
+			}
+			if ($res) break;
+		}*/
+	}	
 }
 
 /**
@@ -1986,17 +2088,13 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	{
 		global $conf;
 		
-		//$sample = new Samples($db);
-		//dol_syslog("DAVID Samples->this->fields=".var_dump($sample->fields), LOG_DEBUG);
-		
 		dol_syslog(__METHOD__, LOG_DEBUG);
 
 		$records = array();
 		
 		$sql = 'SELECT ';
-		$sql .= $this->getFieldList(); // default: $this->getFieldList();
+		$sql .= $this->getFieldList();
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_'.$this->table_element.' as t';
-		dol_syslog("DAVID 232323 sql=".$sql, LOG_DEBUG);
 		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
 		else $sql .= ' WHERE 1 = 1';
 		// Manage filter
