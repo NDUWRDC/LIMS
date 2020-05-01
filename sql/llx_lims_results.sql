@@ -24,7 +24,7 @@ CREATE TABLE llx_lims_results(
 	result real NOT NULL, 
 	start datetime NOT NULL, 
 	end datetime NOT NULL, 
-	abnormalities text, 
+	abnormalities integer NOT NULL, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 

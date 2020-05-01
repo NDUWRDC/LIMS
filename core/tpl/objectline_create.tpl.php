@@ -163,11 +163,10 @@ if ($nolinesbefore) {
 	?>
 	<!-- Predefined product/service => LIMS only allows to select of products listed in methods -->
 	
-	<td class="nobottom linecoldescription minwidth500imp"><?php $coldisplay++;?>
+	<td class="nobottom linecoldescription minwidth300imp"><?php $coldisplay++;?>
 		<span class="prod_entry_mode_predef">
 		<label for="prod_entry_mode_predef">
 		<?php 
-		//echo '<input type="radio" class="prod_entry_mode_predef" name="prod_entry_mode" id="prod_entry_mode_predef" value="predef"'.(GETPOST('prod_entry_mode') == 'predef' ? ' checked' : '').'> ';
 		echo $langs->trans('AddLineTitle');
 		
 		echo '</label>';
@@ -187,22 +186,24 @@ if ($nolinesbefore) {
 	</td>
 	
 	 <!-- Test-ID -->
-	<td class="nobottom linecoltestid right"><?php $coldisplay++; ?>
+	<td class="nobottom linecoltestid left"><?php $coldisplay++; ?>
 		
 	</td>
 
 	<!-- Method -->
-	<td class="nobottom linecolmethod right"><?php $coldisplay++; ?>
-		
+	<td class="nobottom linecolmethod left">
 	</td>
 
 	<!-- Accuracy -->
-	<td class="nobottom linecolaccuracy right"><?php $coldisplay++; ?>
-		
+	<td class="nobottom linecolaccuracy center"><?php $coldisplay++; ?>
+		<?php
+		print $method->standard;
+		dol_syslog(__METHOD__.'HIER $method='.var_export($method, true), LOG_DEBUG);
+		?>
 	</td>
 
 	<!-- Abnormalities -->
-	<td class="nobottom linecolabnormalities right"><?php $coldisplay++; ?>
+	<td class="nobottom linecolabnormalities left"><?php $coldisplay++; ?>
 		<?php 
 		echo $form->selectyesno('abnormalities', $line->abnormalities, 1);
 		?>
@@ -224,7 +225,7 @@ if ($nolinesbefore) {
 	</td>
 	
 	 <!-- Unit -->
-	<td class="nobottom linecolunit right"><?php $coldisplay++; ?>
+	<td class="nobottom linecolunit left"><?php $coldisplay++; ?>
 		
 	</td>
 	

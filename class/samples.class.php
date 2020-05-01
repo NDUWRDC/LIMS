@@ -1357,7 +1357,7 @@ public $fields=array(
 		$method = new Methods($this->db);
 		dol_syslog(__METHOD__.'Fetch $line->fk_method='.$line->fk_method, LOG_DEBUG);
 		$method->fetch($line->fk_method);
-
+		
 		$product = new Product ($this->db);
 		dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 		$product->fetch($method->fk_product);
@@ -1561,6 +1561,10 @@ public $fields=array(
 		// Use global variables + $dateSelector + $seller and $buyer
 		// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook 'formAddObjectLine'.
 		dol_include_once('/lims/class/samples.class.php');
+
+		$method = new Methods($this->db);
+		$method->fetch($this->line->fk_method);
+		
 		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_create.tpl.php';
 		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
 		include $tpl;
@@ -1584,7 +1588,7 @@ public $fields=array(
 			}
 			if ($res) break;
 		}*/
-	}	
+	}
 }
 
 /**

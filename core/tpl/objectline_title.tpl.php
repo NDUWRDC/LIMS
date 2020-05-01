@@ -62,7 +62,7 @@ if ($this->element == 'samples')
 print '<td class="linecoltestid left" style="width: 120px">'.$langs->trans('ResultID').'</td>';
 
 // Method
-print '<td class="linecolmethod left" style="width: 120px">'.$langs->trans('MethodMethod').'</td>';
+print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MethodMethod').'</td>';
 
 // Accuracy
 print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
@@ -88,7 +88,7 @@ print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->tra
 print '<td class="linecolresult center" style="width: 80px">'.$langs->trans('Result').'</td>';
 
 // Method Unit
-print '<td class="linecolmethodunit center" style="width: 80px">'.$langs->trans('MethodUnit').'</td>';
+print '<td class="linecolmethodunit center" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
 
 print '<td class="linecoledit"></td>'; // No width to allow autodim
 

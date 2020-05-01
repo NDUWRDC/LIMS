@@ -101,13 +101,14 @@ class Results extends CommonObject
 		'result' => array('type'=>'real', 'label'=>'Result', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'help'=>"Test result",),
 		'start' => array('type'=>'datetime', 'label'=>'Start time', 'enabled'=>1, 'position'=>35, 'notnull'=>1, 'visible'=>3, 'help'=>"Time procedure started",),
 		'end' => array('type'=>'datetime', 'label'=>'End time', 'enabled'=>1, 'position'=>40, 'notnull'=>1, 'visible'=>-1, 'help'=>"Time procedure fished",),
-		'abnormalities' => array('type'=>'text', 'label'=>'Abnormalities', 'enabled'=>1, 'position'=>50, 'notnull'=>0, 'visible'=>3,),
+		'abnormalities' => array('type'=>'integer', 'label'=>'Abnormalities', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>3,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
+        'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -124,6 +125,7 @@ class Results extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $rang;
+	public $status;
 	// END MODULEBUILDER PROPERTIES
 
 
