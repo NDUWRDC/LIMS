@@ -1258,10 +1258,8 @@ public $fields=array(
 		}
 		$extrafields->fetch_name_optionals_label($this->table_element_line);
 		
-		// ToDO: fix path creation
 		// Print table header
-		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_title.tpl.php';
-		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
+		$tpl = dol_buildpath('lims/core/tpl/objectline_title.tpl.php');
 		include $tpl;
 		/*
 		ToDo: handle hooks and extrafields
@@ -1420,10 +1418,8 @@ public $fields=array(
 
 			//$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
 
-			// ToDo : Fix path building
 			// Print table line
-			$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_view.tpl.php';
-			dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
+			$tpl = dol_buildpath("lims/core/tpl/objectline_view.tpl.php");
 			include $tpl;
 			
 			// Output template part (modules that overwrite templates must declare this into descriptor)
@@ -1503,6 +1499,7 @@ public $fields=array(
 		if ($result)
 		{
 			$num = $obj->db->num_rows($result);
+			$out .= '<form input>'.GETPOST('combinations', 'array');
 			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$key.'" id="'.$key.'">';
 		}
 		
