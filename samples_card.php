@@ -447,18 +447,19 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Form to add new line
+		
 		if ($object->status == 0 && $permissiontoadd && $action != 'selectlines')
 		{
 			if ($action != 'editline')
 			{
 				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
-
+				// Hook is used, formAddObjectLine would be displayed twice
+				//$object->formAddObjectLine(1, $mysoc, $soc);
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
 			}
 		}
-
+		
 		if (!empty($object->lines) || ($object->status == $object::STATUS_DRAFT && $permissiontoadd && $action != 'selectlines' && $action != 'editline'))
 		{
 			print '</table>';

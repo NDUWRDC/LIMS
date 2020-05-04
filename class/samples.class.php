@@ -1501,7 +1501,8 @@ public $fields=array(
 		if ($result)
 		{
 			$num = $obj->db->num_rows($result);
-			$out .= '<form input>'.GETPOST('combinations', 'array');
+			// DoTo -> form !!
+			//$out .= '<form input>'.GETPOST('combinations', 'array');
 			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$key.'" id="'.$key.'">';
 		}
 		
