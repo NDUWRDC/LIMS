@@ -101,16 +101,16 @@ class modLIMS extends DolibarrModules
                 //   '/lims/js/lims.js.php',
             ),
             // Set here all hooks context managed by module. To find available hook context, make a "grep -r '>initHooks(' *" on source code. You can also set hook context to 'all'
-            'hooks' => array(
-                //   'data' => array(
-                //       'hookcontext1',
-                //       'hookcontext2',
-                //   ),
-                //   'entity' => '0',
-            ),
-            // Set this to 1 if features of module are opened to external users
-            'moduleforexternal' => 0,
-        );
+			'hooks' => array(
+					//'printObjectLineTitle'),
+					'data' => array(
+						'samplescard',
+					),
+					'entity' => '0',
+			),
+			// Set this to 1 if features of module are opened to external users
+			'moduleforexternal' => 0,
+		);
         // Data directories to create when module is enabled.
         // Example: this->dirs = array("/lims/temp","/lims/subdir");
         $this->dirs = array("/lims/temp");
@@ -137,9 +137,10 @@ class modLIMS extends DolibarrModules
         //                             2 => array('LIMS_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
         $this->const = array(
-             1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
-             2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
-             3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
+			//0=>array	('MAIN_MODULE_LIMS_HOOKS', 'chaine', 'samplescard', 'Hooks list for managing printing functions', 0),
+			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
+			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
+			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
         );
 
         // Some keys to add into the overwriting translation tables

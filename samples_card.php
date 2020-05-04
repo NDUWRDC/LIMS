@@ -287,8 +287,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$res = $object->fetch_optionals();
 
 	$head = samplesPrepareHead($object);
+	dol_syslog('dol_fiche_head', LOG_DEBUG);
 	dol_fiche_head($head, 'card', $langs->trans("Samples"), -1, $object->picto);
-
+	
 	$formconfirm = '';
 
 	// Confirmation to delete
@@ -347,7 +348,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref.=$form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->lims->samples->creer, 'string', '', 0, 1);
 	$morehtmlref.=$form->editfieldval("Description", 'description', $object->description, $object, $user->rights->lims->samples->creer, 'string', '', null, null, '', 1);
 	// Thirdparty -> Needs to be changed to 'Customer'
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+	dol_syslog('object->thirdparty->getNomUrl', LOG_DEBUG);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? 
+	$object->thirdparty->getNomUrl(1) : '');
 	
 	// Project
 	if (! empty($conf->projet->enabled))

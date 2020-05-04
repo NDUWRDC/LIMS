@@ -1237,6 +1237,7 @@ public $fields=array(
 	 *  @param	string		$defaulttpldir		Directory where to find the template
 	 *	@return	void
 	 */
+	/* Replace with hook 'printObjectLineTitle'
 	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
 	{
 		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
@@ -1294,7 +1295,7 @@ public $fields=array(
 			}
 			
 		}*/
-
+/*
 		$i = 0;
 
 		print "<!-- begin printObjectLines() LIMS --><tbody>\n";
@@ -1322,13 +1323,13 @@ public $fields=array(
 			
 			if (empty($reshook))
 			*/
-			$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
+	/*		$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
 
 			$i++;
 		}
 		print "</tbody><!-- end printObjectLines() LIMS -->\n";
 	}
-
+*/
 	/** COPIED FROM CommonObject.class.php
 	 *	Return HTML content of a detail line
 	 *	TODO Move this into an output class file (htmlline.class.php)
@@ -1346,6 +1347,7 @@ public $fields=array(
 	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
 	 *	@return	void
 	 */
+	/*
 	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
 	{
 		global $conf, $langs, $user, $object, $hookmanager;
@@ -1447,7 +1449,7 @@ public $fields=array(
 				if ($res) break;
 			}
 			*/
-		}
+		/*}
 
 		// Line in update mode
 		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
@@ -1482,7 +1484,7 @@ public $fields=array(
 			}
 		}
 	}
-
+*/
 	//copied from Form::select_produits_list
 	// Create a html dropdown menu with values in the form of:
 	//<option value="product->ID" data-select2-id="number-of-list">'Product->ref' - 'Method->label'</option>
