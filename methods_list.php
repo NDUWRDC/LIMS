@@ -80,6 +80,7 @@ $backtopage = GETPOST('backtopage', 'alpha'); // Go back to a dedicated page
 $optioncss  = GETPOST('optioncss', 'aZ'); // Option for the css output (always '' except when 'print')
 
 $id = GETPOST('id', 'int');
+$methodlist = (GETPOST('methodlist', 'int') ? GETPOST('methodlist', 'int') : 0);
 
 // Load variable for pagination
 $limit = GETPOST('limit', 'int') ? GETPOST('limit', 'int') : $conf->liste_limit;
@@ -165,7 +166,7 @@ $permissiontodelete = $user->rights->lims->methods->delete;
 /*
  * Actions
  */
-
+ 
 if (GETPOST('cancel', 'alpha')) { $action = 'list'; $massaction = ''; }
 if (!GETPOST('confirmmassaction', 'alpha') && $massaction != 'presend' && $massaction != 'confirm_presend') { $massaction = ''; }
 
@@ -206,6 +207,7 @@ if (empty($reshook))
 /*
  * View
  */
+
 
 $form = new Form($db);
 
@@ -569,6 +571,7 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+
 
 if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {

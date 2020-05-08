@@ -140,7 +140,7 @@ class ActionsLims Extends CommonObject
 		print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('MethodUpperLimit').'</td>';
 		*/
 		// Abnormalities
-		print '<td class="linecolresultabnorm left" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
+		print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
 
 		// ??ToDo: Title with colspan=2 for Limits Lower and Upper
 
@@ -151,10 +151,10 @@ class ActionsLims Extends CommonObject
 		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';
 
 		// Result
-		print '<td class="linecolresult center" style="width: 80px">'.$langs->trans('Result').'</td>';
+		print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('Result').'</td>';
 
 		// Method Unit
-		print '<td class="linecolmethodunit center" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
+		print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
 
 		print '<td class="linecoledit"></td>'; // No width to allow autodim
 
@@ -309,7 +309,7 @@ class ActionsLims Extends CommonObject
 
 		if ($object->ref != ''){
 			// Abnormalities
-			print '<td class="linecolresultabnorm">';
+			print '<td class="linecolresultabnorm center">';
 			print $line->abnormalities;
 			print '</td>';
 		}
@@ -325,14 +325,14 @@ class ActionsLims Extends CommonObject
 
 		if ($object->ref != ''){
 			// Result
-			print '<td class="linecolresult center">';
+			print '<td class="linecolresult right">';
 			print $line->result;
 			print '</td>';
 		}
 
 		if ($method->ref != ''){
 			// Units
-			print '<td class="linecolmethodunit center">';
+			print '<td class="linecolmethodunit left">';
 			print $method->unit;
 			print '</td>';
 		}
@@ -588,7 +588,7 @@ class ActionsLims Extends CommonObject
 				$objectline = new FactureLigneRec($object->db);
 			}*/
 		}
-		print "<!-- BEGIN PHP TEMPLATE objectline_create.tpl.php LIMS -->\n";
+		print "<!-- BEGIN ObjectlineCreate LIMS -->\n";
 		$nolinesbefore = (count($object->lines) == 0 || $forcetoshowtitlelines);
 		if ($nolinesbefore) {
 			?>
@@ -659,6 +659,7 @@ class ActionsLims Extends CommonObject
 		<tr class="pair nodrag nodrop nohoverpair<?php echo ($nolinesbefore || $object->element == 'contrat') ? '' : ' liste_titre_create'; ?>">
 			<?php
 			$coldisplay = 0;
+			$coldisplay = 0;
 			// Adds a line numbering column
 			if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) {
 				$coldisplay++;
@@ -667,24 +668,40 @@ class ActionsLims Extends CommonObject
 			?>
 			<!-- Predefined product/service => LIMS only allows to select of products listed in methods -->
 			
-			<td class="nobottom linecoldescription minwidth300imp"><?php $coldisplay++;?>
+			<td class="nobottom linecoldescription minwidth300imp colspan=2"><?php $coldisplay++;?>
 				<span class="prod_entry_mode_predef">
-				<label for="prod_entry_mode_predef">
+				<label form="prod_entry_mode_predef">
 				<?php 
 				echo $langs->trans('AddLineTitle');
 				
 				echo '</label>';
-				echo ' ';
+				echo '<br>';
 				$filtertype = '';  // ''=nofilter, 0=product, 1=service
 				$statustoshow = 1; //1=Return all products, 0=Products not on sell, 1=Products on sell
-				//$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, $buyer->price_level, $statustoshow, 2, '', 0, array(), $buyer->id, '1', 0, 'maxwidth500', 1, '', GETPOST('combinations', 'array'));
+				
+				// select
+				//$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, 0, 1, 2, '', 0, array(), $buyer->id, '1', 0, 'maxwidth500', 1, '', GETPOST('combinations', 'array'));
+				
 				$sql = 'SELECT p.rowid, p.ref, p.label, p.description,';
 				$sql .= ' m.rowid as mrowid, m.ref as mref, m.label as mlabel, m.fk_product';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as m';
 				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON m.fk_product=p.rowid';
+				$sql .= ' GROUP BY p.rowid';  // don't show duplicates
 				
-				$key='Product'; 
-				print $object->DropDownProductMethod($sql, $key, $object, '');
+				$nameID='ProdID'; 
+				
+				$prodID = $object->DropDownProduct($sql, $nameID, $object, 'ref', '', '');
+				
+				if ($prodID > 0){
+					
+					$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
+					$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
+					$sql .= ' WHERE fk_product='.$prodID;
+					
+					$nameID='MethodID';
+					
+					$methodID	 = $object->DropDownProduct($sql, $nameID, $object, 'label', '', '');
+				}
 				?>
 				</span>
 			</td>
@@ -695,19 +712,17 @@ class ActionsLims Extends CommonObject
 			</td>
 
 			<!-- Method -->
-			<td class="nobottom linecolmethod left">
+			<td class="nobottom linecolmethod left"><?php $coldisplay++; ?>
+				<input type="text" size="16" name="MethodStandard" id="MethodStandard" class="flat left" value="<?php echo (isset($_POST["MethodStandard"]) ?GETPOST("MethodStandard", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
 			<!-- Accuracy -->
 			<td class="nobottom linecolaccuracy center"><?php $coldisplay++; ?>
-				<?php
-				print $method->standard;
-				dol_syslog(__METHOD__.'HIER $method='.var_export($method, true), LOG_DEBUG);
-				?>
+				<input type="text" size="5" name="MethodAccuracy" id="MethodAccuracy" class="flat center" value="<?php echo (isset($_POST["MethodAccuracy"]) ?GETPOST("MethodAccuracy", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
 			<!-- Abnormalities -->
-			<td class="nobottom linecolabnormalities left"><?php $coldisplay++; ?>
+			<td class="nobottom linecolabnormalities center"><?php $coldisplay++; ?>
 				<?php 
 				echo $form->selectyesno('abnormalities', $line->abnormalities, 1);
 				?>
@@ -715,12 +730,12 @@ class ActionsLims Extends CommonObject
 
 			 <!-- Lower limit -->
 			<td class="nobottom linecollowerlimit right"><?php $coldisplay++; ?>
-				
+				<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="<?php echo (isset($_POST["MethodLower"]) ?GETPOST("MethodLower", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
 			 <!-- Upper limit -->
 			<td class="nobottom linecolupperlimit right"><?php $coldisplay++; ?>
-				
+				<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="<?php echo (isset($_POST["MethodUpper"]) ?GETPOST("MethodUpper", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
 			 <!-- Result -->
@@ -730,7 +745,7 @@ class ActionsLims Extends CommonObject
 			
 			 <!-- Unit -->
 			<td class="nobottom linecolunit left"><?php $coldisplay++; ?>
-				
+				<input type="text" size="16" name="MethodUnit" id="MethodUnit" class="flat left" value="<?php echo (isset($_POST["MethodUnit"]) ?GETPOST("MethodUnit", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 			
 			<!-- ADD button -->
@@ -765,6 +780,54 @@ class ActionsLims Extends CommonObject
 			print '</td>';
 			print '</tr>'."\n";
 
+			print "<script>\n";
+			?>
+			// When changing MethodID, columns are set: MethodStandard, Accuracy, Lower, Upper, Unit
+			$("#MethodID").change(function()
+			{
+				console.log("MethodID.change: value="+$(this).val());
+				
+				//$.post('<?php echo dol_buildpath("lims"); ?> /methods_ajax.php?action=fetch',
+				$.post('<?php echo DOL_URL_ROOT; ?>/custom/lims/methods_ajax.php?action=fetch',
+				{ 'methodid': $(this).val() },
+					function(data) {
+							jQuery("#MethodStandard").val(data.label);
+							jQuery("#MethodAccuracy").val(data.accuracy);
+							jQuery("#MethodLower").val(data.lower);
+							jQuery("#MethodUpper").val(data.upper);
+							jQuery("#MethodUnit").val(data.unit);
+					},
+					'json'
+				);
+			});
+
+			// When changing ProdID, options are populated with available methods for this product
+			$("#ProdID").change(function()
+			{
+				console.log("ProdID.change: value="+$(this).val());
+
+				// ?Path concat needs repair (no custom?!)
+				//$.post('<?php echo dol_buildpath("lims"); ?> /methods_ajax.php?action=fetch',
+				
+				$.post('<?php echo DOL_URL_ROOT; ?>/custom/lims/methods_ajax.php?action=fetch',
+				{ 'prodid': prodid=$(this).val() },
+					function(data) {
+							$('select[name="MethodID"]').empty();
+							$.each(data, function(key, value) {
+								$('select[name="MethodID"]').append('<option value="'+ key +'">'+ value +'</option>');
+							});
+					},
+					'json'
+				).done(function() {
+					// This is to avoid a race condition where the field is not updated yet when the change-function is called.
+					console.log("post done");
+					$("#MethodID").change();	// Update other elements with new method details
+					$("#MethodID").focus();		// focus on method selection
+				});
+			});
+			
+			<?php
+			print '</script>';
 			
 			print "<!-- END ObjectlineCreate LIMS-->\n";
 	}
