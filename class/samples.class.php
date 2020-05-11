@@ -1350,8 +1350,8 @@ public $fields=array(
 			
 			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
 			
-			$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
-			if ($res >0) $error++;
+			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			//if ($res >0) $error++;
 			
 			//	$result = $this->line->insert();
 			if ($error < 1)
