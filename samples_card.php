@@ -71,10 +71,11 @@ if (!empty($conf->projet->enabled)) {
 $langs->loadLangs(array("lims@lims", "other"));
 
 // Get parameters
-$id			 = GETPOST('id', 'int');
+$id			 = GETPOST('id', 'int');   // Sample ID
 $ref		 = GETPOST('ref', 'alpha');
 $socid		 = GETPOST('socid', 'int');
 $action		 = GETPOST('action', 'aZ09');
+$userid		 = GETPOST('userid', 'int');
 $confirm	 = GETPOST('confirm', 'alpha');
 $cancel		 = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'samplescard'; // To manage different context of search
@@ -116,6 +117,8 @@ dol_syslog('After load object', LOG_DEBUG);
 //if ($user->socid > 0) $socid = $user->socid;
 //$isdraft = (($object->statut == $object::STATUS_DRAFT) ? 1 : 0);
 //$result = restrictedArea($user, 'lims', $object->id, '', '', 'fk_soc', 'rowid', $isdraft);
+
+$usercancreate = $user->rights->lims->samples->write;
 
 $permissiontoread = $user->rights->lims->samples->read;
 $permissiontoadd = $user->rights->lims->samples->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -171,7 +174,119 @@ if (empty($reshook))
 		dol_syslog('setProject(GETPOST(projectid, int)', LOG_DEBUG);
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
+	
+	// Add a new line
+	if ($action == 'addline' && $usercancreate)
+	{
+		$langs->load('errors');
+		$error = 0;
+		
+		$predef=''; // Not used so far (invoice: free entry or predefined product)
+		// result.class.php: Class SampleLine  
+		// Store: rowid-ref-rang-fk_samples-fk_user-fk_method-result-start-end-abnormalities-?status
 
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$idprod = GETPOST('ProdID', 'int'); 
+		$rang = GETPOST('rang', 'int');
+		$fk_user = GETPOST('userid', 'int');
+		$fk_method = GETPOST('MethodID', 'int');
+		$testresult = GETPOST('result', 'int');
+		$abnormalities = GETPOST('abnormalities');
+		$status = GETPOST('status');
+		
+		dol_syslog('Samples_card action=addline: ---------', LOG_DEBUG);
+		dol_syslog('idprod= '.$idprod, LOG_DEBUG);
+		dol_syslog('rang= '.$rang, LOG_DEBUG);
+		dol_syslog('fkuser= '.$fk_user, LOG_DEBUG);
+		dol_syslog('fkmethod= '.$fk_method, LOG_DEBUG);
+		dol_syslog('result= '.$testresult, LOG_DEBUG);
+		dol_syslog('abnormalities= '.$abnormalities, LOG_DEBUG);
+		dol_syslog('status= '.$status, LOG_DEBUG);
+		
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// ERROR HANDLING
+		if ($result == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
+			$error++;
+		}
+		
+		// No Errors -> Add line
+		if (!$error && ($result >= 0) && !empty($idprod)) {
+			$ret = $object->fetch($id);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error);
+				exit();
+			}
+
+			// Clean parameters $date_start and $date_end
+			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
+			// Insert line
+			$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user,$date_start, $date_end, $rang, '', 0, GETPOST('fk_parent_line'));
+			dol_syslog(__METHOD__." addline idprod=".$idprod." idmethod=".$fk_method."  result=".$result, LOG_DEBUG);
+
+			
+			if ($result > 0){
+				// Define output language and generate document
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
+					}
+					$model = $object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+				}
+
+				unset($_POST['rang']);
+				unset($_POST['userid']);
+				unset($_POST['result']);
+
+				unset($_POST['abnormalities']);
+				unset($_POST['status']);
+				unset($_POST['MethodID']);
+				unset($_POST['ProdID']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
+
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+
+			$action = '';
+		}
+	}
+	
 	// Actions to send emails
 	$triggersendname = 'SAMPLES_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_SAMPLES_TO';

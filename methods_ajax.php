@@ -40,8 +40,8 @@ require '../../main.inc.php';
 //$status = ((GETPOST('status', 'int') >= 0) ? GETPOST('status', 'int') : - 1);
 $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'alpha');
-$prodid = GETPOST('prodid', 'int');
-$methodid = GETPOST('methodid', 'int');
+$idprod = GETPOST('idprod', 'int');
+$idmethod = GETPOST('idmethod', 'int');
 
 
 /*
@@ -53,7 +53,7 @@ $methodid = GETPOST('methodid', 'int');
 dol_syslog(join(',', $_GET));
 // print_r($_GET);
 
-if (!empty($action) && $action == 'fetch' && !empty($prodid))
+if (!empty($action) && $action == 'fetch' && !empty($idprod))
 {
 	// action='fetch' is used to get list of methods related to one product -> id must be the product id.
 
@@ -61,7 +61,7 @@ if (!empty($action) && $action == 'fetch' && !empty($prodid))
 
 	$sql = 'SELECT rowid, ref, label, fk_product';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods';
-	$sql .= ' WHERE fk_product='.$prodid;
+	$sql .= ' WHERE fk_product='.$idprod;
 	
 	$result = $db->query($sql);
 	$outjson = array();
@@ -73,17 +73,17 @@ if (!empty($action) && $action == 'fetch' && !empty($prodid))
 	echo json_encode($outjson);
 }
 
-if (!empty($action) && $action == 'fetch' && !empty($methodid))
+if (!empty($action) && $action == 'fetch' && !empty($idmethod))
 {
 	// action='getMethods' is used to get list of methods related to one product -> id must be the product id.
 	
 	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
 
 	$method = new Methods($db);
-	$method->fetch($methodid);
+	$method->fetch($idmethod);
 	
 	// ToDo: link to new table lims_limits
-	dol_syslog('action=fetch?methodid='.$methodid.' $method='.var_export($method, true), LOG_DEBUG);
+	dol_syslog('action=fetch?idmethod='.$idmethod.' $method='.var_export($method, true), LOG_DEBUG);
 	
 	if ($method){
 		$label = $method->standard;

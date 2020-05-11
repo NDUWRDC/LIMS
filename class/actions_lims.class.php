@@ -57,7 +57,7 @@ class ActionsLims Extends CommonObject
 
 		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
-		  // do something only for the context 'somecontext'
+		  // do something only for the context 'samplescard'
 
 			$this->ObjectlineView($object, $parameters['line'], $parameters['num']);
 		}
@@ -689,18 +689,20 @@ class ActionsLims Extends CommonObject
 				$sql .= ' GROUP BY p.rowid';  // don't show duplicates
 				
 				$nameID='ProdID'; 
+				// ToDo ??: GETPOST('idprod')
+				$idprod = $object->DropDownProduct($sql, $nameID, $object, 'ref', '', '');
 				
-				$prodID = $object->DropDownProduct($sql, $nameID, $object, 'ref', '', '');
+				GETPOST('idprod');
 				
-				if ($prodID > 0){
+				if ($idprod > 0){
 					
 					$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
-					$sql .= ' WHERE fk_product='.$prodID;
+					$sql .= ' WHERE fk_product='.$idprod;
 					
 					$nameID='MethodID';
 					
-					$methodID	 = $object->DropDownProduct($sql, $nameID, $object, 'label', '', '');
+					$methodID = $object->DropDownProduct($sql, $nameID, $object, 'label', '', '');
 				}
 				?>
 				</span>
@@ -765,10 +767,10 @@ class ActionsLims Extends CommonObject
 			print '<td colspan=1>';
 			print $langs->trans('TestDuration').'<br>';
 			print ' '.$langs->trans('From').' ';
-			print $date_start=$form->selectDate('', 'Start',1, 1, 0, "Start", 1, 1,0,'','','','',1);
+			print $date_start=$form->selectDate('', 'date_start',1, 1, 0, "Start", 1, 1,0,'','','','',1);
 			print '<br>';
 			print $langs->trans('to');
-			print '&emsp;'.$date_end=$form->selectDate('', 'End',1, 1, 0, "End", 1, 1,0,'','','','',1);
+			print '&emsp;'.$date_end=$form->selectDate('', 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
 			print '</td>';
 
 			// User who did the test 
@@ -789,7 +791,7 @@ class ActionsLims Extends CommonObject
 				
 				//$.post('<?php echo dol_buildpath("lims"); ?> /methods_ajax.php?action=fetch',
 				$.post('<?php echo DOL_URL_ROOT; ?>/custom/lims/methods_ajax.php?action=fetch',
-				{ 'methodid': $(this).val() },
+				{ 'idmethod': $(this).val() },
 					function(data) {
 							jQuery("#MethodStandard").val(data.label);
 							jQuery("#MethodAccuracy").val(data.accuracy);
@@ -810,7 +812,7 @@ class ActionsLims Extends CommonObject
 				//$.post('<?php echo dol_buildpath("lims"); ?> /methods_ajax.php?action=fetch',
 				
 				$.post('<?php echo DOL_URL_ROOT; ?>/custom/lims/methods_ajax.php?action=fetch',
-				{ 'prodid': prodid=$(this).val() },
+				{ 'idprod': $(this).val() },
 					function(data) {
 							$('select[name="MethodID"]').empty();
 							$.each(data, function(key, value) {

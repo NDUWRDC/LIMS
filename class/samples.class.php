@@ -65,7 +65,6 @@ class Samples extends CommonObject
 	 */
 	public $picto = 'samples@lims';
 
-
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
@@ -564,7 +563,7 @@ public $fields=array(
 		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
 		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
 		if ($morewhere)   $sql .= $morewhere;
-		dol_syslog(__METHOD__.' 121212 $sql='.$sql, LOG_DEBUG);
+		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1219,272 +1218,7 @@ public $fields=array(
 
 		return $error;
 	}
-	
-	/* This is to show array of line of details */
-	// COPIED FROM CommonObject.class.php
 
-	/**
-	 *	Return HTML table for object lines
-	 *	TODO Move this into an output class file (htmlline.class.php)
-	 *	If lines are into a template, title must also be into a template
-	 *	But for the moment we don't know if it's possible as we keep a method available on overloaded objects.
-	 *
-	 *	@param	string		$action				Action code
-	 *	@param  string		$seller            	Object of seller third party
-	 *	@param  string  	$buyer             	Object of buyer third party
-	 *	@param	int			$selected		   	Object line selected
-	 *	@param  int	    	$dateSelector      	1=Show also date range input fields
-	 *  @param	string		$defaulttpldir		Directory where to find the template
-	 *	@return	void
-	 */
-	/* Replace with hook 'printObjectLineTitle'
-	public function printObjectLines($action, $seller, $buyer, $selected = 0, $dateSelector = 0, $defaulttpldir = '/core/tpl')
-	{
-		global $conf, $hookmanager, $langs, $user, $form, $extrafields, $object;
-		// TODO We should not use global var for this
-		global $inputalsopricewithtax, $usemargins, $disableedit, $disablemove, $disableremove, $outputalsopricetotalwithtax;
-		// Define usemargins
-		$usemargins = 0;
-		//if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('facture', 'facturerec', 'propal', 'commande'))) $usemargins = 1;  // Original
-		if (!empty($conf->margin->enabled) && !empty($this->element) && in_array($this->element, array('lims_samples', 'lims_results', 'propal', 'commande'))) $usemargins = 1;
-		
-		dol_syslog(__METHOD__.' number of lines='.count($this->lines), LOG_DEBUG);
-		
-		// Line extrafield
-		
-		if (!is_object($extrafields))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line);
-		
-		// Print table header
-		$tpl = dol_buildpath('lims/core/tpl/objectline_title.tpl.php');
-		include $tpl;
-		/*
-		ToDo: handle hooks and extrafields
-		
-		$parameters = array('num'=>$num, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$this->table_element_line);
-		$reshook = $hookmanager->executeHooks('printObjectLineTitle', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-		if (empty($reshook))
-		{
-			// Output template part (modules that overwrite templates must declare this into descriptor)
-			// Use global variables + $dateSelector + $seller and $buyer
-			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook.
-			
-			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-			foreach ($dirtpls as $module => $reldir)
-			{
-				dol_syslog(__METHOD__.' module='.$module, LOG_DEBUG);
-				if (!empty($module))
-				{
-					$tpl = dol_buildpath($reldir.'/objectline_title.tpl.php');
-				}
-				else
-				{
-					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_title.tpl.php';
-				}
-				dol_syslog(__METHOD__.' $tmpl='.$tpl, LOG_DEBUG);
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
-				}
-				if ($res) break;
-			}
-			
-		}*/
-/*
-		$i = 0;
-
-		print "<!-- begin printObjectLines() LIMS --><tbody>\n";
-		foreach ($this->lines as $line)
-		{
-			//Line extrafield
-			$line->fetch_optionals();
-
-			/* ToDo: Add hook handling
-			
-			//if (is_object($hookmanager) && (($line->product_type == 9 && ! empty($line->special_code)) || ! empty($line->fk_parent_line)))
-			if (is_object($hookmanager))   // Old code is commented on preceding line.
-			{
-				if (empty($line->fk_parent_line))
-				{
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element);
-					$reshook = $hookmanager->executeHooks('printObjectLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				}
-				else
-				{
-					$parameters = array('line'=>$line, 'num'=>$num, 'i'=>$i, 'dateSelector'=>$dateSelector, 'seller'=>$seller, 'buyer'=>$buyer, 'selected'=>$selected, 'table_element_line'=>$line->table_element, 'fk_parent_line'=>$line->fk_parent_line);
-					$reshook = $hookmanager->executeHooks('printObjectSubLine', $parameters, $this, $action); // Note that $action and $object may have been modified by some hooks
-				}
-			}
-			
-			if (empty($reshook))
-			*/
-	/*		$this->printObjectLine($action, $line, '', $num, $i, $dateSelector, $seller, $buyer, $selected, $extrafields, $defaulttpldir);
-
-			$i++;
-		}
-		print "</tbody><!-- end printObjectLines() LIMS -->\n";
-	}
-*/
-	/** COPIED FROM CommonObject.class.php
-	 *	Return HTML content of a detail line
-	 *	TODO Move this into an output class file (htmlline.class.php)
-	 *
-	 *	@param	string      		$action				GET/POST action
-	 *	@param  CommonObjectLine 	$line			    Selected object line to output
-	 *	@param  string	    		$var               	Is it a an odd line (true)
-	 *	@param  int		    		$num               	Number of line (0)
-	 *	@param  int		    		$i					I
-	 *	@param  int		    		$dateSelector      	1=Show also date range input fields
-	 *	@param  string	    		$seller            	Object of seller third party
-	 *	@param  string	    		$buyer             	Object of buyer third party
-	 *	@param	int					$selected		   	Object line selected
-	 *  @param  Extrafields			$extrafields		Object of extrafields
-	 *  @param	string				$defaulttpldir		Directory where to find the template (deprecated)
-	 *	@return	void
-	 */
-	/*
-	public function printObjectLine($action, $line, $var, $num, $i, $dateSelector, $seller, $buyer, $selected = 0, $extrafields = null, $defaulttpldir = '/core/tpl')
-	{
-		global $conf, $langs, $user, $object, $hookmanager;
-		global $form;
-		global $object_rights, $disableedit, $disablemove, $disableremove; // TODO We should not use global var for this !
-		
-		$method = new Methods($this->db);
-		dol_syslog(__METHOD__.'Fetch $line->fk_method='.$line->fk_method, LOG_DEBUG);
-		$method->fetch($line->fk_method);
-		
-		$product = new Product ($this->db);
-		dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
-		$product->fetch($method->fk_product);
-
-		$object_rights = $this->getRights();
-
-		$element = $this->element;
-
-		$text = ''; 
-		$description = '';  //pop-up text
-		
-		dol_syslog(__METHOD__.' !!printObjectLine this->element'.$element, LOG_DEBUG);
-		// Line in view mode
-		if ($action != 'editline' || $selected != $line->id)
-		{
-			dol_syslog(__METHOD__.' action!=editline || selected!=line->id', LOG_DEBUG);
-			// Sample (this) -> Result (line) -> Method -> Product
-			if ($line->fk_method > 0)
-			{
-				$product_static = new Product($this->db);
-				//$result_static->$line;
-				// ToDo: get reference to $line->method->product->ref/label
-				//$product_static->ref = $line->ref; //can change ref in hook
-				//$product_static->label = $line->label; //can change label in hook
-
-				$text = $product->getNomUrl(1);
-
-				// Define output language and label
-				if (!empty($conf->global->MAIN_MULTILANGS))
-				{
-					if (property_exists($this, 'socid') && !is_object($this->thirdparty))
-					{
-						dol_print_error('', 'Error: Method printObjectLine was called on an object and object->fetch_thirdparty was not done before');
-						return;
-					}
-
-					//$prod = new Product($this->db);  // Original
-					//$prod->fetch($line->fk_product); // Original
-
-					$outputlangs = $langs;
-					$newlang = '';
-					if (empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-					if (!empty($conf->global->PRODUIT_TEXTS_IN_THIRDPARTY_LANGUAGE) && empty($newlang) && is_object($this->thirdparty)) $newlang = $this->thirdparty->default_lang; // To use language of customer
-					if (!empty($newlang))
-					{
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-					}
-
-					$label = (!empty($method->multilangs[$outputlangs->defaultlang]["label"])) ? $method->multilangs[$outputlangs->defaultlang]["label"] : $method->label;
-				}
-				else
-				{
-					//$label = $method->label; //$line->product_label;
-				}
-
-				//$text .= ' - '.(!empty($method->label) ? $product->label : $label);
-				//$description .= (!empty($conf->global->PRODUIT_DESC_IN_FORM) ? '' : dol_htmlentitiesbr($product->description)); // Description is what to show on popup. We shown nothing if already into desc.
-			}
-
-			//$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
-
-			// Print table line
-			$tpl = dol_buildpath("lims/core/tpl/objectline_view.tpl.php");
-			include $tpl;
-			
-			// Output template part (modules that overwrite templates must declare this into descriptor)
-			// Use global variables + $dateSelector + $seller and $buyer
-			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
-			
-			/*
-			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-			foreach ($dirtpls as $module => $reldir)
-			{
-				if (!empty($module))
-				{
-					$tpl = dol_buildpath($reldir.'/objectline_view.tpl.php');
-				}
-				else
-				{
-					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_view.tpl.php';
-				}
-
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
-				}
-				if ($res) break;
-			}
-			*/
-		/*}
-
-		// Line in update mode
-		if ($this->statut == 0 && $action == 'editline' && $selected == $line->id)
-		{
-			dol_syslog(__METHOD__.' action==editline && selected==line->id', LOG_DEBUG);
-			
-			$label = (!empty($line->label) ? $line->label : (($line->fk_product > 0) ? $line->product_label : ''));
-
-			$line->pu_ttc = price2num($line->subprice * (1 + ($line->tva_tx / 100)), 'MU');
-
-			// Output template part (modules that overwrite templates must declare this into descriptor)
-			// Use global variables + $dateSelector + $seller and $buyer
-			// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook printObjectLine and printObjectSubLine.
-			$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-			foreach ($dirtpls as $module => $reldir)
-			{
-				if (!empty($module))
-				{
-					$tpl = dol_buildpath($reldir.'/objectline_edit.tpl.php');
-				}
-				else
-				{
-					$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_edit.tpl.php';
-				}
-
-				if (empty($conf->file->strict_mode)) {
-					$res = @include $tpl;
-				} else {
-					$res = include $tpl; // for debug
-				}
-				if ($res) break;
-			}
-		}
-	}
-*/
 	//copied from Form::select_produits_list
 	// Create a html dropdown menu with values in the form of:
 	//<option value='obj->rowid' name='nameID'>'obj->key'</option>
@@ -1502,8 +1236,7 @@ public $fields=array(
 		if ($result)
 		{
 			$num = $obj->db->num_rows($result);
-			// DoTo -> form !!
-			//$out .= '<form input>'.GETPOST('combinations', 'array');
+			
 			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$nameID.'" id="'.$nameID.'">';
 			$key_string = 'objp->'.$key;
 			$$key = $key_string;
@@ -1536,63 +1269,109 @@ public $fields=array(
 		return $idprod;
 	}
 
-	//COPIED from CommonObject.class.php
+	
+	// COPIED from facture.class.php
+	public function addline(
+		$fk_product,
+		$fk_method,
+		$abnormalities,
+		$testresult,
+		$fk_user,
+		$date_start = '',
+		$date_end = '',
+		$rang = -1,
+		$origin = '',
+		$origin_id = 0,
+		$fk_parent_line = 0) {
 
-	/* This is to show add lines */
-
-	/**
-	 *	Show add free and predefined products/services form
-	 *
-	 *  @param	int		        $dateSelector       1=Show also date range input fields
-	 *  @param	Societe			$seller				Object thirdparty who sell
-	 *  @param	Societe			$buyer				Object thirdparty who buy
-	 *  @param	string			$defaulttpldir		Directory where to find the template
-	 *	@return	void
-	 */
-	public function formAddObjectLine($dateSelector, $seller, $buyer, $defaulttpldir = '/core/tpl')
-	{
-		global $conf, $user, $langs, $object, $hookmanager, $extrafields;
-		global $form;
-
-		// Line extrafield
-		if (!is_object($extrafields))
-		{
-			require_once DOL_DOCUMENT_ROOT.'/core/class/extrafields.class.php';
-			$extrafields = new ExtraFields($this->db);
-		}
-		$extrafields->fetch_name_optionals_label($this->table_element_line);
-
-		// Output template part (modules that overwrite templates must declare this into descriptor)
-		// Use global variables + $dateSelector + $seller and $buyer
-		// Note: This is deprecated. If you need to overwrite the tpl file, use instead the hook 'formAddObjectLine'.
-		dol_include_once('/lims/class/samples.class.php');
-
-		$method = new Methods($this->db);
-		$method->fetch($this->line->fk_method);
+		global $langs, $user;
 		
-		$tpl = DOL_DOCUMENT_ROOT.$reldir.'/custom/lims/core/tpl/objectline_create.tpl.php';
-		dol_syslog(__METHOD__.' include $tpl='.$tpl, LOG_DEBUG);
-		include $tpl;
+		$error=0;
 		
-		/*$dirtpls = array_merge($conf->modules_parts['tpl'], array($defaulttpldir));
-		foreach ($dirtpls as $module => $reldir)
+		dol_syslog(__METHOD__." with sample id=".$this->id, LOG_DEBUG);
+
+		if ($this->state == self::STATUS_DRAFT)
 		{
-			if (!empty($module))
+			// Clean parameters
+			if (empty($rang)) $rang = 0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
+			if (empty($fk_prev_id)) $fk_prev_id = 'null';
+			
+			// Check parameters
+			if ($date_start > $date_end) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+
+			$this->db->begin();
+
+			if (!empty($fk_product))
 			{
-				$tpl = dol_buildpath($reldir.'/objectline_create.tpl.php');
+				$product = new Product($this->db);
+				$result = $product->fetch($fk_product);
+			}
+
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$ranktouse = $rangmax + 1;
+			}
+
+			// Insert line necessary??
+			//$sampleline = new SamplesLine($this->db);
+
+			// ToDo: variable defined where?
+			//$this->line->context = $this->context;
+			
+			$obj = new Results($this->db);
+
+			/*
+			$this->line->fk_parent_line	 = $fk_parent_line;
+			$this->line->origin			 = $origin;
+			$this->line->origin_id		 = $origin_id;
+			*/
+			$obj->fk_samples = $this->id;
+			$obj->fk_user = $fk_user;
+			$obj->fk_method = $fk_method;
+			$obj->result = $testresult;
+			$obj->start = $date_start;
+			$obj->end = $date_end;
+			$obj->abnormalities = $abnormalities;
+			$obj->rang = $ranktouse;
+			$obj->status = self::STATUS_DRAFT;
+
+			dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			
+			$res = $obj->create($user); //<0 if KO, Id of created object if OK
+			if ($res<0) $error++;
+			
+			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+			
+			$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			if ($res >0) $error++;
+			
+			//	$result = $this->line->insert();
+			if ($error < 1)
+			{
+				// Reorder if child line
+				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				$this->db->commit();
 			}
 			else
 			{
-				$tpl = DOL_DOCUMENT_ROOT.$reldir.'/objectline_create.tpl.php';
+				$this->error = $this->line->error;
+				$this->db->rollback();
+				return -2;
 			}
-
-			if (empty($conf->file->strict_mode)) {
-				$res = @include $tpl;
-			} else {
-				$res = include $tpl; // for debug
-			}
-			if ($res) break;
-		}*/
+		}
+		else
+		{
+			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
 	}
 }
 
@@ -1601,8 +1380,6 @@ public $fields=array(
  */
 class SamplesLine extends CommonObjectLine //CommonInvoiceLine// 
 {
-	// public $fk_product;			// @var int		Id of corresponding product
-	
 	/////
 	// @var string ID to identify managed object
 	///
@@ -1623,7 +1400,7 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	//! Id method applied to get test result @var integer NOT NULL
 	public $fk_method;
 	//! Id product - to be linked with lims_methods
-	//public $fk_product;
+	public $fk_product;
 	// public $product_type = 0;	// @var int		Type of the product. 0 for product 1 for service
 	//! Result of test @var real NOT NULL
 	public $result;
@@ -1633,10 +1410,11 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	public $date_end;
 	//! Abnormalities with this test @var text
 	public $abnormalities;
-	
+	//! ToDo: Check on possible status
+	public $status;
 	//! Id parent line  -- NOT USED FOR NOW
 	// public $fk_parent_line; 
-
+	
 	public $rang = 0;
 
 
@@ -1737,35 +1515,27 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	 //	Insert line into database
 	 //
 	 //	@param      int		$notrigger		                 1 no triggers
-	 //  @param      int     $noerrorifdiscountalreadylinked  1=Do not make error if lines is linked to a discount and discount already linked to another
+	 
 	 //	@return		int						                 <0 if KO, >0 if OK
 	 */
-    public function insert($notrigger = 0, $noerrorifdiscountalreadylinked = 0)
-	{/*
+    public function insert($notrigger = 0)
+	{
 		global $langs, $user, $conf;
 
 		$error = 0;
 
-        $pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
-
-        dol_syslog(get_class($this)."::insert rang=".$this->rang, LOG_DEBUG);
+        dol_syslog(__METHOD__." rang=".$this->rang, LOG_DEBUG);
 
 		// Clean parameters
-		$this->desc = trim($this->desc);
-		if (empty($this->rang)) $this->rang = 0;
-		//if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
-		
+		if (empty($this->line->rang)) $this->line->rang = 0;
+		if (empty($this->line->fk_parent_line)) $this->line->fk_parent_line = 0;
+		if (empty($this->line->$abnormalities)) $this->line->$abnormalities =0;
 		
 		// Check parameters
-		if ($this->product_type < 0)
-		{
-			$this->error = 'ErrorProductTypeMustBe0orMore';
-			return -1;
-		}
-		if (!empty($this->fk_product))
+		if (!empty($this->line->fk_product))
 		{
 			// Check product exists
-			$result = Product::isExistingObject('product', $this->fk_product);
+			$result = Product::isExistingObject('product', $this->line->fk_product);
 			if ($result <= 0)
 			{
 				$this->error = 'ErrorProductIdDoesNotExists';
@@ -1774,63 +1544,27 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 			}
 		}
 
-		$this->db->begin();
+		//$this->db->begin();
 
-		// Insertion dans base de la ligne
-		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facturedet';
-		$sql .= ' (fk_facture, fk_parent_line, label, description, qty,';
-		$sql .= ' vat_src_code, tva_tx, localtax1_tx, localtax2_tx, localtax1_type, localtax2_type,';
-		$sql .= ' fk_product, product_type, remise_percent, subprice, fk_remise_except,';
-		$sql .= ' date_start, date_end, fk_code_ventilation, ';
-		$sql .= ' rang, special_code, fk_product_fournisseur_price, buy_price_ht,';
-		$sql .= ' info_bits, total_ht, total_tva, total_ttc, total_localtax1, total_localtax2,';
-		$sql .= ' situation_percent, fk_prev_id,';
-		$sql .= ' fk_unit, fk_user_author, fk_user_modif,';
-		$sql .= ' fk_multicurrency, multicurrency_code, multicurrency_subprice, multicurrency_total_ht, multicurrency_total_tva, multicurrency_total_ttc';
-		$sql .= ')';
-		$sql .= " VALUES (".$this->fk_facture.",";
-		$sql .= " ".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null").",";
-		$sql .= " ".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null").",";
-		$sql .= " '".$this->db->escape($this->desc)."',";
-		$sql .= " ".price2num($this->qty).",";
-        $sql .= " ".(empty($this->vat_src_code) ? "''" : "'".$this->db->escape($this->vat_src_code)."'").",";
-		$sql .= " ".price2num($this->tva_tx).",";
-		$sql .= " ".price2num($this->localtax1_tx).",";
-		$sql .= " ".price2num($this->localtax2_tx).",";
-		$sql .= " '".$this->db->escape($this->localtax1_type)."',";
-		$sql .= " '".$this->db->escape($this->localtax2_type)."',";
-		$sql .= ' '.(!empty($this->fk_product) ? $this->fk_product : "null").',';
-		$sql .= " ".((int) $this->product_type).",";
-		$sql .= " ".price2num($this->remise_percent).",";
-		$sql .= " ".price2num($this->subprice).",";
-		$sql .= ' '.(!empty($this->fk_remise_except) ? $this->fk_remise_except : "null").',';
-		$sql .= " ".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null").",";
-		$sql .= " ".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null").",";
-		$sql .= ' '.$this->fk_code_ventilation.',';
-		$sql .= ' '.$this->rang.',';
-		$sql .= ' '.$this->special_code.',';
-		$sql .= ' '.(!empty($this->fk_fournprice) ? $this->fk_fournprice : "null").',';
-		$sql .= ' '.price2num($this->pa_ht).',';
-		$sql .= " '".$this->db->escape($this->info_bits)."',";
-		$sql .= " ".price2num($this->total_ht).",";
-		$sql .= " ".price2num($this->total_tva).",";
-		$sql .= " ".price2num($this->total_ttc).",";
-		$sql .= " ".price2num($this->total_localtax1).",";
-		$sql .= " ".price2num($this->total_localtax2);
-		$sql .= ", ".$this->situation_percent;
-		$sql .= ", ".(!empty($this->fk_prev_id) ? $this->fk_prev_id : "null");
-		$sql .= ", ".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= ", ".$user->id;
-		$sql .= ", ".$user->id;
-		$sql .= ", ".(int) $this->fk_multicurrency;
-		$sql .= ", '".$this->db->escape($this->multicurrency_code)."'";
-		$sql .= ", ".price2num($this->multicurrency_subprice);
-		$sql .= ", ".price2num($this->multicurrency_total_ht);
-		$sql .= ", ".price2num($this->multicurrency_total_tva);
-		$sql .= ", ".price2num($this->multicurrency_total_ttc);
-		$sql .= ')';
-
-		dol_syslog(get_class($this)."::insert", LOG_DEBUG);
+		// Use Results class to store new line to database
+		$results = new Results($this->db);
+		$res = $results->create($user, true); //disables triggers
+		
+		dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+		
+		$results->$fk_samples = $this->line->fk_samples;
+		$results->fk_user = $this->line->fk_user;
+		$results->fk_method = $this->line->fk_method;
+		$results->result = $this->line->result;
+		$results->start = $this->line->start;
+		$results->end = $this->line->start;
+		$results->abnormalities = $this->line->abnormalities;
+		$results->rang = $this->line->rang;
+		
+		$res = $results->update($user, true); //disables triggers
+		
+		dol_syslog(__METHOD__." results->update()=".$res, LOG_DEBUG);
+		/*
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -1846,57 +1580,8 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
             	}
             }
 
-			// Si fk_remise_except defini, on lie la remise a la facture
-			// ce qui la flague comme "consommee".
-			if ($this->fk_remise_except)
-			{
-				$discount = new DiscountAbsolute($this->db);
-				$result = $discount->fetch($this->fk_remise_except);
-				if ($result >= 0)
-				{
-					// Check if discount was found
-					if ($result > 0)
-					{
-					    // Check if discount not already affected to another invoice
-						if ($discount->fk_facture_line > 0)
-						{
-						    if (empty($noerrorifdiscountalreadylinked))
-						    {
-    							$this->error = $langs->trans("ErrorDiscountAlreadyUsed", $discount->id);
-    							dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-    							$this->db->rollback();
-    							return -3;
-						    }
-						}
-						else
-						{
-							$result = $discount->link_to_invoice($this->rowid, 0);
-							if ($result < 0)
-							{
-								$this->error = $discount->error;
-								dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-								$this->db->rollback();
-								return -3;
-							}
-						}
-					}
-					else
-					{
-						$this->error = $langs->trans("ErrorADiscountThatHasBeenRemovedIsIncluded");
-						dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-						$this->db->rollback();
-						return -3;
-					}
-				}
-				else
-				{
-					$this->error = $discount->error;
-					dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
-					$this->db->rollback();
-					return -3;
-				}
-			}
-
+			// Triggers not handled yet
+			
 			if (!$notrigger)
 			{
                 // Call trigger
@@ -1908,7 +1593,7 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 				}
                 // End call triggers
 			}
-
+			
 			$this->db->commit();
 			return $this->id;
 		}
@@ -1927,103 +1612,25 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	 //	@param		int		$notrigger	Disable triggers
 	 //	@return		int					<0 if KO, >0 if OK
 	 */
-    public function update($user = '', $notrigger = 0)
-	{/*
+	public function update($user = '', $notrigger = 0)
+	{
 		global $user, $conf;
 
 		$error = 0;
-
-		$pa_ht_isemptystring = (empty($this->pa_ht) && $this->pa_ht == ''); // If true, we can use a default value. If this->pa_ht = '0', we must use '0'.
-
+/*
 		// Clean parameters
 		$this->desc = trim($this->desc);
-		if (empty($this->tva_tx)) $this->tva_tx = 0;
-		if (empty($this->localtax1_tx)) $this->localtax1_tx = 0;
-		if (empty($this->localtax2_tx)) $this->localtax2_tx = 0;
-		if (empty($this->localtax1_type)) $this->localtax1_type = 0;
-		if (empty($this->localtax2_type)) $this->localtax2_type = 0;
-		if (empty($this->total_localtax1)) $this->total_localtax1 = 0;
-		if (empty($this->total_localtax2)) $this->total_localtax2 = 0;
-		if (empty($this->remise_percent)) $this->remise_percent = 0;
-		if (empty($this->info_bits)) $this->info_bits = 0;
-		if (empty($this->special_code)) $this->special_code = 0;
-		if (empty($this->product_type)) $this->product_type = 0;
-		if (empty($this->fk_parent_line)) $this->fk_parent_line = 0;
-		if (!isset($this->situation_percent) || $this->situation_percent > 100 || (string) $this->situation_percent == '') $this->situation_percent = 100;
-		if (empty($this->pa_ht)) $this->pa_ht = 0;
-
-		if (empty($this->multicurrency_subprice)) $this->multicurrency_subprice = 0;
-		if (empty($this->multicurrency_total_ht)) $this->multicurrency_total_ht = 0;
-		if (empty($this->multicurrency_total_tva)) $this->multicurrency_total_tva = 0;
-		if (empty($this->multicurrency_total_ttc)) $this->multicurrency_total_ttc = 0;
-
-		// Check parameters
-		if ($this->product_type < 0) return -1;
-
-		// if buy price not defined, define buyprice as configured in margin admin
-		if ($this->pa_ht == 0 && $pa_ht_isemptystring)
-		{
-			if (($result = $this->defineBuyPrice($this->subprice, $this->remise_percent, $this->fk_product)) < 0)
-			{
-				return $result;
-			}
-			else
-			{
-				$this->pa_ht = $result;
-			}
-		}
-
-		$this->db->begin();
-
-        // Mise a jour ligne en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-        $sql .= " description='".$this->db->escape($this->desc)."'";
-        $sql .= ", label=".(!empty($this->label) ? "'".$this->db->escape($this->label)."'" : "null");
-        $sql .= ", subprice=".price2num($this->subprice)."";
-        $sql .= ", remise_percent=".price2num($this->remise_percent)."";
-        if ($this->fk_remise_except) $sql .= ", fk_remise_except=".$this->fk_remise_except;
-        else $sql .= ", fk_remise_except=null";
-		$sql .= ", vat_src_code = '".(empty($this->vat_src_code) ? '' : $this->db->escape($this->vat_src_code))."'";
-        $sql .= ", tva_tx=".price2num($this->tva_tx)."";
-        $sql .= ", localtax1_tx=".price2num($this->localtax1_tx)."";
-        $sql .= ", localtax2_tx=".price2num($this->localtax2_tx)."";
-		$sql .= ", localtax1_type='".$this->db->escape($this->localtax1_type)."'";
-		$sql .= ", localtax2_type='".$this->db->escape($this->localtax2_type)."'";
-        $sql .= ", qty=".price2num($this->qty);
-        $sql .= ", date_start=".(!empty($this->date_start) ? "'".$this->db->idate($this->date_start)."'" : "null");
-        $sql .= ", date_end=".(!empty($this->date_end) ? "'".$this->db->idate($this->date_end)."'" : "null");
-        $sql .= ", product_type=".$this->product_type;
-        $sql .= ", info_bits='".$this->db->escape($this->info_bits)."'";
-        $sql .= ", special_code='".$this->db->escape($this->special_code)."'";
-        if (empty($this->skip_update_total))
-        {
-        	$sql .= ", total_ht=".price2num($this->total_ht);
-        	$sql .= ", total_tva=".price2num($this->total_tva);
-        	$sql .= ", total_ttc=".price2num($this->total_ttc);
-        	$sql .= ", total_localtax1=".price2num($this->total_localtax1);
-        	$sql .= ", total_localtax2=".price2num($this->total_localtax2);
-        }
-		$sql .= ", fk_product_fournisseur_price=".(!empty($this->fk_fournprice) ? "'".$this->db->escape($this->fk_fournprice)."'" : "null");
-		$sql .= ", buy_price_ht='".price2num($this->pa_ht)."'";
-		$sql .= ", fk_parent_line=".($this->fk_parent_line > 0 ? $this->fk_parent_line : "null");
-		if (!empty($this->rang)) $sql .= ", rang=".$this->rang;
-		$sql .= ", situation_percent=".$this->situation_percent;
-		$sql .= ", fk_unit=".(!$this->fk_unit ? 'NULL' : $this->fk_unit);
-		$sql .= ", fk_user_modif =".$user->id;
-
-		// Multicurrency
-		$sql .= ", multicurrency_subprice=".price2num($this->multicurrency_subprice)."";
-        $sql .= ", multicurrency_total_ht=".price2num($this->multicurrency_total_ht)."";
-        $sql .= ", multicurrency_total_tva=".price2num($this->multicurrency_total_tva)."";
-        $sql .= ", multicurrency_total_ttc=".price2num($this->multicurrency_total_ttc)."";
-
-		$sql .= " WHERE rowid = ".$this->rowid;
-
+		
+		if (empty($this->tva_tx)) 			$this->tva_tx			 = 0;
+		if (empty($this->fk_parent_line))	$this->fk_parent_line	 = 0;
+		
+		
 		dol_syslog(get_class($this)."::update", LOG_DEBUG);
 		$resql = $this->db->query($sql);
+		/*
 		if ($resql)
 		{
-        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // avoid conflicts if trigger used
         	{
         		$this->id = $this->rowid;
         		$result = $this->insertExtraFields();
