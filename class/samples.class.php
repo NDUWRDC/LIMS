@@ -1166,7 +1166,7 @@ public $fields=array(
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 1;
+		$includedocgeneration = 0;
 
 		$langs->load("lims@lims");
 
