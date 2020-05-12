@@ -6,7 +6,7 @@ require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
 
 
 
-class ActionsLims Extends CommonObject
+class ActionsLims
 { 
 	/**
 	 * Overriding the printObjectLineTitle function : replacing the parent function with the one below

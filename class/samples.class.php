@@ -1166,12 +1166,12 @@ public $fields=array(
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
+		$includedocgeneration = 1;
 
 		$langs->load("lims@lims");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'standard';
+			$modele = 'crabe';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;
@@ -1182,6 +1182,12 @@ public $fields=array(
 
 		$modelpath = "core/modules/lims/doc/";
 
+		dol_syslog(__METHOD__." modele=".var_export($modele, true), LOG_DEBUG);
+		//dol_syslog(__METHOD__." outputlangs=".var_export($outputlangs, true), LOG_DEBUG);
+		dol_syslog(__METHOD__." hidedetails=".var_export($hidedetails, true), LOG_DEBUG);
+		dol_syslog(__METHOD__." hidedesc=".var_export($hidedesc, true), LOG_DEBUG);
+		dol_syslog(__METHOD__." hideref=".var_export($hideref, true), LOG_DEBUG);
+			
 		if ($includedocgeneration) {
 			$result = $this->commonGenerateDocument($modelpath, $modele, $outputlangs, $hidedetails, $hidedesc, $hideref, $moreparams);
 		}

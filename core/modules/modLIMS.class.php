@@ -104,7 +104,7 @@ class modLIMS extends DolibarrModules
 			'hooks' => array(
 					//'printObjectLineTitle'),
 					'data' => array(
-						'samplescard',
+						'samplescard'
 					),
 					'entity' => '0',
 			),
@@ -141,6 +141,7 @@ class modLIMS extends DolibarrModules
 			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
 			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
 			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
+			4 => array('SAMPLES_ADDON_PDF', 'chaine', 'crabe', 'PDF template Crabe. Originally used for invoices.', 1, 'allentities', 1),
         );
 
         // Some keys to add into the overwriting translation tables
