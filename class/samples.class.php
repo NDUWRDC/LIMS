@@ -1450,7 +1450,16 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	//public $product_label;	// Product label
 	//public $product_desc;	// Description product
 
-
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db		Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+	
 	/////
 	 //	Load results line from database
 	 //
