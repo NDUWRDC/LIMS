@@ -201,6 +201,9 @@ public $fields=array(
 
 		$this->db = $db;
 
+		// TODO: must be handled via constants?
+		$this->model_pdf = 'lims_testreport';
+		
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
 
@@ -1172,7 +1175,7 @@ public $fields=array(
 		$langs->load("lims@lims");
 
 		if (!dol_strlen($modele)) {
-			$modele = 'crabe';
+			$modele = 'lims_testreport';
 
 			if ($this->modelpdf) {
 				$modele = $this->modelpdf;

@@ -175,6 +175,31 @@ if (empty($reshook))
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 	
+	// In addition also validate all the lines -> Results
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
+	{
+		if ($object->error || $object->status == $object::STATUS_DRAFT){
+			// object not validated
+		}
+		else {
+			// object validated
+			dol_syslog('Samples object with ref='.$object->ref.' ... validate lines', LOG_DEBUG);
+			$result = new Results($object->db);
+				
+			foreach ($object->lines as $line){
+				$result->fetch($line->fk_result);
+				dol_syslog('--- $line='.var_export($line,true), LOG_DEBUG);
+				
+				//dol_syslog('--- $result='.var_export($result,true), LOG_DEBUG);
+				If ($line->status == $result::STATUS_DRAFT){
+					$line->validate($user);
+					dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
+				}
+			
+			}
+		}
+	}
+	
 	// Add a new line
 	if ($action == 'addline' && $usercancreate)
 	{
@@ -691,14 +716,20 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<a name="builddoc"></a>'; // ancre
 
 		// Documents
-		/*$objref = dol_sanitizeFileName($object->ref);
+		$objref = dol_sanitizeFileName($object->ref);
 		$relativepath = $objref . '/' . $objref . '.pdf';
 		$filedir = $conf->lims->dir_output . '/' . $objref;
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $user->rights->lims->samples->read;	// If you can read, you can build the PDF to read content
 		$delallowed = $user->rights->lims->samples->create;	// If you can create/edit, you can remove a file on card
-		print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
-		*/
+		
+		if (is_null ( $object->modelpdf ))
+			$object->modelpdf = 'lims_testreport';
+		
+		// Does not work: bad file path generated
+		// ?? Maybe use $hookmanager->initHooks(array('formfile')) ??
+		//print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
+		
 
 		// Show links to link elements
 		$linktoelem = $form->showLinkToObjectBlock($object, null, array('samples'));

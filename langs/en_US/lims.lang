@@ -77,3 +77,4 @@ TestingTechnician = Test perfomed by:
 # Report
 #
 PdfSampleTitle = Test Report
+PDFlims_testreportDescription = PDF to show test results for a sample
