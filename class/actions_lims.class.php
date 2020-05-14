@@ -60,7 +60,7 @@ class ActionsLims
 		{
 		  // do something only for the context 'samplescard'
 
-			$this->ObjectlineView($object, $parameters['line'], $parameters['num']);
+			$this->ObjectlineView($object, $parameters['line'], $parameters['num'], $parameters['i']);
 		}
 
 		if (! $error)
@@ -177,7 +177,7 @@ class ActionsLims
 		print "<!-- END PHP LIMS ObjectlinesTitle -->\n";
 	}
 	
-	function ObjectlineView ($object, $line, $num)
+	function ObjectlineView ($object, $line, $num, $i)
 	{
 		global $forceall, $senderissupplier, $inputalsopricewithtax, $outputalsopricetotalwithtax;
 		global $langs;
@@ -340,6 +340,7 @@ class ActionsLims
 			print '</td>';
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
+				dol_syslog('Linecoledit .... $num='.$num.' $i='.$i, LOG_DEBUG);
 				print '<td class="linecolmove tdlineupdown center">';
 				$coldisplay++;
 				if ($i > 0) { ?>

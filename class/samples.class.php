@@ -1681,14 +1681,14 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 		}*/
 	}
 
-	/*
+	/*  Function not used, instead ::deleteLineCommon is called
 	// 	Delete line in database
 	//  TODO Add param User $user and notrigger (see skeleton)
 	//
 	//	@return	    int		           <0 if KO, >0 if OK
 	*/
-    public function delete()
-	{/*
+/*    public function delete()
+	{
 		global $user;
 
 		$this->db->begin();
@@ -1715,8 +1715,8 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 			$this->error = $this->db->error()." sql=".$sql;
 			$this->db->rollback();
 			return -1;
-		}*/
-	}
+		}
+	}*/
 	// COPIED from class Samples
 //   $result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
