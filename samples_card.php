@@ -450,7 +450,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
-
+	// Update line
+	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
+	{
+		dol_syslog('action=updateline', LOG_DEBUG);
+	}
+	
 	// Confirmation of action xxxx
 	if ($action == 'xxx')
 	{

@@ -60,7 +60,20 @@ class ActionsLims
 		{
 		  // do something only for the context 'samplescard'
 
-			$this->ObjectlineView($object, $parameters['line'], $parameters['num'], $parameters['i']);
+			$selected = $parameters['selected'];
+			$line = $parameters['line'];
+			// Line in view mode
+			if ($action != 'editline' || $selected != $line->id) 
+			{
+				$this->ObjectlineView($object, $parameters['line'], $parameters['num'], $parameters['i']);
+			}
+			
+			// Line in update mode
+			if ($action == 'editline' && $selected == $line->id)
+			{
+				dol_syslog(__METHOD__.' EDIT LINE #='.$line->id, LOG_DEBUG);
+				$this->ObjectlineEdit($object, $line, $parameters['i']);
+			}
 		}
 
 		if (! $error)
@@ -395,7 +408,7 @@ class ActionsLims
 		if (empty($senderissupplier)) $senderissupplier = 0;
 		if (empty($inputalsopricewithtax)) $inputalsopricewithtax = 0;
 		// Define colspan for the button 'Add'
-		$colspan = 3; // Columns: total ht + col edit + col delete
+		$colspan = 2; // Columns: total ht + col edit + col delete
 		if (!empty($conf->multicurrency->enabled) && $object->multicurrency_code != $conf->currency) $colspan++; //Add column for Total (currency) if required
 		if (in_array($object->element, array('propal', 'commande', 'order', 'facture', 'facturerec', 'invoice', 'supplier_proposal', 'order_supplier', 'invoice_supplier'))) $colspan++; // With this, there is a column move button
 		//print $object->element;
@@ -673,5 +686,135 @@ class ActionsLims
 			print '</script>';
 			
 			print "<!-- END ObjectlineCreate LIMS-->\n";
+	}
+	
+	// Copied from objectline_edit.tpl.php
+	function ObjectlineEdit($object, $line, $i)
+	{
+		global $conf, $langs, $form;
+		// Define colspan for the button 'Change'
+		$colspan = 2; // Columns: col edit + col delete
+		
+		// Protection to avoid direct call of template
+		if (empty($object) || !is_object($object))
+		{
+			dol_syslog(__METHOD__.'Object empty or not object', LOG_DEBUG);
+			exit;
+		}
+		
+		$method = new Methods($object->db);
+		$method->fetch($line->fk_method);
+		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
+
+		$product = new Product ($object->db);
+		$product->fetch($method->fk_product);
+		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		
+		print "<!-- BEGIN ObjectlineView LIMS -->\n";
+		$coldisplay = 0;
+		?>
+		<tr class="oddeven tredited">
+		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+				<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
+		<?php }
+
+		?>
+		<td>
+			<div id="line_<?php echo $line->id; $coldisplay++; ?>"></div>
+
+			<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+			<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
+			<?php
+
+			$text = $product->getNomUrl(1);		// PRODUCT->REF 
+			if ($product > 0)
+			{
+				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+				print ' - '.$method->label;		// - METHOD->LABEL
+			}
+			
+			print '<br>';						// DATE START OF TEST
+			print ' '.$langs->trans('From').' ';
+			print $form->selectDate($line->start, 'date_start', 1, 1, 0, "Start",  1, 1,0,'','','','',1);
+			print '<br>';						// DATE END OF TEST
+			print ' '.$langs->trans('to').' ';
+			print '&emsp;'.$form->selectDate($line->end, 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
+			print '<br>';						// USER WHO DID TEST 
+			print $langs->trans('TestingTechnician').'<br>';
+			print $form->select_users($line->fk_user, $line->fk_user);
+		?>
+		</td>
+		
+			?>
+		</td>
+		<td class="linecoltestid">
+			<?php
+			$coldisplay++;
+			print $line->getNomUrl();	// RESULT-REF (TEST)
+			?>
+		</td>
+		
+		<td class="linecolmethod">
+			<?php
+			$coldisplay++;
+			print $method->standard;	// METHOD
+			?>
+		</td>
+		
+		<td class="linecolaccuracy center">
+			<?php
+			$coldisplay++;
+			print $method->accuracy; // Accuracy
+			?>
+		</td>
+		
+		<td class="linecolresultabnorm center">
+			<?php
+			$coldisplay++;
+			echo $form->selectyesno('abnormalities', $line->abnormalities, 1); // Abnormalities
+			?>
+		</td>
+
+		<td class="linecolstandardlower center">
+			<?php
+			$coldisplay++;
+			print "";		// Lower Limit
+			?>
+		</td>
+			
+		<td class="linecolstandardupper center">
+			<?php
+			$coldisplay++;
+			print "";		// Upper Limit
+			?>
+		</td>
+
+		<td class="linecolresult right">
+			<?php
+			$coldisplay++;
+			print '<input type="text" size="5" name="result" id="result" class="flat right" value="';
+			print $line->result;  // Result
+			?>
+			">
+		</td>
+
+		<td class="linecolmethodunit left">
+			<?php
+			$coldisplay++;
+			print $method->unit;	// Units
+			?>
+		</td>
+		<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
+			<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+			<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		</td>
+		<?php
+		if (is_object($objectline)) {
+			print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', 1);
+		}
+		?>
+		</tr>
+		<!-- END ObjectlineView LIMS -->
+		<?php
 	}
 }
