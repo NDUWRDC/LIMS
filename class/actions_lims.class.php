@@ -333,7 +333,7 @@ class ActionsLims
 		}
 		
 		// Edit - Delete - Move up/down
-		if ($isdraft && $permissiontodelete && $action != 'selectlines') {
+		if ($object->status == $object::STATUS_DRAFT && $permissiontodelete && $action != 'selectlines') {
 			print '<td class="linecoledit center">';
 			$coldisplay++;
 			if (!empty($disableedit)) {
