@@ -126,32 +126,32 @@ class Limits extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'lims_limitsline';
+	public $table_element_line = 'lims_limits_entries';
 
 	/**
 	 * @var int    Field with ID of parent key if this field has a parent
 	 */
-	//public $fk_element = 'fk_limits';
+	public $fk_element = 'fk_limits';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Limitsline';
+	public $class_element_line = 'Limitsline';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables=array();
+	protected $childtables=array();
 
 	/**
 	 * @var array	List of child tables. To know object to delete on cascade.
 	 */
-	//protected $childtablesoncascade=array('lims_limitsdet');
+	protected $childtablesoncascade=array('lims_limits_entries');
 
 	/**
 	 * @var LimitsLine[]     Array of subtable lines
 	 */
-	//public $lines = array();
+	public $lines = array();
 
 
 
@@ -327,9 +327,51 @@ class Limits extends CommonObject
 	 */
 	public function fetchLines()
 	{
+		/* ORIGINAL FROM MODULE BUILDER
 		$this->lines = array();
-
+		
 		$result = $this->fetchLinesCommon();
+		return $result;
+		*/
+		
+		// copied from samples.class.php
+		
+		$objectlineclassname = 'LimitsLine';
+		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
+		$objectline = new $objectlineclassname($this->db);
+		$sql = 'SELECT '.$objectline->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		
+		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
+			$i = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
+				{
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[$i] = $newline;
+				}
+				$i++;
+			}
+			
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		
 		return $result;
 	}
 
@@ -790,10 +832,10 @@ class Limits extends CommonObject
 			global $langs;
 			//$langs->load("lims");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
-			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Validated');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}
 
@@ -1029,8 +1071,194 @@ class Limits extends CommonObject
 /**
  * Class LimitsLine. You can also remove this and generate a CRUD class for lines objects.
  */
-class LimitsLine
+class LimitsLine extends CommonObjectLine 
 {
 	// To complete with content of an object LimitsLine
 	// We should have a field rowid, fk_limits and position
+	/////
+	// @var string ID to identify managed object
+	///
+	public $element = 'limitentry';
+	
+	/////
+	 // @var string Name of table without prefix where object is stored
+	 ///
+	public $table_element = 'lims_limits_entries'; // table -> lims_limits_entries
+	
+	public $fields=array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit set', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
+		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Lower limit",),
+		'maximum' => array('type'=>'real', 'label'=>'Maximum', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>3, 'help'=>"Upper limit",),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
+		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+	);
+
+	
+	public $oldline;
+	public $origin;		// Should be used with templates or copying 
+	public $origin_id;
+
+	public $rowid;
+	public $ref;		// ?required?
+	public $label;
+	public $rang = 0;
+	public $fk_limits;
+	public $fk_method;
+	
+	public $minimum;
+	public $maximum;
+	
+	public $methods_ref;
+	public $methods_label;
+	public $methods_standard;
+	public $methods_unit;
+			
+	
+	public $status;
+	
+	public $fk_user_modif;
+	public $fk_user_creat;
+	
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db		Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+
+	/////
+	 //	Load results line from database
+	 //
+	 //	@param	int			$rowid      id of results line to get
+	 //	@return	int			<0 if KO, >0 if OK
+	 ///
+	public function fetch($rowid)
+	{
+		$sql = 'SELECT fd.rowid, fd.ref, fd.label, fd.rang, fd.fk_limits, fd.fk_method,';
+		$sql .= ' fd.minimum, fd.maximum,';
+		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
+		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
+		//$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution, m.accuracy as methods_accuracy,';
+		$sql .= ' m.unit as methods_unit';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_limits_entries as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
+		$sql .= ' WHERE fd.rowid = '.$rowid;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+
+			$this->rowid				 = $objp->rowid;
+			$this->id					 = $objp->rowid;
+			$this->ref					 = $objp->ref;
+			$this->label				 = $objp->label;
+			$this->rang					 = $objp->rang;
+			$this->fk_limits			 = $objp->fk_limits;
+			$this->fk_method			 = $objp->fk_method;
+			//$this->fk_parent_line		 = $objp->fk_parent_line;
+			$this->minimum				 = $objp->limit_min;
+			$this->maximum				 = $objp->limit_max;
+
+			$this->fk_user_modif		 = $objp->fk_user_modif;
+			$this->fk_user_creat		 = $objp->fk_user_creat;
+
+			$this->methods_ref			 = $objp->methods_ref;
+			$this->methods_label		 = $objp->methods_label;
+			$this->methods_standard		 = $objp->methods_standard;
+			$this->methods_unit			 = $objp->methods_unit;
+			//$this->methods_accuracy		 = $objp->methods_accuracy;
+			//$this->methods_lower_range	 = $objp->methods_lower_range;
+			//$this->methods_upper_range	 = $objp->methods_upper_range;
+			//$this->methods_resolution	 = $objp->methods_resolution;
+
+			$this->db->free($result);
+
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+	
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+		
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid') {
+					$sqlwhere[] = $key.'='.$value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+		if (!empty($sortfield)) {
+		//	$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+            $i = 0;
+			while ($i < min($limit, $num))
+			{
+			    $obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
 }

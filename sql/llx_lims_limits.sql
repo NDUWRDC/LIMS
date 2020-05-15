@@ -30,3 +30,22 @@ CREATE TABLE llx_lims_limits(
 	status smallint NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
+
+CREATE TABLE llx_lims_limits_entries(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	label varchar(255),
+	fk_limits integer NOT NULL,
+	fk_method integer NOT NULL,
+	rang integer,
+	minimum real,
+	maximum real NOT NULL,
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status smallint NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;
