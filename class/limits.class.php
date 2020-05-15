@@ -105,9 +105,6 @@ class Limits extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
-		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test Method', 'enabled'=>1, 'position'=>40, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Test method",),
-		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'help'=>"Lower limit",),
-		'maximum' => array('type'=>'real', 'label'=>'Maximum', 'enabled'=>1, 'position'=>55, 'notnull'=>1, 'visible'=>1, 'help'=>"Upper limit",),
 	);
 	public $rowid;
 	public $ref;
@@ -121,9 +118,6 @@ class Limits extends CommonObject
 	public $fk_user_modif;
 	public $import_key;
 	public $status;
-	public $fk_method;
-	public $minimum;
-	public $maximum;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -180,7 +174,7 @@ class Limits extends CommonObject
 			$this->fields['myfield']['visible'] = 1;
 			$this->fields['myfield']['noteditable'] = 0;
 		}*/
-
+		
 		// Unset fields that are disabled
 		foreach ($this->fields as $key => $val)
 		{
@@ -215,6 +209,8 @@ class Limits extends CommonObject
 	 */
 	public function create(User $user, $notrigger = false)
 	{
+		$this->fields['status']=0;
+		
 		return $this->createCommon($user, $notrigger);
 	}
 

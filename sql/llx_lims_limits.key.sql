@@ -19,7 +19,6 @@ ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_rowid (rowid);
 ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_ref (ref);
 ALTER TABLE llx_lims_limits ADD CONSTRAINT llx_lims_limits_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_status (status);
-ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_fk_method (fk_method);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_lims_limits ADD UNIQUE INDEX uk_lims_limits_fieldxy(fieldx, fieldy);

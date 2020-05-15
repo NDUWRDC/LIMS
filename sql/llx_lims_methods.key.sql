@@ -18,9 +18,7 @@
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_rowid (rowid);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_ref (ref);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_soc (fk_soc);
-ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_project (fk_project);
 ALTER TABLE llx_lims_methods ADD CONSTRAINT llx_lims_methods_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_status (status);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_lims_methods ADD UNIQUE INDEX uk_lims_methods_fieldxy(fieldx, fieldy);

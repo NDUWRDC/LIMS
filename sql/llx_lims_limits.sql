@@ -27,9 +27,6 @@ CREATE TABLE llx_lims_limits(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	status smallint NOT NULL, 
-	fk_method integer NOT NULL, 
-	minimum real, 
-	maximum real NOT NULL
+	status smallint NOT NULL
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
