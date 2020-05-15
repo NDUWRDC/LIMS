@@ -188,6 +188,7 @@ if (empty($reshook))
 				
 			foreach ($object->lines as $line){
 				$result->fetch($line->fk_result);
+				
 				dol_syslog('--- $line='.var_export($line,true), LOG_DEBUG);
 				
 				//dol_syslog('--- $result='.var_export($result,true), LOG_DEBUG);
@@ -453,7 +454,126 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Update line
 	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
 	{
-		dol_syslog('action=updateline', LOG_DEBUG);
+		$langs->load('errors');
+		$error = 0;
+		
+		$predef=''; // Not used so far (invoice: free entry or predefined product)
+		// result.class.php: Class SampleLine  
+		// update: fk_user-result-start-end-abnormalities
+		
+		$date_start = '';
+		$date_end = '';
+
+		// Clean parameters $date_start and $date_end
+		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$fk_user = GETPOST('userid', 'int');
+		$testresult = GETPOST('result', 'int');
+		$abnormalities = GETPOST('abnormalities');
+		
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// Check parameters
+		if ($date_start > $date_end) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+			
+		// ERROR HANDLING
+		/*
+		if ($result == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
+			$error++;
+		}*/
+		$obj = new Results($object->db);
+		$obj->fetch(GETPOST('lineid', 'int'));
+		
+		if (is_null($obj->ref))
+			$error++;
+		
+		// No Errors -> Update line
+		if (!$error) 
+		{
+			// Update line
+			dol_syslog('action=updateline: ref='.$obj->ref.' lineid='.GETPOST('lineid', 'int'), LOG_DEBUG);
+			
+			// Those are not changed:
+			//$obj->fk_samples = $this->id;
+			//$obj->fk_method = $fk_method;
+			//$obj->rang = $ranktouse;
+			//$obj->status = self::STATUS_DRAFT;
+			
+			$obj->fk_user		 = $fk_user;
+			$obj->result		 = $testresult;
+			$obj->start			 = $date_start;
+			$obj->end			 = $date_end;
+			$obj->abnormalities	 = $abnormalities;
+			
+			$result = $obj->updateCommon($user);
+			
+			// method not defined:
+			//$object->updateline($abnormalities, $testresult, $fk_user, $date_start, $date_end,);
+		
+			if ($result > 0)
+			{
+				// Define output language and generate document
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
+					}
+					$model = $object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+				}
+
+				unset($_POST['rang']);
+				unset($_POST['userid']);
+				unset($_POST['result']);
+
+				unset($_POST['abnormalities']);
+				unset($_POST['status']);
+				unset($_POST['MethodID']);
+				unset($_POST['ProdID']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
+
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$action = '';
+		}
 	}
 	
 	// Confirmation of action xxxx

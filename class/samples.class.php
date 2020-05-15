@@ -1474,7 +1474,7 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
 		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
 		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
-		$sql .= ' m.lower_range as methods_lower_range, m.upper_range as methods_upper_range, m.resolution as methods_resolution';
+		$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
 		$sql .= ' WHERE fd.rowid = '.$rowid;
@@ -1631,22 +1631,23 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 	 //	@param		int		$notrigger	Disable triggers
 	 //	@return		int					<0 if KO, >0 if OK
 	 */
-	public function update($user = '', $notrigger = 0)
+
+	 public function update($user = '', $notrigger = 0)
 	{
 		global $user, $conf;
 
 		$error = 0;
-/*
-		// Clean parameters
-		$this->desc = trim($this->desc);
-		
-		if (empty($this->tva_tx)) 			$this->tva_tx			 = 0;
+
+		// Clean parameters		
 		if (empty($this->fk_parent_line))	$this->fk_parent_line	 = 0;
-		
-		
-		dol_syslog(get_class($this)."::update", LOG_DEBUG);
+
+		dol_syslog(__METHOD__
+		.' fkuser='.$this->fk_user 
+		.' result='.$this->testresult 
+		.' abnormalities='.$this->abnormalities, LOG_DEBUG);
+			
 		$resql = $this->db->query($sql);
-		/*
+		
 		if ($resql)
 		{
         	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // avoid conflicts if trigger used
@@ -1678,7 +1679,7 @@ class SamplesLine extends CommonObjectLine //CommonInvoiceLine//
 			$this->error = $this->db->error();
 			$this->db->rollback();
 			return -2;
-		}*/
+		}
 	}
 
 	/*  Function not used, instead ::deleteLineCommon is called

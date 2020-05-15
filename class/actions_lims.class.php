@@ -710,7 +710,7 @@ class ActionsLims
 		$product->fetch($method->fk_product);
 		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 		
-		print "<!-- BEGIN ObjectlineView LIMS -->\n";
+		print "<!-- BEGIN ObjectlineEdit LIMS -->\n";
 		$coldisplay = 0;
 		?>
 		<tr class="oddeven tredited">
@@ -814,7 +814,7 @@ class ActionsLims
 		}
 		?>
 		</tr>
-		<!-- END ObjectlineView LIMS -->
+		<!-- END ObjectlineEDIT LIMS -->
 		<?php
 	}
 }
