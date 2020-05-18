@@ -163,6 +163,7 @@ if (empty($reshook))
 	{
 		$langs->load('errors');
 		$error = 0;
+		$checkresult = 0;
 		
 		// Store: rowid-ref-rang-fk_samples-fk_user-fk_method-result-start-end-abnormalities-?status
 
@@ -190,10 +191,10 @@ if (empty($reshook))
 		}
 
 		// ERROR HANDLING
-		if ($maximum == '') {
-			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('maximum')), null, 'errors');
+		$checkresult = $object->CheckMinMaxValidity($minimum,$maximum);
+		if ($checkresult == -1)
 			$error++;
-		}
+		
 		
 		// No Errors -> Add line
 		if (!$error && ($result >= 0) && !empty($idmethod)) {
@@ -379,6 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	{
 		$langs->load('errors');
 		$error = 0;
+		$checkresult = 0;
 		
 		$predef=''; // Not used so far (invoice: free entry or predefined product)
 		// result.class.php: Class SampleLine  
@@ -400,12 +402,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Check parameters
-		if ($minimum > $maximum) {
-				$langs->load("errors");
-				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
-				return -1;
-			}
-			
+		$checkresult = $object->CheckMinMaxValidity($minimum,$maximum);
+		if ($checkresult == -1)
+			$error++;
+				
 		// ERROR HANDLING
 		/*
 		if ($result == '') {

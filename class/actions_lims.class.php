@@ -1282,19 +1282,14 @@ class ActionsLims
 		<td class="linecolstandardlower center">
 			<?php $coldisplay++;	// Lower Limit
 			
-			print '<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="';
-			print $line->minimum;
+			print '<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="'.$line->minimum.'">';
 			?>
-			">
 		</td>
 
 		<td class="linecolstandardupper center">
 			<?php $coldisplay++;	// Upper Limit
-			
-			print '<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="';
-			print $line->maximum;
+			print '<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="'.$line->maximum.'">';
 			?>
-			">
 		</td>
 
 		<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>

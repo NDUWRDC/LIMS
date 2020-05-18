@@ -64,8 +64,8 @@ MethodLowerLimit = Lower
 MethodUpperLimit = Upper
 ResultAbnormality = Abnormalities
 StandardLimitTitle = Standard Limit
-StandardLowerLimit = Lower
-StandardUpperLimit = Upper
+StandardLowerLimit = Minimum
+StandardUpperLimit = Maximum
 Result = Result
 ResultID = Test-ID
 MethodUnit = Unit
@@ -83,5 +83,7 @@ PDFlims_testreportDescription = PDF to show test results for a sample
 # Limits
 #
 AddLineTitleLimits = Method
-ErrorMinimumGreaterMaximum = Limit for minimum is greater than maximum
-ErrorMaximumNotSet = Limit for maximum is not set
+ErrorMinimumGreaterMaximum = Limit for minimum greater than maximum
+ErrorMaximumNotSet = Limit for maximum not a number or not set
+ErrorMinimumEqualsMaximum = Limit for maximum and minimum are the same
+ErrorNumberNotValue = Limit must be a number

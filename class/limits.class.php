@@ -1036,19 +1036,6 @@ class Limits extends CommonObject
 			
 			// Check parameters
 			$langs->load("lims@lims");
-				
-			if (isset($minimum) && isset($maximum))
-				if ($minimum > $maximum) {
-					$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
-					return -1;
-				}
-			elseif ($minimum == '')
-				$minimum = NULL;
-			elseif ($maximum == '' || $maximum == NULL)
-			{
-					$this->error = $langs->trans('ErrorMaximumNotSet');
-					return -1;
-			}
 			
 			$this->db->begin();
 
@@ -1115,6 +1102,58 @@ class Limits extends CommonObject
 			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
 			return -3;
 		}
+	}
+	
+	public function CheckMinMaxValidity(&$minimum,$maximum)
+	{
+		global $langs;
+		
+		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum, LOG_ERR);
+		
+		
+		$langs->load("errors");
+		
+		// check if max and min are numbers and if min<max
+		if (is_numeric($minimum) && is_numeric($maximum))
+		{
+			if ($minimum > $maximum)
+			{
+				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
+				setEventMessages($langs->trans('ErrorMinimumGreaterMaximum', $langs->transnoentitiesnoconv('Minimum')), null, 'errors');
+				
+				return -1;
+			}
+			if ($minimum == $maximum)
+			{
+				$this->error = $langs->trans('ErrorMinimumEqualsMaximum');
+				setEventMessages($langs->trans('ErrorMinimumEqualsMaximum', $langs->transnoentitiesnoconv('Upper')), null, 'errors');
+				return -1;
+			}
+		}
+		else
+		{	// check if max is number
+			if (!is_numeric($maximum))
+			{
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardUpperLimit')), null, 'errors');
+				return -1;
+			}
+			// check if min is number
+			if (!is_numeric($minimum))
+			{
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardLowerLimit')), null, 'errors');
+				return -1;
+			}
+			
+			// check if min is empty
+			if ($minimum == '')
+			{
+				$minimum = NULL;
+			}
+		}
+
+		return 1;
 	}
 }
 
