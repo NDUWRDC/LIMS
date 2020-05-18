@@ -978,12 +978,12 @@ class ActionsLims
 
 			 <!-- Lower limit -->
 			<td class="nobottom linecollowerlimit right"><?php $coldisplay++; ?>
-				<input type="text" size="5" name="Minimum" id="Minimum" class="flat center" value="<?php echo (isset($_POST["Minimum"]) ?GETPOST("Minimum", 'alpha', 2) : ''); ?>">
+				<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="<?php echo (isset($_POST["MethodLower"]) ?GETPOST("MethodLower", 'alpha', 2) : ''); ?>">
 			</td>
 
 			 <!-- Upper limit -->
 			<td class="nobottom linecolupperlimit right"><?php $coldisplay++; ?>
-				<input type="text" size="5" name="Maximum" id="Maximum" class="flat center" value="<?php echo (isset($_POST["Maximum"]) ?GETPOST("Maximum", 'alpha', 2) : ''); ?>">
+				<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="<?php echo (isset($_POST["MethodUpper"]) ?GETPOST("MethodUpper", 'alpha', 2) : ''); ?>">
 			</td>
 
 			<!-- ADD button -->

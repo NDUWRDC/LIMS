@@ -75,8 +75,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'lim
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid   = GETPOST('lineid', 'int');
-$minimum   = GETPOST('minium', 'int');
-$maximum   = GETPOST('maximum', 'int');
+$minimum   = GETPOST('MethodLower', 'int');
+$maximum   = GETPOST('MethodUpper', 'int');
 
 
 // Initialize technical objects
@@ -153,7 +153,7 @@ if (empty($reshook))
     include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
     // Action to move up and down lines of object
-    //include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+    include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
 
     // Action to build doc
     include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -169,8 +169,8 @@ if (empty($reshook))
 		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
 		$rang = GETPOST('rang', 'int');
 		$idmethod = GETPOST('MethodID', 'int');
-		$minimum = GETPOST('Minimum', 'int');
-		$maximum = GETPOST('Maximum', 'int');
+		$minimum = GETPOST('MethodLower', 'int');
+		$maximum = GETPOST('MethodUpper', 'int');
 		
 		dol_syslog('Limits_card action=addline: ---------', LOG_DEBUG);
 		dol_syslog('fkmethod= '.$idmethod, LOG_DEBUG);
@@ -210,7 +210,7 @@ if (empty($reshook))
 
 			if ($result > 0){
 				// Define output language and generate document
-				/*
+				
 				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
 				{
 					$outputlangs = $langs;
@@ -227,11 +227,11 @@ if (empty($reshook))
 
 					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
 					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-				}*/
+				}
 
 				unset($_POST['rang']);
-				unset($_POST['minimum']);
-				unset($_POST['maximum']);
+				unset($_POST['MethodLower']);
+				unset($_POST['MethodUpper']);
 				unset($_POST['MethodID']);
 
 			} else {
@@ -468,8 +468,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				unset($_POST['MethodAccuracy']);
 				unset($_POST['MethodUnit']);
 
-				unset($_POST['Minimum']);
-				unset($_POST['Maximum']);
+				unset($_POST['MethodLower']);
+				unset($_POST['Methodupper']);
 				unset($_POST['MethodID']);
 				
 			} else {
@@ -614,7 +614,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
     	    if ($action != 'editline')
     	    {
     	        // Add products/services form
-    	        $object->formAddObjectLine(1, $mysoc, $soc);
+    	        //$object->formAddObjectLine(1, $mysoc, $soc);
 
     	        $parameters = array();
     	        $reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
