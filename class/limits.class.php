@@ -26,6 +26,8 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
+
 
 /**
  * Class for Limits
@@ -319,63 +321,8 @@ class Limits extends CommonObject
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}
-
-	/**
-	 * Load object lines in memory from the database
-	 *
-	 * @return int         <0 if KO, 0 if not found, >0 if OK
-	 */
-	public function fetchLines()
-	{
-		/* ORIGINAL FROM MODULE BUILDER
-		$this->lines = array();
-		
-		$result = $this->fetchLinesCommon();
-		return $result;
-		*/
-		
-		// copied from samples.class.php
-		
-		$objectlineclassname = 'LimitsLine';
-		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
-		$objectline = new $objectlineclassname($this->db);
-		$sql = 'SELECT '.$objectline->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
-		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
-		
-		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_rows = $this->db->num_rows($resql);
-			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
-			$i = 0;
-			while ($i < $num_rows)
-			{
-				$obj = $this->db->fetch_object($resql);
-				if ($obj)
-				{
-					$newline = new $objectlineclassname($this->db);
-					$newline->setVarsFromFetchObj($obj);
-
-					$this->lines[$i] = $newline;
-				}
-				$i++;
-			}
-			
-			return 1;
-		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
-		
-		return $result;
-	}
-
-
+	
+	
 	/**
 	 * Load list of objects in memory from the database.
 	 *
@@ -439,7 +386,6 @@ class Limits extends CommonObject
 
 				$record = new self($this->db);
 				$record->setVarsFromFetchObj($obj);
-
 				$records[$record->id] = $record;
 
 				$i++;
@@ -456,6 +402,67 @@ class Limits extends CommonObject
 	}
 
 	/**
+/**
+	 * Load object lines in memory from the database
+	 *
+	 * @return int         <0 if KO, 0 if not found, >0 if OK
+	 */
+	public function fetchLines()
+	{
+		// ORIGINAL FROM MODULE BUILDER
+		$this->lines = array();
+		
+		$result = $this->fetchLinesCommon();  //'rowid' => NULL, ??!!
+		dol_syslog(__METHOD__.' results='.$result, LOG_DEBUG);
+		dol_syslog(__METHOD__." this->lines=".var_export($this->lines, true), LOG_DEBUG);
+		return $result;
+		
+		
+		// copied from samples.class.php
+		/*
+		$objectlineclassname = 'LimitsLine';
+		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
+		$objectline = new $objectlineclassname($this->db);
+		$sql = 'SELECT '.$objectline->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		
+		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_rows = $this->db->num_rows($resql);
+			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
+			$i = 0;
+			while ($i < $num_rows)
+			{
+				$obj = $this->db->fetch_object($resql);
+				if ($obj)
+				{
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+		
+					$this->lines[$i] = $newline;
+				}
+				dol_syslog(__METHOD__." $obj=".var_export($obj, true)); 
+				dol_syslog(__METHOD__." $obj=".var_export($obj, true)); 
+				dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
+			
+				$i++;
+			}
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		
+		return $this->lines;*/
+	}
+	
+	/*
 	 * Update object into database
 	 *
 	 * @param  User $user      User that modifies
@@ -917,22 +924,7 @@ class Limits extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-	    $this->lines = array();
-
-	    $objectline = new LimitsLine($this->db);
-	    $result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_limits = '.$this->id));
-
-	    if (is_numeric($result))
-	    {
-	        $this->error = $this->error;
-	        $this->errors = $this->errors;
-	        return $result;
-	    }
-	    else
-	    {
-	        $this->lines = $result;
-	        return $this->lines;
-	    }
+		return $this->fetchLines();
 	}
 
 	/**
@@ -1066,6 +1058,111 @@ class Limits extends CommonObject
 
 		return $error;
 	}
+	
+	public function addline(
+		$fk_method,
+		$minimum,
+		$maximum,
+		$rang = -1,
+		$origin = '',
+		$origin_id = 0,
+		$fk_parent_line = 0) {
+
+		global $langs, $user;
+		
+		$error=0;
+		
+		dol_syslog(__METHOD__." with limit set id=".$this->id, LOG_DEBUG);
+
+		if ($this->state == self::STATUS_DRAFT)
+		{
+			// Clean parameters
+			if (empty($rang)) $rang = 0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
+			if (empty($fk_prev_id)) $fk_prev_id = 'null';
+			
+			// Check parameters
+			$langs->load("lims@lims");
+				
+			if (isset($minimum) && isset($maximum))
+				if ($minimum > $maximum) {
+					$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
+					return -1;
+				}
+			elseif ($minimum == '')
+				$minimum = NULL;
+			elseif ($maximum == '' || $maximum == NULL)
+			{
+					$this->error = $langs->trans('ErrorMaximumNotSet');
+					return -1;
+			}
+			
+			$this->db->begin();
+
+			if (!empty($fk_method))
+			{
+				$method = new Methods($this->db);
+				$result = $method->fetch($fk_method);
+			}
+
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$ranktouse = $rangmax + 1;
+			}
+
+			// Insert line necessary??
+			//$sampleline = new SamplesLine($this->db);
+
+			// ToDo: variable defined where?
+			//$this->line->context = $this->context;
+			
+			$obj = new LimitsLine($this->db);
+
+			/*
+			$this->line->fk_parent_line	 = $fk_parent_line;
+			$this->line->origin			 = $origin;
+			$this->line->origin_id		 = $origin_id;
+			*/
+			$obj->fk_limits = $this->id;
+			$obj->fk_method = $fk_method;
+			$obj->minimum = $minimum;
+			$obj->maximum = $maximum;
+			$obj->rang = $ranktouse;
+			$obj->status = self::STATUS_DRAFT;
+
+			dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			
+			$res = $obj->create($user); //<0 if KO, Id of created object if OK
+			if ($res<0) $error++;
+			
+			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+			
+			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			//if ($res >0) $error++;
+			
+			//	$result = $this->line->insert();
+			if ($error < 1)
+			{
+				// Reorder if child line
+				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				$this->db->commit();
+			}
+			else
+			{
+				$this->error = $this->line->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
+	}
 }
 
 /**
@@ -1088,9 +1185,10 @@ class LimitsLine extends CommonObjectLine
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
 		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit set', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
 		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Lower limit",),
 		'maximum' => array('type'=>'real', 'label'=>'Maximum', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>3, 'help'=>"Upper limit",),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -1098,7 +1196,6 @@ class LimitsLine extends CommonObjectLine
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 
@@ -1146,6 +1243,10 @@ class LimitsLine extends CommonObjectLine
 	 ///
 	public function fetch($rowid)
 	{
+		$result = $this->fetchCommon($rowid);
+		
+		return $result;
+		/*
 		$sql = 'SELECT fd.rowid, fd.ref, fd.label, fd.rang, fd.fk_limits, fd.fk_method,';
 		$sql .= ' fd.minimum, fd.maximum,';
 		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
@@ -1192,7 +1293,7 @@ class LimitsLine extends CommonObjectLine
 		{
 			$this->error = $this->db->lasterror();
 			return -1;
-		}
+		}*/
 	}
 	
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
@@ -1252,7 +1353,7 @@ class LimitsLine extends CommonObjectLine
 				$i++;
 			}
 			$this->db->free($resql);
-
+			
 			return $records;
 		} else {
 			$this->errors[] = 'Error '.$this->db->lasterror();
@@ -1260,5 +1361,17 @@ class LimitsLine extends CommonObjectLine
 
 			return -1;
 		}
+	}
+	
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		return $this->createCommon($user, $notrigger);
 	}
 }

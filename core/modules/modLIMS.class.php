@@ -104,7 +104,7 @@ class modLIMS extends DolibarrModules
 			'hooks' => array(
 					//'printObjectLineTitle'),
 					'data' => array(
-						'samplescard'
+						'samplescard','limitscard'
 					),
 					'entity' => '0',
 			),
@@ -137,7 +137,6 @@ class modLIMS extends DolibarrModules
         //                             2 => array('LIMS_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
         // );
         $this->const = array(
-			//0=>array	('MAIN_MODULE_LIMS_HOOKS', 'chaine', 'samplescard', 'Hooks list for managing printing functions', 0),
 			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
 			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
 			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),

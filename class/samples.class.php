@@ -356,111 +356,6 @@ public $fields=array(
 		require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
-		
-		
-		// The following is in adaption to facture.class.php -> Facture::fetch
-		/*
-		global $conf;
-		
-		$rowid = $id;
-		
-		if (empty($rowid) && empty($ref) ) return -1;
-		
-		$sql = 'SELECT s.rowid, s.fk_samples, s.fk_method, s.fk_user, s.abnormalities, s.result,';
-		$sql .= ' s.start as date_start, s.end as date_end,';
-		$sql .= ' fd.rang,';
-		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
-		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
-		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
-		$sql .= ' m.lower_range as methods_lower_range, m.upper_range as methods_upper_range, m.resolution as methods_resolution';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
-		$sql .= ' WHERE fd.rowid = '.$rowid;
-		
-		$sql = 'SELECT s.rowid, s.ref, s.fk_soc, s.fk_propal, s.fk_facture, s.fk_socpeople, s.fk_user,';
-		$sql .= ' s.label, s.volume, s.qty, s.date, s.place, s.place_lon, s.place_lat, s.date_arrival,';
-		$sql .= ' s.fk_project, s.description, s.note_public, s.note_private, s.date_creation, s.tms,';
-		$sql .= ' s.fk_user_creat, s.fk_user_modif, s.import_key, s.model_pdf, s.status';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_samples as s';
-		*/
-		/*
-		if ($rowid) $sql .= " WHERE s.rowid=".$rowid;
-		else {
-			$sql .= ' WHERE s.entity IN ('.getEntity('invoice').')'; // Dont't use entity if you use rowid
-			if ($ref)     $sql .= " AND f.ref='".$this->db->escape($ref)."'";
-			if ($ref_ext) $sql .= " AND f.ref_ext='".$this->db->escape($ref_ext)."'";
-			if ($notused) $sql .= " AND f.ref_int='".$this->db->escape($notused)."'"; // deprecated
-		}
-		*/
-		/*
-		dol_syslog(get_class($this)."::fetch", LOG_DEBUG);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$objp = $this->db->fetch_object($result);
-				$this->rowid				 = $objp->rowid;
-				$this->id					 = $objp->rowid;
-				$this->fk_samples			 = $objp->fk_samples;
-				$this->fk_method			 = $objp->fk_method;
-				$this->fk_user				 = $objp->fk_user;
-				//$this->fk_parent_line		 = $objp->fk_parent_line;
-				$this->abnormalities		 = $objp->abnormalities;
-				$this->result				 = $objp->result;
-
-				$this->date_start			 = $this->db->jdate($objp->date_start);
-				$this->date_end				 = $this->db->jdate($objp->date_end);
-				$this->rang					 = $objp->rang;
-				
-				$this->methods_ref			 = $objp->methods_ref;
-				$this->methods_label		 = $objp->methods_label;
-				$this->methods_standard		 = $objp->methods_standard;
-				$this->methods_unit			 = $objp->methods_unit;
-				$this->methods_accuracy		 = $objp->methods_accuracy;
-				$this->methods_lower_range	 = $objp->methods_lower_range;
-				$this->methods_upper_range	 = $objp->methods_upper_range;
-				$this->methods_resolution	 = $objp->methods_resolution;
-
-				//$this->product_type			 = $objp->product_type;
-				//$this->methods_fk_product	 = $objp->methods_fk_product;		// Pointer to sales item	@ var int
-				//$this->product_ref 		 = $objp->product_ref;
-				//$this->product_label		 = $objp->product_libelle;
-				//$this->product_desc		 = $objp->product_desc;
-				
-				$this->fk_user_modif		 = $objp->fk_user_modif;
-				$this->fk_user_creat		 = $objp->fk_user_creat;
-				
-				$this->extraparams = (array) json_decode($obj->extraparams, true);
-
-				// Retreive all extrafield
-				// fetch optionals attributes and labels
-				$this->fetch_optionals();
-				
-				// Lines
-				$this->lines = array();
-
-				$result = $this->fetchLines();
-				if ($result < 0)
-				{
-					$this->error = $this->db->error();
-					// $this->db->free($result);  //REQUIRED? 
-					return -3;
-				}
-				return 1;
-			}
-			else
-			{
-				$this->error = 'Sample with id='.$rowid.' or ref='.$ref.' or ref_ext='.$ref_ext.' not found';
-				dol_syslog(get_class($this)."::fetch Error ".$this->error, LOG_ERR);
-				return 0;
-			}
-		}
-		else
-		{
-		    $this->error = $this->db->lasterror();
-			return -1;
-		}*/
 	}
 
 	 /**  
@@ -558,7 +453,7 @@ public $fields=array(
 		$result = $this->fetchLinesCommon();
 		//$result = $this->fetchLinesCommon(); // original,  CommonObject::fetchLinesCommon($morewhere = '') 
 		*/
-		$results = new Results($this->db);
+		//$results = new Results($this->db);
 		$morewhere = '';
 		$objectlineclassname = 'Results';
 		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
@@ -584,6 +479,7 @@ public $fields=array(
 
 					$this->lines[$i] = $newline;
 				}
+				dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
 				$i++;
 			}
 			
@@ -1061,34 +957,8 @@ public $fields=array(
 	 */
 	public function getLinesArray()
 	{
-		
 		//return $this->fetch_lines();  // Original
 		return $this->fetchLines();
-		
-		/*
-	    // Copied from facture.class.php 
-		$this->lines = array();
-
-	    $objectline = new SamplesLine($this->db);
-		
-		//dol_syslog("DAVID ".get_class($this)."::getLinesArray objectline = ".var_export($objectline), LOG_DEBUG);
-		dol_syslog("DAVID234 ".get_class($this)."::getLinesArray this->db.database_name = ".$this->db->database_name, LOG_DEBUG);
-		dol_syslog("DAVID12 ".get_class($this)."::getLinesArray customsql=>fk_samples =  this.id".var_dump(array('customsql'=>'fk_samples = '.$this->id)), LOG_DEBUG);
-
-	    $result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
-
-	    if (is_numeric($result))
-	    {
-	        $this->error = $this->error;
-	        $this->errors = $this->errors;
-	        return $result;
-	    }
-	    else
-	    {
-	        $this->lines = $result;
-	        return $this->lines;
-	    }
-		*/
 	}
 
 	/**
@@ -1228,57 +1098,6 @@ public $fields=array(
 
 		return $error;
 	}
-
-	//copied from Form::select_produits_list
-	// Create a html dropdown menu with values in the form of:
-	//<option value='obj->rowid' name='nameID'>'obj->key'</option>
-	public function DropDownProduct($sql, $nameID, $obj, $key='ref', $selected='', $morecss='')
-	{
-		global $langs, $conf, $user, $db;
-
-		$out = '';
-		$outarray = array();
-		$idprod = -1;		//Product used to get list of methods
-
-		dol_syslog(__METHOD__, LOG_DEBUG);
-		$result = $obj->db->query($sql);
-		
-		if ($result)
-		{
-			$num = $obj->db->num_rows($result);
-			
-			$out .= '<select class="flat'.($morecss ? ' '.$morecss : '').'" name="'.$nameID.'" id="'.$nameID.'">';
-			$key_string = 'objp->'.$key;
-			$$key = $key_string;
-			$i = 0;
-			while ($num && $i < $num)
-			{
-				$opt = '';
-				$objp = $this->db->fetch_object($result);
-				$opt = '<option value="'.$objp->rowid.'"';
-				$idprod = ($i == 0 ? $objp->rowid : $idprod); // first element selected
-				if ($objp->rowid == $selected){
-					$opt .= ' selected';
-					$idprod = $objp->rowid;
-				}
-				$opt .= '>';
-				$opt .= $objp->{$key};
-				$opt .= "</option>\n";
-				
-				$out .= $opt;
-				$i++;
-			}
-			if ($num)
-				$out .= '</select>';
-		}
-		
-		$this->db->free($result);
-		
-		print $out;
-		
-		return $idprod;
-	}
-
 	
 	// COPIED from facture.class.php
 	public function addline(

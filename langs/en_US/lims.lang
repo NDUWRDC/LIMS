@@ -54,10 +54,10 @@ MyWidget = My widget
 MyWidgetDescription = My widget description
 
 #
-#
+# Samples
 #
 
-MethodMethod = Method
+MethodMethod = Standard
 MethodAccuracy = Accuracy
 MethodLimitTitle = Meas. Range
 MethodLowerLimit = Lower
@@ -69,7 +69,7 @@ StandardUpperLimit = Upper
 Result = Result
 ResultID = Test-ID
 MethodUnit = Unit
-AddLineTitle = Product - Method
+AddLineTitleSamples = Product - Method
 TestDuration = Test performed in this period:
 TestingTechnician = Test perfomed by:
 
@@ -78,3 +78,10 @@ TestingTechnician = Test perfomed by:
 #
 PdfSampleTitle = Test Report
 PDFlims_testreportDescription = PDF to show test results for a sample
+
+#
+# Limits
+#
+AddLineTitleLimits = Method
+ErrorMinimumGreaterMaximum = Limit for minimum is greater than maximum
+ErrorMaximumNotSet = Limit for maximum is not set

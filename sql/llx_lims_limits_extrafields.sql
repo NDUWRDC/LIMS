@@ -21,3 +21,10 @@ create table llx_lims_limits_extrafields
   import_key                varchar(14)                          		-- import key
 ) ENGINE=innodb;
 
+create table llx_lims_limits_entries_extrafields
+(
+  rowid                     integer AUTO_INCREMENT PRIMARY KEY,
+  tms                       timestamp,
+  fk_object                 integer NOT NULL,
+  import_key                varchar(14)                          		-- import key
+) ENGINE=innodb;
