@@ -27,7 +27,7 @@ class ActionsLims
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
-		dol_syslog(__METHOD__.' hook on printObjectLineTitle, paramters='.var_export($paramters, true).' action='.$action.' object='.var_export($object,true), LOG_DEBUG);
+		dol_syslog(__METHOD__.' hook on printObjectLineTitle, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 
 		if ($object->element == 'samples' )
 		if (in_array('', explode(':', $parameters['samplescard'])))
@@ -63,7 +63,7 @@ class ActionsLims
 		$myvalue = 'test'; // A result value
 
 		
-		dol_syslog(__METHOD__.' DB hook on printObjectLine, paramters='.var_export($paramters, true).' action='.$action.' object='.var_export($object,true), LOG_DEBUG);
+		dol_syslog(__METHOD__.' DB hook on printObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 		if ($object->element == 'samples' )
 		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
@@ -119,7 +119,7 @@ class ActionsLims
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
-		dol_syslog(__METHOD__.' DB hook on formAddObjectLine, paramters='.var_export($paramters, true).' action='.$action.' object='.var_export($object,true), LOG_DEBUG);
+		dol_syslog(__METHOD__.' DB hook on formAddObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 		if ($object->element == 'samples' )
 		//if (in_array('', explode(':', $parameters['samplescard'])))
 		{
@@ -978,7 +978,7 @@ class ActionsLims
 
 			 <!-- Lower limit -->
 			<td class="nobottom linecollowerlimit right"><?php $coldisplay++; ?>
-				<input type="text" size="5" name="Minimum" id="Minium" class="flat center" value="<?php echo (isset($_POST["Minimum"]) ?GETPOST("Minimum", 'alpha', 2) : ''); ?>">
+				<input type="text" size="5" name="Minimum" id="Minimum" class="flat center" value="<?php echo (isset($_POST["Minimum"]) ?GETPOST("Minimum", 'alpha', 2) : ''); ?>">
 			</td>
 
 			 <!-- Upper limit -->
@@ -1207,5 +1207,107 @@ class ActionsLims
 		}
 
 		print "<!-- END ObjectlineView Limits LIMS -->\n";
+	}
+
+	function ObjectlineEditLimits($object, $line, $i)
+	{
+		global $conf, $langs, $form;
+		// Define colspan for the button 'Change'
+		$colspan = 2; // Columns: col edit + col delete
+		
+		// Protection to avoid direct call of template
+		if (empty($object) || !is_object($object))
+		{
+			dol_syslog(__METHOD__.'Object empty or not object', LOG_DEBUG);
+			exit;
+		}
+		
+		$method = new Methods($object->db);
+		$method->fetch($line->fk_method);
+		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
+
+		$product = new Product ($object->db);
+		$product->fetch($method->fk_product);
+		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		
+		print "<!-- BEGIN ObjectlineEdit Limits LIMS -->\n";
+		$coldisplay = 0;
+		?>
+		<tr class="oddeven tredited">
+		<?php if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) { ?>
+				<td class="linecolnum center"><?php $coldisplay++; ?><?php echo ($i + 1); ?></td>
+		<?php }
+
+		?>
+		<td>
+			<div id="line_<?php echo $line->id; $coldisplay++; ?>"></div>
+
+			<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
+			<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
+			<?php
+
+			$text = $product->getNomUrl(1);		// PRODUCT->REF 
+			if ($product > 0)
+			{
+				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
+				print ' - '.$method->label;		// - METHOD->LABEL
+
+				print ' - '.$line->ref;	// LIMITS-ENTRY-REF
+
+			}
+			?>
+		</td>
+		
+		<td class="linecolmethod">
+			<?php
+			$coldisplay++;
+			print $method->standard;	// METHOD
+			?>
+		</td>
+		
+		<td class="linecolaccuracy center">
+			<?php
+			$coldisplay++;
+			print $method->accuracy; // Accuracy
+			?>
+		</td>
+		
+		<td class="linecolmethodunit left">
+			<?php
+			$coldisplay++;
+			print $method->unit;	// Units
+			?>
+		</td>
+		
+		<td class="linecolstandardlower center">
+			<?php $coldisplay++;	// Lower Limit
+			
+			print '<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="';
+			print $line->minimum;
+			?>
+			">
+		</td>
+
+		<td class="linecolstandardupper center">
+			<?php $coldisplay++;	// Upper Limit
+			
+			print '<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="';
+			print $line->maximum;
+			?>
+			">
+		</td>
+
+		<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
+			<input type="submit" class="button buttongen marginbottomonly" id="savelinebutton marginbottomonly" name="save" value="<?php echo $langs->trans("Save"); ?>"><br>
+			<input type="submit" class="button buttongen marginbottomonly" id="cancellinebutton" name="cancel" value="<?php echo $langs->trans("Cancel"); ?>">
+		</td>
+		<?php
+		if (is_object($objectline)) {
+			print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', 1);
+		}
+		?>
+		</tr>
+		<!-- END ObjectlineEDIT Limits LIMS -->
+		<?php
 	}
 }

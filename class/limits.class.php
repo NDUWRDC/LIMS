@@ -402,7 +402,6 @@ class Limits extends CommonObject
 	}
 
 	/**
-/**
 	 * Load object lines in memory from the database
 	 *
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
@@ -413,53 +412,7 @@ class Limits extends CommonObject
 		$this->lines = array();
 		
 		$result = $this->fetchLinesCommon();  //'rowid' => NULL, ??!!
-		dol_syslog(__METHOD__.' results='.$result, LOG_DEBUG);
-		dol_syslog(__METHOD__." this->lines=".var_export($this->lines, true), LOG_DEBUG);
 		return $result;
-		
-		
-		// copied from samples.class.php
-		/*
-		$objectlineclassname = 'LimitsLine';
-		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
-		$objectline = new $objectlineclassname($this->db);
-		$sql = 'SELECT '.$objectline->getFieldList();
-		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
-		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
-		
-		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
-			$num_rows = $this->db->num_rows($resql);
-			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
-			$i = 0;
-			while ($i < $num_rows)
-			{
-				$obj = $this->db->fetch_object($resql);
-				if ($obj)
-				{
-					$newline = new $objectlineclassname($this->db);
-					$newline->setVarsFromFetchObj($obj);
-		
-					$this->lines[$i] = $newline;
-				}
-				dol_syslog(__METHOD__." $obj=".var_export($obj, true)); 
-				dol_syslog(__METHOD__." $obj=".var_export($obj, true)); 
-				dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
-			
-				$i++;
-			}
-			return 1;
-		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			$this->errors[] = $this->error;
-			return -1;
-		}
-		
-		return $this->lines;*/
 	}
 	
 	/*
