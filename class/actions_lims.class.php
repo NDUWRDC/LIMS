@@ -342,11 +342,11 @@ class ActionsLims
 
 			// Lower Limit
 			print '<td class="linecolstandardlower center">';
-			print "";
+			print $line->minimum;
 			print '</td>';
 			// Upper Limit
 			print '<td class="linecolstandardupper center">';
-			print "";
+			print $line->maximum;
 			print '</td>';
 
 		if ($object->ref != ''){

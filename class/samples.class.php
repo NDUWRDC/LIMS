@@ -30,6 +30,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
 //require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
+require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/limits.class.php';
 
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
@@ -466,25 +467,50 @@ class Samples extends CommonObject
 		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
 		if ($morewhere)   $sql .= $morewhere;
 		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
-		$resql = $this->db->query($sql);
-		if ($resql)
+		$resqlRESULTS = $this->db->query($sql);
+		
+		$limits = new Limits ($this->db);
+		$limits->fetch($this->fk_limits);
+		$rows_limits = count($limits->lines);
+		//$filter = array('customsql' => 'fk_limits = '.$this->fk_limits);
+		//$limitlines->fetchLines();
+		//$limitlines->fetchAll('', '', '', '', $filter);
+		/*
+		$sql = 'SELECT minimum, maximum, fk_method';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_limits_entries';
+		$sql .= ' WHERE fk_limits = '.$this->fk_limits;
+		$resqlLIMITS = $this->db->query($sql);
+		*/
+		if ($resqlRESULTS)
 		{
-			$num_rows = $this->db->num_rows($resql);
+			$num_rows = $this->db->num_rows($resqlRESULTS);
 			//dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
 			$i = 0;
-			while ($i < $num_rows)
-			{
-				$obj = $this->db->fetch_object($resql);
-				if ($obj)
-				{
+			while ($i < $num_rows){	
+				$obj = $this->db->fetch_object($resqlRESULTS);
+				if ($obj){
 					$newline = new $objectlineclassname($this->db);
 					$newline->setVarsFromFetchObj($obj);
 
 					$this->lines[$i] = $newline;
+					
+					$l = 0;
+					while ($l < $rows_limits ){
+						if ($this->lines[$i]->fk_method == $limits->lines[$l]->fk_method){
+							$this->lines[$i]->minimum = $limits->lines[$l]->minimum;
+							$this->lines[$i]->maximum = $limits->lines[$l]->maximum;
+							
+							dol_syslog(" line->maximum=".var_export($this->lines[$i]->maximum, true), LOG_DEBUG);
+							dol_syslog(" limits->maximum=".var_export($limits->lines[$i]->maximum, true), LOG_DEBUG);
+							break;
+						}
+						$l++;
+					}
 				}
 				//dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
 				$i++;
 			}
+			
 			
 			return 1;
 		}

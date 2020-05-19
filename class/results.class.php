@@ -127,8 +127,9 @@ class Results extends CommonObject
 	public $rang;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-
+	public $minimum;  // CHECK IF CAN BE ACCESSED VIA SAMPLES
+	public $maximum;
+	
 	// If this object has a subtable with lines
 
 	/**
