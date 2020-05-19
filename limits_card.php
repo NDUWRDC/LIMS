@@ -434,7 +434,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			dol_syslog('Minimum ... old='.$obj->minimum.' new='.$minimum, LOG_DEBUG);
 			dol_syslog('Maximum ... old='.$obj->maximum.' new='.$maximum, LOG_DEBUG);
 			
-			$obj->minimum = $minimum;
+			$obj->minimum = (is_numeric($minimum) ? $minimum : '');
 			$obj->maximum = $maximum;
 			
 			$result = $obj->updateCommon($user);

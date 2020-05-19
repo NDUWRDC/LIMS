@@ -39,7 +39,7 @@ CREATE TABLE llx_lims_limits_entries(
 	fk_limits integer NOT NULL,
 	fk_method integer NOT NULL,
 	rang integer,
-	minimum real,
+	minimum real default NULL,
 	maximum real NOT NULL,
 	date_creation datetime NOT NULL, 
 	tms timestamp, 

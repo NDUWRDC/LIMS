@@ -1142,7 +1142,7 @@ class ActionsLims
 		}
 			// Lower Limit
 			print '<td class="linecolstandardlower center">';
-			print $line->minimum;
+			print (is_null($line->minimum) ? '' : $line->minimum);
 			print '</td>';
 			// Upper Limit
 			print '<td class="linecolstandardupper center">';
