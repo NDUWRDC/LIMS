@@ -18,6 +18,12 @@
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_rowid (rowid);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_ref (ref);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_soc (fk_soc);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_propal (fk_propal);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_facture (fk_facture);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_socpeople (fk_socpeople);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_user (fk_user);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_limits (fk_limits);
+ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_qty (qty);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_project (fk_project);
 ALTER TABLE llx_lims_samples ADD CONSTRAINT llx_lims_samples_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_status (status);
