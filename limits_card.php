@@ -191,10 +191,9 @@ if (empty($reshook))
 		}
 
 		// ERROR HANDLING
-		$checkresult = $object->CheckMinMaxValidity($minimum,$maximum);
+		$checkresult = $object->CheckLimitsEntryValidity($minimum,$maximum,$idmethod);
 		if ($checkresult == -1)
 			$error++;
-		
 		
 		// No Errors -> Add line
 		if (!$error && ($result >= 0) && !empty($idmethod)) {
@@ -402,7 +401,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		}
 
 		// Check parameters
-		$checkresult = $object->CheckMinMaxValidity($minimum,$maximum);
+		$checkresult = $object->CheckLimitsEntryValidity($minimum,$maximum);
 		if ($checkresult == -1)
 			$error++;
 				

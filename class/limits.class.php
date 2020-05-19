@@ -411,7 +411,7 @@ class Limits extends CommonObject
 		// ORIGINAL FROM MODULE BUILDER
 		$this->lines = array();
 		
-		$result = $this->fetchLinesCommon();  //'rowid' => NULL, ??!!
+		$result = $this->fetchLinesCommon();
 		return $result;
 	}
 	
@@ -1073,17 +1073,16 @@ class Limits extends CommonObject
 			$obj->rang = $ranktouse;
 			$obj->status = self::STATUS_DRAFT;
 
-			dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			//dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
 			
 			$res = $obj->create($user); //<0 if KO, Id of created object if OK
 			if ($res<0) $error++;
 			
-			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+			dol_syslog(__METHOD__." LimitsLine->create()=".$res, LOG_DEBUG);
 			
 			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
 			//if ($res >0) $error++;
 			
-			//	$result = $this->line->insert();
 			if ($error < 1)
 			{
 				// Reorder if child line
@@ -1104,27 +1103,40 @@ class Limits extends CommonObject
 		}
 	}
 	
-	public function CheckMinMaxValidity(&$minimum,$maximum)
+	public function CheckLimitsEntryValidity(&$minimum,$maximum,$idmethod='')
 	{
 		global $langs;
 		
-		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum, LOG_ERR);
+		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum.' idmethod='.$idmethod, LOG_DEBUG);
 		
 		
 		$langs->load("errors");
 		
-		// check if max and min are numbers and if min<max
-		if (is_numeric($minimum) && is_numeric($maximum))
+		// Check if method already used -> ONLY WITH NEW ENTRY
+		if (isset($idmethod))
 		{
-			if ($minimum > $maximum)
-			{
+			//$sql = 'SELECT CASE WHEN EXISTS (SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod.') THEN 1 ELSE 0 END';
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod;
+			$resql = $this->db->query($sql);
+			
+			if ($this->db->num_rows($resql) > 0) // Method already used
+			{	dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
+				$this->error = $langs->trans('ErrorMultipleLimitEntries');
+				setEventMessages($langs->trans('ErrorMultipleLimitEntries', $langs->transnoentitiesnoconv('MethodMethod')), null, 'errors');
+				
+				return -1;
+			}
+		}
+		
+		// check if max and min are numbers and if min<max
+		if (is_numeric($minimum) && is_numeric($maximum)){
+			if ($minimum > $maximum){
 				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
 				setEventMessages($langs->trans('ErrorMinimumGreaterMaximum', $langs->transnoentitiesnoconv('Minimum')), null, 'errors');
 				
 				return -1;
 			}
-			if ($minimum == $maximum)
-			{
+			if ($minimum == $maximum){
 				$this->error = $langs->trans('ErrorMinimumEqualsMaximum');
 				setEventMessages($langs->trans('ErrorMinimumEqualsMaximum', $langs->transnoentitiesnoconv('Upper')), null, 'errors');
 				return -1;
@@ -1132,24 +1144,22 @@ class Limits extends CommonObject
 		}
 		else
 		{	// check if max is number
-			if (!is_numeric($maximum))
-			{
+			if (!is_numeric($maximum)){
 				$this->error = $langs->trans('ErrorNumberNotValue');
 				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardUpperLimit')), null, 'errors');
 				return -1;
 			}
 			// check if min is number
-			if (!is_numeric($minimum))
-			{
+			if (!is_numeric($minimum)){
+				// check if min is empty
+				if ($minimum == ''){
+					$minimum = NULL;
+				}
+				else{
 				$this->error = $langs->trans('ErrorNumberNotValue');
 				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardLowerLimit')), null, 'errors');
 				return -1;
-			}
-			
-			// check if min is empty
-			if ($minimum == '')
-			{
-				$minimum = NULL;
+				}
 			}
 		}
 
@@ -1181,7 +1191,7 @@ class LimitsLine extends CommonObjectLine
 		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit set', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
 		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
-		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Lower limit",),
+		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"Lower limit",),
 		'maximum' => array('type'=>'real', 'label'=>'Maximum', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>3, 'help'=>"Upper limit",),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),

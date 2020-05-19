@@ -88,3 +88,4 @@ ErrorMaximumNotSet = Limit for maximum not a number or not set
 ErrorMinimumEqualsMaximum = Limit for maximum and minimum are the same
 ErrorNumberNotValue = Limit must be a number
 ErrorLowerLimit = Limit for minimum must be empty or a number
+ErrorMultipleLimitEntries = Method already has limits
