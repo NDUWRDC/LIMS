@@ -467,7 +467,7 @@ public $fields=array(
 		if ($resql)
 		{
 			$num_rows = $this->db->num_rows($resql);
-			dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
+			//dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
 			$i = 0;
 			while ($i < $num_rows)
 			{
@@ -479,7 +479,7 @@ public $fields=array(
 
 					$this->lines[$i] = $newline;
 				}
-				dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
+				//dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
 				$i++;
 			}
 			
