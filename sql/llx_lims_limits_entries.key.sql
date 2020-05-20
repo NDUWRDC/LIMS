@@ -1,4 +1,4 @@
--- Copyright (C) ---Put here your own copyright and developer email---
+-- Copyright (C) --- 2020 david@bensel.cc ---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,20 +13,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-
-CREATE TABLE llx_lims_limits(
-	-- BEGIN MODULEBUILDER FIELDS
-	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
-	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	label varchar(255), 
-	description text, 
-	note_public text, 
-	note_private text, 
-	date_creation datetime NOT NULL, 
-	tms timestamp, 
-	fk_user_creat integer NOT NULL, 
-	fk_user_modif integer, 
-	import_key varchar(14), 
-	status smallint NOT NULL
-	-- END MODULEBUILDER FIELDS
-) ENGINE=innodb;
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_rowid (rowid);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_ref (ref);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_fk_limits (fk_limits);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_fk_method (fk_method);
+ALTER TABLE llx_lims_limits_entries ADD CONSTRAINT llx_lims_entries_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
