@@ -336,7 +336,7 @@ class ActionsLims
 		if ($object->ref != ''){
 			// Abnormalities
 			print '<td class="linecolresultabnorm center">';
-			print $line->abnormalities;
+			print ($line->abnormalities ? 'Yes' : 'None');
 			print '</td>';
 		}
 
