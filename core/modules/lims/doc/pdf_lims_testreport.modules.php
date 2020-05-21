@@ -364,7 +364,34 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$tab_top = 90 + $top_shift;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
 				
-				// Display notes
+				// Print sample description
+				$sampledescription = empty($object->description) ? '' : $object->description;
+				if ($sampledescription)
+				{
+					$tab_top -= 2;
+					$pdf->SetFont('', 'B', $default_font_size-1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleDescription"), 0, 1);
+					$nexY = $pdf->GetY();
+					
+					$tab_top = $nexY + 1;
+					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$sampledescription = make_substitutions($sampledescription, $substitutionarray, $outputlangs);
+					$sampledescription = convertBackOfficeMediasLinksToPublicLinks($sampledescription);
+
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($sampledescription), 0, 1);
+					$nexY = $pdf->GetY();
+					$height_note = $nexY - $tab_top;
+
+					// Rect takes a length in 3rd parameter
+					$pdf->SetDrawColor(192, 192, 192);
+					$pdf->Rect($this->margin_left, $tab_top - 1, $this->page_width - $this->margin_left - $this->margin_right, $height_note + 1);
+
+					$tab_top = $nexY + 6;
+				}
+				
+				// Print notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				/*if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
 				{
@@ -380,7 +407,11 @@ class pdf_lims_testreport extends CommonDocGenerator
 				if ($notetoshow)
 				{
 					$tab_top -= 2;
-
+					$pdf->SetFont('', 'B', $default_font_size-1);
+					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleNote"), 0, 1);
+					$nexY = $pdf->GetY();
+					
+					$tab_top = $nexY + 1;
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
 					$notetoshow = make_substitutions($notetoshow, $substitutionarray, $outputlangs);
@@ -879,7 +910,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$posy += 1;
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		// CLIENT REF --- NOT USED
+		// CLIENT REF --- NOT USED BY SAMPLE
 		if ($object->ref_client)
 		{
 			$posy += 4;
@@ -947,31 +978,26 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CorrectionInvoice").' : '.$outputlangs->convToOutputCharset($objectreplaced->ref), '', 'R');
 		}
 */
-		// SHOW DATE OF REPORT
+
+		// SHOW DATE OF SAMPLING
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateReport")." : ".dol_print_date($object->date_creation, "day", false, $outputlangs), '', 'R');
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampling")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		// SHOW DATE OF SAMPLE RECEIPT
+		$posy += 3;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampleReceived")." : ".dol_print_date($object->date_arrival, "day", false, $outputlangs, true), '', 'R');
+		// SHOW DATE OF REPORT
+		$posy += 3;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateReport")." : ".dol_print_date($object->tms, "day", false, $outputlangs), '', 'R');
 		
-		/*if (!empty($conf->global->INVOICE_POINTOFTAX_DATE))
-		{
-			$posy += 4;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DatePointOfTax")." : ".dol_print_date($object->date_pointoftax, "day", false, $outputlangs), '', 'R');
-		}*/
-
-		if ($object->type != 2)
-		{
-			$posy += 3;
-			$pdf->SetXY($posx, $posy);
-			$pdf->SetTextColor(0, 0, 60);
-			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateDue")." : ".dol_print_date($object->date_lim_reglement, "day", false, $outputlangs, true), '', 'R');
-		}
-
 		if ($object->thirdparty->code_client)
 		{
-			$posy += 3;
+			$posy += 4;
 			$pdf->SetXY($posx, $posy);
 			$pdf->SetTextColor(0, 0, 60);
 			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("CustomerCode")." : ".$outputlangs->transnoentities($object->thirdparty->code_client), '', 'R');
