@@ -78,6 +78,11 @@ TestingTechnician = Test perfomed by:
 #
 PdfSampleTitle = Test Report
 PDFlims_testreportDescription = PDF to show test results for a sample
+DateReport = Date
+ReportTitleAbnormalities = Abnormalities
+ReportTitleMinimum = Min.
+ReportTitleMaximum = Max.
+ReportTitleAccuracy = Accuracy
 
 #
 # Limits

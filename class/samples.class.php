@@ -500,6 +500,7 @@ class Samples extends CommonObject
 							$this->lines[$i]->minimum = $limits->lines[$l]->minimum;
 							$this->lines[$i]->maximum = $limits->lines[$l]->maximum;
 							
+							// DEFINE LABEL HERE??$this->lines[$i]->label = ...
 							//dol_syslog(" line->maximum=".var_export($this->lines[$i]->maximum, true), LOG_DEBUG);
 							//dol_syslog(" limits->maximum=".var_export($limits->lines[$i]->maximum, true), LOG_DEBUG);
 							break;

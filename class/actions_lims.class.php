@@ -1305,4 +1305,28 @@ class ActionsLims
 		<!-- END ObjectlineEDIT Limits LIMS -->
 		<?php
 	}
+	
+	function pdf_writelinedesc($parameters, &$object, &$action, $hookmanager)
+	{
+		//$parameters = array('pdf'=>$pdf, 'i'=>$i, 'outputlangs'=>$outputlangs, 'w'=>$w, 'h'=>$h, 'posx'=>$posx, 'posy'=>$posy, 'hideref'=>$hideref, 'hidedesc'=>$hidedesc, 'issupplierline'=>$issupplierline, 'special_code'=>$special_code);
+		
+		$w = $parameters['w'];
+		$h = $parameters['h'];
+		$posx = $parameters['posx']; 
+		$posy = $parameters['posy'];
+		$pdf = $parameters['pdf'];
+		$outputlangs = $parameters['outputlangs'];
+		$i = $parameters['i'];
+		
+		$method = new Methods($object->db);
+		$method->fetch($object->lines[$i]->fk_method);
+		$product = new Product($object->db);
+		$product->fetch($method->fk_product);
+				
+		$labelproductservice = $method->label;
+		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$result = $labelproductservice;
+	
+		//return $result;
+	}
 }
