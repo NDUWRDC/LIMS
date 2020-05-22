@@ -182,7 +182,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		
 		$this->posxstandard = 60;
 		$this->posxaccuracy = 90;
-		$this->posxabnormality = 110;
+		$this->posxtestdate = 110;
 		$this->posxminimum = 135;
 		$this->posxmaximum = 150;
 		$this->posxresult= 165;
@@ -196,7 +196,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			
 			$this->posxstandard -= 20;
 			$this->posxaccuracy -= 20;
-			$this->posxabnormality -= 20;
+			$this->posxtestdate -= 20;
 			$this->posxminimum -= 20;
 			$this->posxmaximum -= 20;
 			$this->posxresult -= 20;
@@ -607,13 +607,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 					// Accuracy 
 					$accuracy = $method->accuracy;
 					$pdf->SetXY($this->posxaccuracy, $curY);
-					$pdf->MultiCell($this->posxabnormality - $this->posxaccuracy, 3, $accuracy, 0, 'C');
+					$pdf->MultiCell($this->posxtestdate - $this->posxaccuracy, 3, $accuracy, 0, 'C');
 
-					// Abnormality
-					// TODO Translate YES / NONE
-					$abnormalities = ($object->lines[$i]->abnormalities ? $outputlangs->transnoentities("Yes") : $outputlangs->transnoentities("No"));
-					$pdf->SetXY($this->posxabnormality, $curY);
-					$pdf->MultiCell($this->posxminimum - $this->posxabnormality, 3, $abnormalities, 0, 'C'); // Enough for 6 chars
+					// Test-Date
+					$testdate = dol_print_date($object->lines[$i]->end, 'dayrfc');
+					$pdf->SetXY($this->posxtestdate, $curY);
+					$pdf->MultiCell($this->posxminimum - $this->posxtestdate, 3, $testdate, 0, 'C'); // Enough for 6 chars
 
 					// Minimum
 					$minimum = $object->lines[$i]->minimum;
@@ -827,15 +826,15 @@ class pdf_lims_testreport extends CommonDocGenerator
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxaccuracy, $tab_top + 1);
-			$pdf->MultiCell($this->posxabnormality - $this->posxaccuracy - 1, 2, $outputlangs->transnoentities("ReportTitleAccuracy"), '', 'C');
+			$pdf->MultiCell($this->posxtestdate - $this->posxaccuracy - 1, 2, $outputlangs->transnoentities("ReportTitleAccuracy"), '', 'C');
 		}
 
-		// ABNORMALITIES
-		$pdf->line($this->posxabnormality - 1, $tab_top, $this->posxabnormality - 1, $tab_top + $tab_height);
+		// TESTDATE
+		$pdf->line($this->posxtestdate - 1, $tab_top, $this->posxtestdate - 1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxabnormality, $tab_top + 1);
-			$pdf->MultiCell($this->posxminimum - $this->posxabnormality - 1, 2, $outputlangs->transnoentities("ReportTitleAbnormalities"), '', 'C');
+			$pdf->SetXY($this->posxtestdate, $tab_top + 1);
+			$pdf->MultiCell($this->posxminimum - $this->posxtestdate - 1, 2, $outputlangs->transnoentities("ReportTitleDate"), '', 'C');
 		}
 
 		// MINIMUM

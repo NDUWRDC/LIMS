@@ -88,6 +88,7 @@ HeaderSamplePerson = Sampling person
 ReportTitleNum = No.
 ReportTitleDescription = Description
 ReportTitleAbnormalities = Abnormalities
+ReportTitleDate = Date
 ReportTitleMinimum = Min.
 ReportTitleMaximum = Max.
 ReportTitleAccuracy = Accuracy
