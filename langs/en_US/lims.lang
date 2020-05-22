@@ -83,10 +83,17 @@ DateSampling = Sampling done on
 DateSampleReceived = Sample received on
 HeaderSampleDescription = Sample description
 HeaderSampleNote = Remark
+HeaderSamplePlace = Sampling place
+HeaderSamplePerson = Sampling person
+ReportTitleNum = No.
+ReportTitleDescription = Description
 ReportTitleAbnormalities = Abnormalities
 ReportTitleMinimum = Min.
 ReportTitleMaximum = Max.
 ReportTitleAccuracy = Accuracy
+ReportStatementA = The results relate only to the items tested.
+ReportStatementB = If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
+ReportTestsWithAbnormalities = The tests with the following line number experienced abnormalities: 
 
 #
 # Limits

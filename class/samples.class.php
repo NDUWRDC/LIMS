@@ -1232,6 +1232,13 @@ class Samples extends CommonObject
 			return -3;
 		}
 	}
+
+	public function getuserlist ($userarray)
+	{
+		$userlist = array();
+
+		return $userlist;
+	}
 }
 
 /**

@@ -160,7 +160,8 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->margin_right = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
 		$this->margin_top = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
 		$this->margin_bottom = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
-
+		$this->page_textwidth = $this->page_width - $this->margin_right - $this->margin_right; // =196 as opposed to 190 used in code for boxes spanning the whole width.
+		
 		$this->option_logo = 1; // Display logo
 		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
@@ -172,7 +173,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 		if (empty($this->issuer->country_code)) $this->issuer->country_code = substr($langs->defaultlang, -2); // By default, if was not defined
 
 		// Define position of columns
+		$this->posxnum = $this->margin_left + 1;
+		$this->numwidth = 10;
 		$this->posxdesc = $this->margin_left + 1;
+		$this->posxsampleplace = 120;
+		$this->posxsampleperson = 165;
+		$this->sample_gap = 5;
 		
 		$this->posxstandard = 60;
 		$this->posxaccuracy = 90;
@@ -185,6 +191,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->posxpicture = $this->posxstandard - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		if ($this->page_width < 210) // To work with US executive format
 		{
+			$this->posxsampleplace -= 20;
+			$this->posxsampleperson -= 20;
+			
 			$this->posxstandard -= 20;
 			$this->posxaccuracy -= 20;
 			$this->posxabnormality -= 20;
@@ -302,7 +311,7 @@ class pdf_lims_testreport extends CommonDocGenerator
                 $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
                 $pdf->SetAutoPageBreak(1, 0);
 
-                $heightforinfotot = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+                $heightforinfotests = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
 		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 	            $heightforfooter = $this->margin_bottom + 8; // Height reserved to output the footer (value include bottom margin)
 	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
@@ -370,9 +379,10 @@ class pdf_lims_testreport extends CommonDocGenerator
 				{
 					$tab_top -= 2;
 					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleDescription"), 0, 1);
-					$nexY = $pdf->GetY();
+					$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleDescription"), 0, 1);
+					$tab_top_sampleplace = $tab_top;
 					
+					$nexY = $pdf->GetY();
 					$tab_top = $nexY + 1;
 					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
 					complete_substitutions_array($substitutionarray, $outputlangs, $object);
@@ -380,35 +390,86 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$sampledescription = convertBackOfficeMediasLinksToPublicLinks($sampledescription);
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($sampledescription), 0, 1);
+					$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($sampledescription), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->margin_left, $tab_top - 1, $this->page_width - $this->margin_left - $this->margin_right, $height_note + 1);
+					$pdf->Rect($this->margin_left, $tab_top - 1, $this->posxsampleplace - $this->posxdesc, $height_note + 1);
 
-					$tab_top = $nexY + 6;
+					$tab_top_note = $nexY + 6;
+				}
+				
+				// Print Sampling Place 
+				$sample_place = empty($object->place) ? '' : $object->place;
+				$lon = empty($object->place_lon) ? '' : $object->place_lon;
+				$lat = empty($object->place_lat) ? '' : $object->place_lat;
+				if( !empty($lon) && !empty($lat) ) $sample_place .= '<br />'.$lon.' | '.$lat;
+				
+				if ($sample_place)
+				{
+					$pdf->SetFont('', 'B', $default_font_size-1);
+					$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePlace"), 0, 1);
+
+					$nexY = $pdf->GetY();
+					$tab_top = $nexY + 1;
+					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$sample_place = make_substitutions($sample_place, $substitutionarray, $outputlangs);
+					$sample_place = convertBackOfficeMediasLinksToPublicLinks($sample_place);
+
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top - 1, dol_htmlentitiesbr($sample_place), 0, 1);
+					$nexY = $pdf->GetY();
+					$height_note = $nexY - $tab_top;
+
+					// Rect takes a length in 3rd parameter
+					$pdf->SetDrawColor(192, 192, 192);
+					$pdf->Rect($this->posxsampleplace, $tab_top - 1, $this->posxsampleperson - $this->posxsampleplace - 1, $height_note + 1);
+				}
+				
+				// Print Sampling Person
+				// TODO: fk_socpeople not yet working!!
+				// $sample_person_user = empty($object->fk_user) ? '' : $object->fk_user;
+				if ( empty($object->fk_user) )
+					$sample_person_user = '';
+				else{
+					$userobj = new User($object->db);
+					$userobj->fetch($object->fk_user);
+					$sample_person_user = $userobj->firstname.' '.$userobj->lastname;
+				}
+				if ($sample_person_user)
+				{
+					$pdf->SetFont('', 'B', $default_font_size-1);
+					$pdf->writeHTMLCell($this->page_textwidth - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePerson"), 0, 1);
+
+					$nexY = $pdf->GetY();
+					$tab_top = $nexY + 1;
+					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+					complete_substitutions_array($substitutionarray, $outputlangs, $object);
+					$sample_person_user = make_substitutions($sample_person_user, $substitutionarray, $outputlangs);
+					$sample_person_user = convertBackOfficeMediasLinksToPublicLinks($sample_person_user);
+
+					$pdf->SetFont('', '', $default_font_size - 1);
+					$pdf->writeHTMLCell($this->page_textwidth - $this->posxsampleplace, 3, $this->posxsampleperson, $tab_top - 1, dol_htmlentitiesbr($sample_person_user), 0, 1);
+					$nexY = $pdf->GetY();
+					$height_note = $nexY - $tab_top;
+
+					// Rect takes a length in 3rd parameter
+					$pdf->SetDrawColor(192, 192, 192);
+					$pdf->Rect($this->posxsampleperson, $tab_top - 1, $this->page_width - $this->margin_right - $this->posxsampleperson, $height_note + 1);
 				}
 				
 				// Print notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				/*if (!empty($conf->global->MAIN_ADD_SALE_REP_SIGNATURE_IN_NOTE))
-				{
-					// Get first sale rep
-					if (is_object($object->thirdparty))
-					{
-						$salereparray = $object->thirdparty->getSalesRepresentatives($user);
-						$salerepobj = new User($this->db);
-						$salerepobj->fetch($salereparray[0]['id']);
-						if (!empty($salerepobj->signature)) $notetoshow = dol_concatdesc($notetoshow, $salerepobj->signature);
-					}
-				}*/
+				
 				if ($notetoshow)
-				{
-					$tab_top -= 2;
+				{	
+					$tab_top = $tab_top_note - 2;
+					//$tab_top -= 2;
 					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleNote"), 0, 1);
+					$pdf->writeHTMLCell($this->page_textwidth, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleNote"), 0, 1);
 					$nexY = $pdf->GetY();
 					
 					$tab_top = $nexY + 1;
@@ -424,7 +485,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->margin_left, $tab_top - 1, $this->page_width - $this->margin_left - $this->margin_right, $height_note + 1);
+					$pdf->Rect($this->margin_left, $tab_top - 1, $this->page_textwidth, $height_note + 1);
 
 					$tab_top = $nexY + 6;
 				}
@@ -449,7 +510,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotests); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -457,7 +518,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$posYAfterDescription = 0;
 
 					// We start with Photo of product line
-					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// If photo too high, we moved completely on new page
+					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotests)))	// If photo too high, we moved completely on new page
 					{
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -497,8 +558,8 @@ class pdf_lims_testreport extends CommonDocGenerator
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, 3, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
-						//var_dump($posyafter); var_dump(($this->page_height - ($heightforfooter+$heightforfreetext+$heightforinfotot))); exit;
-						if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
+						//var_dump($posyafter); var_dump(($this->page_height - ($heightforfooter+$heightforfreetext+$heightforinfotests))); exit;
+						if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotests)))	// There is no space left for total+free text
 						{
 							if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 							{
@@ -628,28 +689,18 @@ class pdf_lims_testreport extends CommonDocGenerator
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_height - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforinfotests - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_height - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforinfotests - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
 				}
 
-				/*
-				// Display info area
-				$posy = $this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
+				// Display info area, maximal height=heightforinfotests
+				$posy = $this->tests_info($pdf, $object, $bottomlasttab, $outputlangs);
 
-				// Display total area
-				$posy = $this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
-
-				// Display Payments area
-				if (($deja_regle || $amount_credit_notes_included || $amount_deposits_included) && empty($conf->global->INVOICE_NO_PAYMENT_DETAILS))
-				{
-					$posy = $this->_tableau_versements($pdf, $object, $posy, $outputlangs, $heightforfooter);
-				}
-				*/
 				// Pagefoot
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
@@ -737,12 +788,20 @@ class pdf_lims_testreport extends CommonDocGenerator
 		// Output Rect
 		$this->printRect($pdf, $this->margin_left, $tab_top, $this->page_width - $this->margin_left - $this->margin_right, $tab_height, $hidetop, $hidebottom); // Rect takes a length in 3rd parameter and 4th parameter
 
+		// Number
+		$pdf->line($this->posxnum - 1, $tab_top, $this->posxnum - 1, $tab_top + $tab_height);
+		if (empty($hidetop))
+		{
+			$pdf->SetXY($this->posxnum - 1, $tab_top + 1);
+			$pdf->MultiCell($this->posxdesc - $this->posxnum + 3, 2, $outputlangs->transnoentities("ReportTitleNum"), '', 'L');
+		}
+		
 		if (empty($hidetop))
 		{
 			$pdf->line($this->margin_left, $tab_top + 5, $this->page_width - $this->margin_right, $tab_top + 5); // line takes a position y in 2nd parameter and 4th parameter
 
 			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);
-			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("Designation"), '', 'L');
+			$pdf->MultiCell(108, 2, $outputlangs->transnoentities("ReportTitleDescription"), '', 'L');
 		}
 
 		if (!empty($conf->global->MAIN_GENERATE_INVOICES_WITH_PICTURE))
@@ -754,7 +813,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$pdf->MultiCell($this->posxstandard-$this->posxpicture-1,2, $outputlangs->transnoentities("Photo"),'','C');
 			}
 		}
-
+		
 		// STANDARD (ISO ...)
 		$pdf->line($this->posxstandard - 1, $tab_top, $this->posxstandard - 1, $tab_top + $tab_height);
 		if (empty($hidetop))
@@ -808,6 +867,53 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
 			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("MethodUnit"), '', 'L');
 		}
+	}
+	
+	/* Function shall print a note like:
+		The results relate only to the items tested.
+		If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
+		<optional: Test 1,3,5 performed at __other laboratory__.
+		<optional: Test 2 showed abormality.
+	*/
+	public function tests_info(&$pdf, $object, $posy, $outputlangs)
+	{
+		global $conf, $langs;
+
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("lims@lims"));
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		$pdf->SetFont('', '', $default_font_size - 1);
+
+		$pdf->SetXY($this->margin_left, $posy);
+		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementA"), 0, 'L', 0);
+		$posy = $pdf->GetY() + 2;
+		
+		$pdf->SetXY($this->margin_left, $posy);
+		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementB"), 0, 'L', 0);
+		$posy = $pdf->GetY() + 2;
+		
+		// If tests with 'abnormality' set
+		$nblines = count($object->lines);
+		$i = 0;
+		$abnormalitiesfound = false;
+		$abnormalities = $outputlangs->transnoentities("ReportTestsWithAbnormalities");
+		while ($i < $nblines)
+		{
+			if ($object->lines[$i]->abnormalities){
+				$abnormalities .= '('.$i.')';
+				$abnormalitiesfound = true;
+			}
+			$i++;
+		}
+		if ($abnormalitiesfound){
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->MultiCell($this->page_textwidth, 2, $abnormalities, 0, 'L', 0);
+			$posy = $pdf->GetY() + 3;
+		}
+
+		return $posy;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore

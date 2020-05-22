@@ -1324,7 +1324,11 @@ class ActionsLims
 		$product->fetch($method->fk_product);
 				
 		$labelproductservice = $method->label;
-		$pdf->writeHTMLCell($w, $h, $posx, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		
+		// Print Number starting with 1
+		$pdf->writeHTMLCell(7, $h, $posx, $posy, $i+1, 0, 1, false, true, 'J', true);
+		// Print Description
+		$pdf->writeHTMLCell($w-7, $h, $posx+7, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
 		$result = $labelproductservice;
 	
 		//return $result;
