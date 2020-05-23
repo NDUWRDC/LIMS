@@ -626,8 +626,13 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 					// Result
 					$result = $object->lines[$i]->result;
+					// check if min/max is set and $result outside min/max
+					if ( (!is_null($minimum) && $result < $minimum) || (!is_null($maximum) && $result > $maximum) )
+						$pdf->SetFont('', 'B', $default_font_size - 1); // Make bold if outside min/max
+					
 					$pdf->SetXY($this->posxresult, $curY);
 					$pdf->MultiCell($this->posxunit - $this->posxresult, 3, $result, 0, 'C');
+					$pdf->SetFont('', '', $default_font_size - 1); // in any case reset text style
 
 					// Unit
 					$unit = $method->unit;
