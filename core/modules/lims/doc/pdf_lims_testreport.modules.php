@@ -437,7 +437,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				else{
 					$userobj = new User($object->db);
 					$userobj->fetch($object->fk_user);
-					$sample_person_user = $userobj->firstname.' '.$userobj->lastname;
+					$sample_person_user = $userobj->getFullName($outputlangs);
 				}
 				if ($sample_person_user)
 				{
@@ -883,6 +883,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 	{
 		global $conf, $langs;
 
+		dol_syslog(__METHOD__, LOG_DEBUG);
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("lims@lims"));
 
@@ -892,22 +893,33 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 		$pdf->SetXY($this->margin_left, $posy);
 		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementA"), 0, 'L', 0);
-		$posy = $pdf->GetY() + 2;
+		$posy = $pdf->GetY() + 1;
 		
 		$pdf->SetXY($this->margin_left, $posy);
 		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementB"), 0, 'L', 0);
-		$posy = $pdf->GetY() + 2;
+		$posy = $pdf->GetY() + 1;
 		
 		// If tests with 'abnormality' set
 		$nblines = count($object->lines);
 		$i = 0;
 		$abnormalitiesfound = false;
 		$abnormalities = $outputlangs->transnoentities("ReportTestsWithAbnormalities");
+		
+		// Technicians array
+		$technician_arr = array();
+		$technician_arr_i = 0;
+		
 		while ($i < $nblines)
 		{
 			if ($object->lines[$i]->abnormalities){
 				$abnormalities .= '('.$i.')';
 				$abnormalitiesfound = true;
+			}
+			
+			if (!in_array($object->lines[$i]->fk_user, $technician_arr)){
+				$technician_arr[$technician_arr_i] = $object->lines[$i]->fk_user;
+				$technician_arr_i++;
+				dol_syslog('technician_arr='.var_export($technician_arr,true), LOG_DEBUG);
 			}
 			$i++;
 		}
@@ -916,7 +928,26 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$pdf->MultiCell($this->page_textwidth, 2, $abnormalities, 0, 'L', 0);
 			$posy = $pdf->GetY() + 3;
 		}
-
+		
+		// Show responsible person
+		$responsible = $outputlangs->transnoentities("ReportResponsible").'<br />';
+		$technician = new User($this->db);
+		$i = 0;
+		while ($i < $technician_arr_i)
+		{
+			$technician->fetch($technician_arr[$i]);
+			$responsible .= $technician->getFullName($outputlangs).' ('.$technician->job.')';
+			if ($technician_arr_i > 0 && $i != $technician_arr)
+				$responsible .= '<br />';
+			
+			$i++;
+		}
+		
+		$pdf->SetXY($this->margin, $posy);
+		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
+		//$pdf->MultiCell($this->page_textwidth, 2, $responsible, 0, 'L', 0);
+		$posy = $pdf->GetY() + 3;
+			
 		return $posy;
 	}
 
