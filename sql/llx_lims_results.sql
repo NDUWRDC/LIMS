@@ -20,6 +20,7 @@ CREATE TABLE llx_lims_results(
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	fk_samples integer NOT NULL, 
 	fk_user integer NOT NULL, 
+	fk_user_approval integer NOT NULL, 
 	fk_method integer NOT NULL, 
 	result real NOT NULL, 
 	start datetime NOT NULL, 

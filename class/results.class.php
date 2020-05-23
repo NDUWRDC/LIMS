@@ -97,6 +97,7 @@ class Results extends CommonObject
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'fk_samples' => array('type'=>'integer:Samples:lims/class/samples.class.php', 'label'=>'Sample', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Technician', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>3, 'index'=>1, 'help'=>"Responsible lab technician",),
+		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>21, 'notnull'=>1, 'visible'=>5, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
 		'result' => array('type'=>'real', 'label'=>'Result', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'help'=>"Test result",),
 		'start' => array('type'=>'datetime', 'label'=>'Start time', 'enabled'=>1, 'position'=>35, 'notnull'=>1, 'visible'=>3, 'help'=>"Time procedure started",),
@@ -114,6 +115,7 @@ class Results extends CommonObject
 	public $ref;
 	public $fk_samples;
 	public $fk_user;
+	public $fk_user_approval;
 	public $fk_method;
 	public $result;
 	public $start;
@@ -130,7 +132,7 @@ class Results extends CommonObject
 	public $minimum;	// ACCESSED VIA SAMPLES
 	public $maximum;
 	
-	public $label;		// ?? Maybe later userd for report
+	public $label;		// Later may be user for printing report
 	// If this object has a subtable with lines
 
 	/**
