@@ -22,6 +22,7 @@ ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_propal (fk_propal);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_facture (fk_facture);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_socpeople (fk_socpeople);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_user (fk_user);
+ALTER TABLE llx_lims_results ADD INDEX idx_lims_results_fk_user_approval (fk_user_approval);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_limits (fk_limits);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_qty (qty);
 ALTER TABLE llx_lims_samples ADD INDEX idx_lims_samples_fk_project (fk_project);

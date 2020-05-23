@@ -23,6 +23,7 @@ CREATE TABLE llx_lims_samples(
 	fk_facture integer, 
 	fk_socpeople integer, 
 	fk_user integer, 
+	fk_user_approval integer,
 	label varchar(255) NOT NULL, 
 	volume real NOT NULL, 
 	qty integer NOT NULL, 

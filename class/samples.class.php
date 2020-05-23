@@ -107,6 +107,7 @@ class Samples extends CommonObject
 		'fk_facture' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Customer Invoice', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Customer Invoice",),
 		'fk_socpeople' => array('type'=>'integer:Contacts:Contacts/class/contact.class.php:1', 'label'=>'Client sample taker', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"If client did the sampling",),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Laboratory Sample taker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Own lab techician",),
+		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>5, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
 		'volume' => array('type'=>'real', 'label'=>'Volume [liter]', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Total volume in liters of all containers and bottles",),
 		'qty' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"Amount of containers or bottles",),
@@ -136,6 +137,7 @@ class Samples extends CommonObject
 	public $fk_facture;
 	public $fk_socpeople;
 	public $fk_user;
+	public $fk_user_approval;
 	public $label;
 	public $volume;
 	public $qty;
