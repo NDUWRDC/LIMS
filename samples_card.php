@@ -196,7 +196,9 @@ if (empty($reshook))
 					$line->validate($user);
 					dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
 				}
-			
+			// save person who validated
+			$object->fk_user_approval = $user->id;
+			$object->update($user);
 			}
 		}
 	}

@@ -931,12 +931,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 		
 		// Show responsible person
 		$responsible = $outputlangs->transnoentities("ReportResponsible").'<br />';
-		$technician = new User($this->db);
+		$signingperson = new User($this->db);
 		$i = 0;
 		while ($i < $technician_arr_i)
 		{
-			$technician->fetch($technician_arr[$i]);
-			$responsible .= $technician->getFullName($outputlangs).' ('.$technician->job.')';
+			$signingperson->fetch($technician_arr[$i]);
+			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 			if ($technician_arr_i > 0 && $i != $technician_arr)
 				$responsible .= '<br />';
 			
@@ -945,9 +945,17 @@ class pdf_lims_testreport extends CommonDocGenerator
 		
 		$pdf->SetXY($this->margin, $posy);
 		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
-		//$pdf->MultiCell($this->page_textwidth, 2, $responsible, 0, 'L', 0);
 		$posy = $pdf->GetY() + 3;
+		
+		$responsible = $outputlangs->transnoentities("ReportAuthorizing").'<br />';
+		$signingperson->fetch($object->fk_user_approval);
+		
+		$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 			
+		$pdf->SetXY($this->margin, $posy);
+		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
+		$posy = $pdf->GetY() + 3;
+				
 		return $posy;
 	}
 

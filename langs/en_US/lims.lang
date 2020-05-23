@@ -96,6 +96,7 @@ ReportStatementA = The results relate only to the items tested.
 ReportStatementB = If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
 ReportTestsWithAbnormalities = The tests with the following line number experienced abnormalities: 
 ReportResponsible = Responsible for report content: 
+ReportAuthorizing = Validated by:
 #
 # Limits
 #
