@@ -42,7 +42,7 @@ $outjson = (GETPOST('outjson', 'int') ? GETPOST('outjson', 'int') : 0);
 $action = GETPOST('action', 'alpha');
 $idprod = GETPOST('idprod', 'int');
 $idmethod = GETPOST('idmethod', 'int');
-
+$idsample = GETPOST('idsample', 'int');
 
 /*
  * View
@@ -73,28 +73,34 @@ if (!empty($action) && $action == 'fetch' && !empty($idprod))
 	echo json_encode($outjson);
 }
 
-if (!empty($action) && $action == 'fetch' && !empty($idmethod))
+if (!empty($action) && $action == 'fetch' && !empty($idmethod) && !empty($idsample))
 {
-	// action='getMethods' is used to get list of methods related to one product -> id must be the product id.
+	//to get label, accuracy and unit of methods and min/max of limits
 	
 	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
-
+	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/samples.class.php';
+	
+	dol_syslog('methods_ajax action=fetch idmethod='.$idmethod.' idsample='.$idsample, LOG_DEBUG);
+	
 	$method = new Methods($db);
 	$method->fetch($idmethod);
 	
-	// ToDo: link to new table lims_limits
-	dol_syslog('action=fetch?idmethod='.$idmethod.' $method='.var_export($method, true), LOG_DEBUG);
+	$sample = new Samples($db);
+	$sample->fetch($idsample);
+	
+	$minmax = array();
 	
 	if ($method){
 		$label = $method->standard;
 		$accuracy = $method->accuracy;
-		//$lower = $method->lower;
-		//$upper = $method->upper;
+		$minmax = $method->getLimits($sample->fk_limits);
+		$lower = $minmax['min'];
+		$upper = $minmax['max'];
 		$unit = $method->unit;
 	}
 	
 	$outjson = array();
-	$outjson = array('label'=>$label, 'accuracy'=>$accuracy, 'lower'=>$lower, 'upper'=>$upper,'unit'=>$unit);
+	$outjson = array('label'=>$label, 'accuracy'=>$accuracy, 'lower'=>$lower, 'upper'=>$upper, 'unit'=>$unit);
 	
 	echo json_encode($outjson);
 }

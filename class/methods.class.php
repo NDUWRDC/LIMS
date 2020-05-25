@@ -1040,6 +1040,36 @@ class Methods extends CommonObject
 
 		return $error;
 	}
+	
+	public function getLimits($fk_limit, $id='')
+	{
+		$minmax = array();
+		
+		if (empty($id))
+			$id = $this->id;
+		
+		$limits = new Limits($this->db);
+		$limits->fetch($fk_limit);
+		if ($limits){
+			$limits->fetchLines();
+			
+			$rows_limits = count($limits->lines);
+			
+			$i=0;
+			while ($i < $rows_limits){
+				if ($id == $limits->lines[$i]->fk_method){
+					$minmax['min'] = $limits->lines[$i]->minimum;
+					$minmax['max'] = $limits->lines[$i]->maximum;
+					break;
+				}
+				$i++;
+			}
+			//dol_syslog(__METHOD__.' minmax='.var_export($minmax,true), LOG_DEBUG);
+			return $minmax;
+		}
+		else
+			return -1;
+	}
 }
 
 /**

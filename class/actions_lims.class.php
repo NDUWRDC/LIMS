@@ -623,7 +623,7 @@ class ActionsLims
 				
 				//$.post('<?php echo dol_buildpath("lims"); ?> /methods_ajax.php?action=fetch',
 				$.post('<?php echo DOL_URL_ROOT; ?>/custom/lims/methods_ajax.php?action=fetch',
-				{ 'idmethod': $(this).val() },
+				{ 'idmethod': $(this).val(), 'idsample':<?php echo $object->id ?> },
 					function(data) {
 							jQuery("#MethodStandard").val(data.label);
 							jQuery("#MethodAccuracy").val(data.accuracy);
