@@ -503,7 +503,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			//$obj->fk_samples = $this->id;
 			//$obj->fk_method = $fk_method;
 			//$obj->rang = $ranktouse;
-			//$obj->status = self::STATUS_DRAFT;
+			$obj->status = Results::STATUS_DRAFT; // Line (Result) set to STATUS_DRAFT -> ID is unchanged => no use of it for now
 			
 			$obj->fk_user		 = $fk_user;
 			$obj->result		 = $testresult;
@@ -512,7 +512,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$obj->abnormalities	 = $abnormalities;
 			
 			$result = $obj->updateCommon($user);
-			
 			// method not defined:
 			//$object->updateline($abnormalities, $testresult, $fk_user, $date_start, $date_end,);
 		
