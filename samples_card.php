@@ -150,6 +150,42 @@ if (empty($reshook))
 	}
 	$triggermodname = 'LIMS_SAMPLES_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	// Do this before the report gets printed
+	// In addition also validate all the lines -> Results
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
+	{
+		dol_syslog('Samples object with ref='.$object->ref.' ... validate lines', LOG_DEBUG);
+		$result = new Results($object->db);
+			
+		foreach ($object->lines as $line){
+			$result->fetch($line->fk_result);
+			
+			//dol_syslog('--- $line='.var_export($line,true), LOG_DEBUG);
+			
+			//dol_syslog('--- $result='.var_export($result,true), LOG_DEBUG);
+			If ($line->status == $result::STATUS_DRAFT){
+				$line->validate($user);
+				dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
+			}
+		}
+		// save person who validated
+		$object->fk_user_approval = $user->id;
+		$object->update($user);
+		dol_syslog('action=confirm_validate && confirm=yes fk_user_approval='.$object->fk_user_approval, LOG_DEBUG);
+	}
+	// Action setdraft object
+	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
+	{
+		dol_syslog('action=confirm_setdraft && confirm=yes', LOG_DEBUG);
+		// reset person who validated to null
+		$object->fk_user_approval = NULL;
+		$object->update($user);
+		
+		//force report to be printed again
+		// Generate Document
+		$object->PrintReport();
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -173,34 +209,6 @@ if (empty($reshook))
 	{
 		dol_syslog('setProject(GETPOST(projectid, int)', LOG_DEBUG);
 		$object->setProject(GETPOST('projectid', 'int'));
-	}
-	
-	// In addition also validate all the lines -> Results
-	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
-	{
-		if ($object->error || $object->status == $object::STATUS_DRAFT){
-			// object not validated
-		}
-		else {
-			// object validated
-			dol_syslog('Samples object with ref='.$object->ref.' ... validate lines', LOG_DEBUG);
-			$result = new Results($object->db);
-				
-			foreach ($object->lines as $line){
-				$result->fetch($line->fk_result);
-				
-				dol_syslog('--- $line='.var_export($line,true), LOG_DEBUG);
-				
-				//dol_syslog('--- $result='.var_export($result,true), LOG_DEBUG);
-				If ($line->status == $result::STATUS_DRAFT){
-					$line->validate($user);
-					dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
-				}
-			// save person who validated
-			$object->fk_user_approval = $user->id;
-			$object->update($user);
-			}
-		}
 	}
 	
 	// Add a new line
@@ -266,24 +274,8 @@ if (empty($reshook))
 
 			
 			if ($result > 0){
-				// Define output language and generate document
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-				{
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-						$outputlangs->load('products');
-					}
-					$model = $object->modelpdf;
-					$ret = $object->fetch($id); // Reload to get new records
-
-					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-				}
+				// Generate Document
+				$object->PrintReport();
 
 				unset($_POST['rang']);
 				unset($_POST['userid']);
@@ -530,24 +522,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		
 			if ($result > 0)
 			{
-				// Define output language and generate document
-				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
-				{
-					$outputlangs = $langs;
-					$newlang = '';
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
-					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
-					if (!empty($newlang)) {
-						$outputlangs = new Translate("", $conf);
-						$outputlangs->setDefaultLang($newlang);
-						$outputlangs->load('products');
-					}
-					$model = $object->modelpdf;
-					$ret = $object->fetch($id); // Reload to get new records
-
-					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
-					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
-				}
+				// Generate Document
+				$object->PrintReport();
 
 				unset($_POST['rang']);
 				unset($_POST['userid']);

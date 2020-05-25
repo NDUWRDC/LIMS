@@ -946,16 +946,17 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$pdf->SetXY($this->margin, $posy);
 		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
 		$posy = $pdf->GetY() + 3;
-		
-		$responsible = $outputlangs->transnoentities("ReportAuthorizing").'<br />';
-		$signingperson->fetch($object->fk_user_approval);
-		
-		$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
+		dol_syslog("object->fk_user_approval=".$object->fk_user_approval, LOG_DEBUG);
+		if (is_numeric($object->fk_user_approval)){	
+			$responsible = $outputlangs->transnoentities("ReportAuthorizing").'<br />';
+			$signingperson->fetch($object->fk_user_approval);
 			
-		$pdf->SetXY($this->margin, $posy);
-		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
-		$posy = $pdf->GetY() + 3;
+			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 				
+			$pdf->SetXY($this->margin, $posy);
+			$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
+			$posy = $pdf->GetY() + 3;
+		}
 		return $posy;
 	}
 

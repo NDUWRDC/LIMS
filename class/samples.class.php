@@ -107,7 +107,7 @@ class Samples extends CommonObject
 		'fk_facture' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Customer Invoice', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Customer Invoice",),
 		'fk_socpeople' => array('type'=>'integer:Contacts:Contacts/class/contact.class.php:1', 'label'=>'Client sample taker', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"If client did the sampling",),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Laboratory Sample taker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Own lab techician",),
-		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>5, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
+		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>5, 'default'=>null, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
 		'volume' => array('type'=>'real', 'label'=>'Volume [liter]', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Total volume in liters of all containers and bottles",),
 		'qty' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"Amount of containers or bottles",),
@@ -1240,6 +1240,32 @@ class Samples extends CommonObject
 		$userlist = array();
 
 		return $userlist;
+	}
+	
+	public function PrintReport ()
+	{
+		global $langs, $conf;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		// Define output language and generate document
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->thirdparty->default_lang;
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			$model = $this->modelpdf;
+			$ret = $this->fetch($id); // Reload to get new records
+
+			$result = $this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) setEventMessages($this->error, $this->errors, 'errors');
+		}
 	}
 }
 
