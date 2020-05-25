@@ -161,7 +161,6 @@ class Samples extends CommonObject
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
-
 	// If this object has a subtable with lines
 
 	/**

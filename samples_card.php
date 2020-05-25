@@ -160,10 +160,7 @@ if (empty($reshook))
 		foreach ($object->lines as $line){
 			$result->fetch($line->fk_result);
 			
-			//dol_syslog('--- $line='.var_export($line,true), LOG_DEBUG);
-			
-			//dol_syslog('--- $result='.var_export($result,true), LOG_DEBUG);
-			If ($line->status == $result::STATUS_DRAFT){
+			if ($line->status == $result::STATUS_DRAFT){
 				$line->validate($user);
 				dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
 			}
@@ -171,24 +168,11 @@ if (empty($reshook))
 		// save person who validated
 		$object->fk_user_approval = $user->id;
 		$object->update($user);
-		dol_syslog('action=confirm_validate && confirm=yes fk_user_approval='.$object->fk_user_approval, LOG_DEBUG);
-	}
-	// Action setdraft object
-	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
-	{
-		dol_syslog('action=confirm_setdraft && confirm=yes', LOG_DEBUG);
-		// reset person who validated to null
-		$object->fk_user_approval = NULL;
-		$object->update($user);
-		
-		//force report to be printed again
-		// Generate Document
-		$object->PrintReport();
 	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
-
+	
 	// Actions when linking object each other
 	include DOL_DOCUMENT_ROOT.'/core/actions_dellink.inc.php';
 
@@ -209,6 +193,18 @@ if (empty($reshook))
 	{
 		dol_syslog('setProject(GETPOST(projectid, int)', LOG_DEBUG);
 		$object->setProject(GETPOST('projectid', 'int'));
+	}
+	
+	// actions_addupdatedelete.inc.php does not print with confirm_setdraft
+	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
+	{
+		// reset person who validated to null
+		$object->fk_user_approval = NULL;
+		$object->update($user);
+		
+		//force report to be printed again
+		// Generate Document
+		$object->PrintReport();
 	}
 	
 	// Add a new line

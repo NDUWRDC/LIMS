@@ -38,7 +38,6 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
 
-
 /**
  *	Class to generate the customer invoice PDF with template Crabe
  */
@@ -1050,7 +1049,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		if ($object->statut == Samples::STATUS_DRAFT)
+		if ($object->status != $object::STATUS_VALIDATED)
 		{
 			$pdf->SetTextColor(128, 0, 0);
 			$textref .= ' - '.$outputlangs->transnoentities("NotValidated");
