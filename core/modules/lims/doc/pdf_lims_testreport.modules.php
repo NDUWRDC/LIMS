@@ -164,7 +164,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->option_logo = 1; // Display logo
 		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
-		$this->option_freetext = 1; // Support add of a personalised text
+		$this->option_freetext = 0; // Support add of a personalised text
 		$this->option_draft_watermark = 1; // Support add of a watermark on drafts
 
 		// Get source company
@@ -303,15 +303,16 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 				// Set nblines with the new sample lines content after hook
 				$nblines = count($object->lines);
-				//$nbpayments = count($object->getListOfPayments());
-				$nbpayments = 0;
 				// Create pdf instance
 				$pdf = pdf_getInstance($this->format);
                 $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
                 $pdf->SetAutoPageBreak(1, 0);
 
-                $heightforinfotests = 50 + (4 * $nbpayments); // Height reserved to output the info and total part and payment part
+                $heightforinfotests = 40; // Height reserved to output information in tests and signatures
 		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
+				if ($this->option_freetext==0) 
+					$heightforfreetext = 0;
+					
 	            $heightforfooter = $this->margin_bottom + 8; // Height reserved to output the footer (value include bottom margin)
 	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
 
@@ -664,7 +665,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 						$pagenb++;
 						$pdf->setPage($pagenb);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
@@ -680,7 +681,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 						{
 							$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
-						$this->_pagefoot($pdf, $object, $outputlangs, 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 						// New page
 						$pdf->AddPage();
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -705,7 +706,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$posy = $this->tests_info($pdf, $object, $bottomlasttab, $outputlangs);
 
 				// Pagefoot
-				$this->_pagefoot($pdf, $object, $outputlangs);
+				$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
 				$pdf->Close();
@@ -927,7 +928,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$pdf->MultiCell($this->page_textwidth, 2, $abnormalities, 0, 'L', 0);
 			$posy = $pdf->GetY() + 3;
 		}
-		
+		$posy_column = $posy;
 		// Show responsible person
 		$responsible = $outputlangs->transnoentities("ReportResponsible").'<br />';
 		$signingperson = new User($this->db);
@@ -936,27 +937,26 @@ class pdf_lims_testreport extends CommonDocGenerator
 		{
 			$signingperson->fetch($technician_arr[$i]);
 			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
-			if ($technician_arr_i > 0 && $i != $technician_arr)
+			if ($technician_arr_i > 0 && $i != $technician_arr_i)
 				$responsible .= '<br />';
 			
 			$i++;
 		}
 		
-		$pdf->SetXY($this->margin, $posy);
 		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
-		$posy = $pdf->GetY() + 3;
-		dol_syslog("object->fk_user_approval=".$object->fk_user_approval, LOG_DEBUG);
+		$posy = $posy_column;
+		
 		if (is_numeric($object->fk_user_approval)){	
 			$responsible = $outputlangs->transnoentities("ReportAuthorizing").'<br />';
 			$signingperson->fetch($object->fk_user_approval);
 			
 			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
-				
-			$pdf->SetXY($this->margin, $posy);
-			$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
+			$responsible .= '<br />'.$outputlangs->transnoentities("DigitalSigned");
+			$responsible .= dol_print_date(dol_now(),'dayrfc');
+			$pdf->writeHTMLCell($this->page_textwidth/2, 3, $this->margin_left+$this->page_textwidth/2, $posy, $responsible, 0, 1);
 			$posy = $pdf->GetY() + 3;
 		}
-		return $posy;
+		return $posy > $posy_column ? $posy : $posy_column;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
