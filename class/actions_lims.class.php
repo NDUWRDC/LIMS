@@ -425,6 +425,7 @@ class ActionsLims
 	function ObjectlineCreateSample($object)
 	{
 		global $conf, $langs, $form;
+		global $user;
 		
 		if (!isset($dateSelector)) global $dateSelector; // Take global var only if not already defined into function calling (for example formAddObjectLine)
 		global $forceall, $forcetoshowtitlelines;
@@ -433,7 +434,7 @@ class ActionsLims
 		if (empty($forceall)) $forceall = 0;
 		
 		// Define colspan for the button 'Add'
-		$colspan = 2; // Columns: total ht + col edit + col delete
+		$colspan = 3; // Columns: total ht + col edit + col delete
 		
 		//print $object->element;
 		// Lines for extrafield
@@ -521,7 +522,6 @@ class ActionsLims
 				$sql .= ' GROUP BY p.rowid';  // don't show duplicates
 				
 				$nameID='ProdID'; 
-				// ToDo ??: GETPOST('idprod')
 				$idprod = lims_functions::DropDownProduct($sql, $nameID, $object, 'ref', '', '');
 				
 				GETPOST('idprod');
@@ -536,6 +536,23 @@ class ActionsLims
 					
 					$methodID = lims_functions::DropDownProduct($sql, $nameID, $object, 'label', '', '');
 				}
+				// Test Start and End
+				// Form::selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
+				print '<br>';
+				print $langs->trans('From').' ';
+				print $date_start=$form->selectDate('', 'date_start',1, 1, 0, "Start", 1, 1,0,'','','','',1);
+				print '<br>';
+				print $langs->trans('to');
+				print '&emsp;'.$date_end=$form->selectDate('', 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
+				
+				// User who did the test
+				$disable_edit = $user->rights->lims->samples->delete ? false : true; // Only Manager should be able to change user
+				print '<br>';
+				print $langs->trans('TestingTechnician').'<br>';
+				//public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0');
+				print $fk_user=$form->select_users($user->id, 'userid',0,null,$disable_edit);
+				//print &user=select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0');
+				
 				?>
 				</span>
 			</td>
@@ -592,30 +609,8 @@ class ActionsLims
 		if (is_object($objectline)) {
 			print $objectline->showOptionals($extrafields, 'edit', array('colspan'=>$coldisplay), '', '', 1);
 		}
-
-			// Test Start and End
-			// Form::selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
-			print '<tr id="trlinefordates" class="oddeven">'."\n";
-			print '<td colspan=1>';
-			print $langs->trans('TestDuration').'<br>';
-			print ' '.$langs->trans('From').' ';
-			print $date_start=$form->selectDate('', 'date_start',1, 1, 0, "Start", 1, 1,0,'','','','',1);
-			print '<br>';
-			print $langs->trans('to');
-			print '&emsp;'.$date_end=$form->selectDate('', 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
-			print '</td>';
-
-			// User who did the test 
-			print '<td colspan=2>';
-			print $langs->trans('TestingTechnician').'<br>';
-			//public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0')
-			print $fk_user=$form->select_users('', 'userid');
-			//print &user=select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0');;
-			print '</td>';
-			print '</tr>'."\n";
-
-			print "<script>\n";
-			?>
+		?>
+			<script>
 			// When changing MethodID, columns are set: MethodStandard, Accuracy, Lower, Upper, Unit
 			$("#MethodID").change(function()
 			{
@@ -659,11 +654,9 @@ class ActionsLims
 					$("#MethodID").focus();		// focus on method selection
 				});
 			});
-			
-			<?php
-			print '</script>';
-			
-			print "<!-- END ObjectlineCreate Sample LIMS-->\n";
+			</script>
+			<!-- END ObjectlineCreate Sample LIMS-->
+	<?php
 	}
 	
 	// Copied from objectline_edit.tpl.php
@@ -671,7 +664,7 @@ class ActionsLims
 	{
 		global $conf, $langs, $form;
 		// Define colspan for the button 'Change'
-		$colspan = 2; // Columns: col edit + col delete
+		$colspan = 3; // Columns: col edit + col delete
 		
 		// Protection to avoid direct call of template
 		if (empty($object) || !is_object($object))

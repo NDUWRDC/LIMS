@@ -583,8 +583,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	$morehtmlref = '<div class="refidno">';
 	
 	// Description
-	$morehtmlref.=$form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->lims->samples->creer, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("Description", 'description', $object->description, $object, $user->rights->lims->samples->creer, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->lims->samples->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Description", 'description', $object->description, $object, $user->rights->lims->samples->write, 'string', '', null, null, '', 1);
 	// Thirdparty -> Needs to be changed to 'Customer'
 	dol_syslog('object->thirdparty->getNomUrl', LOG_DEBUG);
 	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? 
@@ -817,7 +817,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$filedir = $conf->lims->dir_output . '/' . $objref;
 		$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 		$genallowed = $user->rights->lims->samples->read;	// If you can read, you can build the PDF to read content
-		$delallowed = $user->rights->lims->samples->create;	// If you can create/edit, you can remove a file on card
+		$delallowed = $user->rights->lims->samples->write;	// If you can create/edit, you can remove a file on card
 		
 		if (is_null ( $object->modelpdf ))
 			$object->modelpdf = 'lims_testreport';
