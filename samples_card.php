@@ -476,11 +476,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 		// Check parameters
 		if ($date_start > $date_end) {
-				$langs->load("errors");
 				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
 				return -1;
 		}
-			
+
 		// ERROR HANDLING
 		/*
 		if ($result == '') {

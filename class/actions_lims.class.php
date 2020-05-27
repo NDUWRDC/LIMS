@@ -330,7 +330,11 @@ class ActionsLims
 			print '</td>';
 			
 			// Range
-			print '<td class="linecolrange center">';
+			print '<td class="linecolrange center"';
+			// add color if result out of measurement range
+			if ( (!is_null($method->range_lower) && $line->result < $method->range_lower) || (!is_null($method->range_upper) && $line->result > $method->range_upper) )
+			print ' style="background-color: rgb(234,228,225)"'; //#butactiondeletebg
+			print '>';
 			print $method->range_lower.' - '.$method->range_upper;
 			print '</td>';
 
@@ -353,7 +357,11 @@ class ActionsLims
 		print '</td>';*/
 		
 		// Limits combined in one column
-		print '<td class="linecollimit center">';
+		print '<td class="linecollimit center"';
+		// add color if result out of limits
+		if ( (!is_null($line->minimum) && $line->result < $line->minimum) || (!is_null($line->maximum) && $line->result > $line->maximum) )
+			print ' style="background-color: rgb(234,228,225)"'; //#butactiondeletebg
+		print '">';
 		if (is_numeric($line->minimum) && is_numeric($line->maximum))
 			print $line->minimum.' - '.$line->maximum;
 		elseif (is_numeric($line->minimum) && !is_numeric($line->maximum))
