@@ -93,14 +93,16 @@ if (!empty($action) && $action == 'fetch' && !empty($idmethod) && !empty($idsamp
 	if ($method){
 		$label = $method->standard;
 		$accuracy = $method->accuracy;
+		$rangelower = $method->range_lower;
+		$rangeupper = $method->range_upper;
 		$minmax = $method->getLimits($sample->fk_limits);
-		$lower = $minmax['min'];
-		$upper = $minmax['max'];
+		$limitmin = $minmax['min'];
+		$limitmax = $minmax['max'];
 		$unit = $method->unit;
 	}
 	
 	$outjson = array();
-	$outjson = array('label'=>$label, 'accuracy'=>$accuracy, 'lower'=>$lower, 'upper'=>$upper, 'unit'=>$unit);
+	$outjson = array('label'=>$label, 'accuracy'=>$accuracy, 'rangelower'=>$rangelower, 'rangeupper'=>$rangeupper, 'limitmin'=>$limitmin, 'limitmax'=>$limitmax, 'unit'=>$unit);
 	
 	echo json_encode($outjson);
 }

@@ -177,23 +177,20 @@ class ActionsLims
 
 		// Accuracy
 		print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
-		/*
-		// Lower Limit of Method
-		print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('MethodLowerLimit').'</td>';
+		
+		// Range of Method
+		print '<td class="linecolmethodrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
 
-		// Upper Limit of Method
-		print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('MethodUpperLimit').'</td>';
-		*/
 		// Abnormalities
 		print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
 
-		// ??ToDo: Title with colspan=2 for Limits Lower and Upper
-
-		// Limit Standard lower (UNBS or other)
+		/*/ Limit Standard lower (UNBS or other)
 		print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
 
 		// Limit Standard upper (UNBS or other)
-		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';
+		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';*/
+		// Limits combined in one column
+		print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('StandardLimitTitle').'</td>';
 
 		// Result
 		print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('Result').'</td>';
@@ -331,6 +328,12 @@ class ActionsLims
 			print '<td class="linecolaccuracy center">';
 			print $method->accuracy;
 			print '</td>';
+			
+			// Range
+			print '<td class="linecolrange center">';
+			print $method->range_lower.' - '.$method->range_upper;
+			print '</td>';
+
 		}
 
 		if ($object->ref != ''){
@@ -340,15 +343,25 @@ class ActionsLims
 			print '</td>';
 		}
 
-			// Lower Limit
-			print '<td class="linecolstandardlower center">';
-			print $line->minimum;
-			print '</td>';
-			// Upper Limit
-			print '<td class="linecolstandardupper center">';
-			print $line->maximum;
-			print '</td>';
-
+		/*/ Lower Limit
+		print '<td class="linecolstandardlower center">';
+		print $line->minimum;
+		print '</td>';
+		// Upper Limit
+		print '<td class="linecolstandardupper center">';
+		print $line->maximum;
+		print '</td>';*/
+		
+		// Limits combined in one column
+		print '<td class="linecollimit center">';
+		if (is_numeric($line->minimum) && is_numeric($line->maximum))
+			print $line->minimum.' - '.$line->maximum;
+		elseif (is_numeric($line->minimum) && !is_numeric($line->maximum))
+			print '>= '.$line->minimum;
+		elseif (!is_numeric($line->minimum) && is_numeric($line->maximum))
+			print '<= '.$line->maximum;  // if $line->maximum = 0 it will 
+		print '</td>';
+			
 		if ($object->ref != ''){
 			// Result
 			print '<td class="linecolresult right">';
@@ -460,23 +473,21 @@ class ActionsLims
 
 				// Accuracy
 				print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
-				/*
-				// Lower Limit of Method
-				print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('MethodLowerLimit').'</td>';
+				
+				// Lower and Upper Limit of Method (Measurement Range)
+				print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
 
-				// Upper Limit of Method
-				print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('MethodUpperLimit').'</td>';
-				*/
 				// Abnormalities
 				print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
 
-				// ??ToDo: Title with colspan=2 for Limits Lower and Upper
-
-				// Limit Standard lower (UNBS or other)
+				/*/ Limit Standard lower (UNBS or other)
 				print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
 
 				// Limit Standard upper (UNBS or other)
-				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';
+				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';*/
+		
+				// Limits combined in one column
+				print '<td class="linecollimit center" style="width: 80px">'.$langs->trans('StandardLimitTitle').'</td>';
 
 				// Result
 				print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('Result').'</td>';
@@ -572,6 +583,13 @@ class ActionsLims
 				<input type="text" size="5" name="MethodAccuracy" id="MethodAccuracy" class="flat center" value="<?php echo (isset($_POST["MethodAccuracy"]) ?GETPOST("MethodAccuracy", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
+			<!-- Measurement Range -->
+			<td class="nobottom linecolrange center"><?php $coldisplay++; ?>
+				<input type="text" size="5" name="MethodRangeLower" id="MethodRangeLower" class="flat center" value="<?php echo (isset($_POST["MethodRangeLower"]) ?GETPOST("MethodRangeLower", 'alpha', 2) : ''); ?>" disabled>
+				&nbsp;-&nbsp;
+				<input type="text" size="5" name="MethodRangeUpper" id="MethodRangeUpper" class="flat center" value="<?php echo (isset($_POST["MethodRangeUpper"]) ?GETPOST("MethodRangeUpper", 'alpha', 2) : ''); ?>" disabled>
+			</td>
+
 			<!-- Abnormalities -->
 			<td class="nobottom linecolabnormalities center"><?php $coldisplay++; ?>
 				<?php 
@@ -579,17 +597,14 @@ class ActionsLims
 				?>
 			</td>
 
-			 <!-- Lower limit -->
-			<td class="nobottom linecollowerlimit right"><?php $coldisplay++; ?>
-				<input type="text" size="5" name="MethodLower" id="MethodLower" class="flat center" value="<?php echo (isset($_POST["MethodLower"]) ?GETPOST("MethodLower", 'alpha', 2) : ''); ?>" disabled>
+			<!-- Limits combined in one column -->
+			<td class="nobottom linecollimit center"><?php $coldisplay++; ?>
+				<input type="text" size="5" name="LimitMinimum" id="LimitMinimum" class="flat center" value="<?php echo (isset($_POST["LimitMinimum"]) ?GETPOST("LimitMinimum", 'alpha', 2) : ''); ?>" disabled>
+				&nbsp;-&nbsp;
+				<input type="text" size="5" name="LimitMaximum" id="LimitMaximum" class="flat center" value="<?php echo (isset($_POST["LimitMaximum"]) ?GETPOST("LimitMaximum", 'alpha', 2) : ''); ?>" disabled>
 			</td>
-
-			 <!-- Upper limit -->
-			<td class="nobottom linecolupperlimit right"><?php $coldisplay++; ?>
-				<input type="text" size="5" name="MethodUpper" id="MethodUpper" class="flat center" value="<?php echo (isset($_POST["MethodUpper"]) ?GETPOST("MethodUpper", 'alpha', 2) : ''); ?>" disabled>
-			</td>
-
-			 <!-- Result -->
+			
+			<!-- Result -->
 			<td class="nobottom linecolresult right"><?php $coldisplay++; ?>
 				<input type="text" size="5" name="result" id="result" class="flat right" value="<?php echo (isset($_POST["result"]) ?GETPOST("result", 'alpha', 2) : 0); ?>">
 			</td>
@@ -622,8 +637,10 @@ class ActionsLims
 					function(data) {
 							jQuery("#MethodStandard").val(data.label);
 							jQuery("#MethodAccuracy").val(data.accuracy);
-							jQuery("#MethodLower").val(data.lower);
-							jQuery("#MethodUpper").val(data.upper);
+							jQuery("#MethodRangeLower").val(data.rangelower);
+							jQuery("#MethodRangeUpper").val(data.rangeupper);
+							jQuery("#LimitMinimum").val(data.limitmin);
+							jQuery("#LimitMaximum").val(data.limitmax);
 							jQuery("#MethodUnit").val(data.unit);
 					},
 					'json'
@@ -738,6 +755,13 @@ class ActionsLims
 			print $method->accuracy; // Accuracy
 			?>
 		</td>
+
+		<td class="linecolaccuracy center">
+			<?php
+			$coldisplay++;
+			print $method->range_lower.' - '.$method->range_upper; // Range
+			?>
+		</td>
 		
 		<td class="linecolresultabnorm center">
 			<?php
@@ -745,28 +769,33 @@ class ActionsLims
 			echo $form->selectyesno('abnormalities', $line->abnormalities, 1); // Abnormalities
 			?>
 		</td>
-
+		<!--
 		<td class="linecolstandardlower center">
 			<?php
-			$coldisplay++;
-			print "";		// Lower Limit
+			//$coldisplay++;
+			//print "";		// Lower Limit
 			?>
 		</td>
-			
+
 		<td class="linecolstandardupper center">
 			<?php
+			//$coldisplay++;
+			//print "";		// Upper Limit
+			?>
+		</td>
+		-->
+		<!-- Limits combined in one column -->
+		<td class="linecollimit center">
+			<?php
 			$coldisplay++;
-			print "";		// Upper Limit
+			print $line->minimum.' - '.$line->maximum;	// Limit min - max
 			?>
 		</td>
 
 		<td class="linecolresult right">
 			<?php
 			$coldisplay++;
-			print '<input type="text" size="5" name="result" id="result" class="flat right" value="';
-			print $line->result;  // Result
-			?>
-			">
+			print '<input type="text" size="5" name="result" id="result" class="flat right" value="';print $line->result;// Result?>">
 		</td>
 
 		<td class="linecolmethodunit left">

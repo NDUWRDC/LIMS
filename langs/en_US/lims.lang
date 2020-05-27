@@ -59,11 +59,11 @@ MyWidgetDescription = My widget description
 
 MethodMethod = Standard
 MethodAccuracy = Accuracy
-MethodLimitTitle = Meas. Range
+MethodRangeTitle = Range
 MethodLowerLimit = Lower
 MethodUpperLimit = Upper
 ResultAbnormality = Abnormalities
-StandardLimitTitle = Standard Limit
+StandardLimitTitle = Limits
 StandardLowerLimit = Minimum
 StandardUpperLimit = Maximum
 Result = Result
