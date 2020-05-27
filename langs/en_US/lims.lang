@@ -72,7 +72,7 @@ MethodUnit = Unit
 AddLineTitleSamples = Product - Method
 TestDuration = Test performed in this period:
 TestingTechnician = Test perfomed by:
-
+ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
 #
 # Report
 #

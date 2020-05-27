@@ -479,7 +479,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				$langs->load("errors");
 				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
 				return -1;
-			}
+		}
 			
 		// ERROR HANDLING
 		/*
