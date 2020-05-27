@@ -906,10 +906,23 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 		$pdf->SetFont('', '', $default_font_size - 1);
 
+		// Print limit set name
+		$limits = new Limits($this->db);
+		$limits->fetch($object->fk_limits);
+
+		if($limits)
+		{
+			$pdf->SetXY($this->margin_left, $posy);
+			$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportLimitsApplied").$limits->label, 0, 'L', 0);
+			$posy = $pdf->GetY() + 1;
+		}
+
+		// Statement: The results relate only to the items tested
 		$pdf->SetXY($this->margin_left, $posy);
 		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementA"), 0, 'L', 0);
 		$posy = $pdf->GetY() + 1;
-		
+
+		// Statement: tests conducted at own laboratory without any abnormality
 		$pdf->SetXY($this->margin_left, $posy);
 		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementB"), 0, 'L', 0);
 		$posy = $pdf->GetY() + 1;

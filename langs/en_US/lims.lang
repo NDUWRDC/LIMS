@@ -92,6 +92,7 @@ ReportTitleDate = Date
 ReportTitleMinimum = Min.
 ReportTitleMaximum = Max.
 ReportTitleAccuracy = Accuracy
+ReportLimitsApplied = The limits displayed correspond to: 
 ReportStatementA = The results relate only to the items tested.
 ReportStatementB = If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
 ReportTestsWithAbnormalities = The tests with the following line number experienced abnormalities: 
