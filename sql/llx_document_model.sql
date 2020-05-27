@@ -13,4 +13,4 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('testreport', '1', 'lims', NULL, NULL)
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('lims_testreport', '1', 'lims', NULL, NULL)
