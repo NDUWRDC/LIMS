@@ -308,7 +308,7 @@ class pdf_lims_testreport extends CommonDocGenerator
                 $default_font_size = pdf_getPDFFontSize($outputlangs); // Must be after pdf_getInstance
                 $pdf->SetAutoPageBreak(1, 0);
 
-                $heightforinfotests = 40; // Height reserved to output information in tests and signatures
+                $heightforinfotests = 35; // Height reserved to output information in tests and signatures
 		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				if ($this->option_freetext==0) 
 					$heightforfreetext = 0;
@@ -470,7 +470,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
 				
 				$nexY = max($nexYsampleline);
-				$tab_top_note = $nexY + 6;
+				$tab_top_note = $nexY + 4;
 				
 				if ($notetoshow)
 				{	
