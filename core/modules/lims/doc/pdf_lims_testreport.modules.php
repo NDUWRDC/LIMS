@@ -1285,4 +1285,26 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
 		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->issuer, $this->margin_bottom, $this->margin_left, $this->page_height, $object, $showdetails, $hidefreetext);
 	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
+	/**
+	 *  Return list of active generation modules
+	 *
+	 *  @param	DoliDB	$db     			Database handler
+	 *  @param  integer	$maxfilenamelength  Max length of value to show
+	 *  @return	array						List of templates
+	 */
+	public static function liste_modeles($db, $maxfilenamelength = 0)
+	{
+		// phpcs:enable
+		global $conf;
+
+		$type = 'lims';
+		$liste = array();
+
+		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
+		$liste = getListOfModels($db, $type, $maxfilenamelength);
+
+		return $liste;
+	}
 }

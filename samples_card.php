@@ -824,7 +824,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		
 		// Does not work: bad file path generated
 		// ?? Maybe use $hookmanager->initHooks(array('formfile')) ??
-		//print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
+		print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 		
 
 		// Show links to link elements
