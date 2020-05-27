@@ -375,6 +375,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				
 				// Print sample description
 				$sampledescription = empty($object->description) ? '' : $object->description;
+				$nexYsampleline = array();
 				if ($sampledescription)
 				{
 					$tab_top -= 2;
@@ -397,8 +398,8 @@ class pdf_lims_testreport extends CommonDocGenerator
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->margin_left, $tab_top - 1, $this->posxsampleplace - $this->posxdesc, $height_note + 1);
-
-					$tab_top_note = $nexY + 6;
+					
+					$nexYsampleline[0] = $nexY;
 				}
 				
 				// Print Sampling Place 
@@ -427,6 +428,8 @@ class pdf_lims_testreport extends CommonDocGenerator
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->posxsampleplace, $tab_top - 1, $this->posxsampleperson - $this->posxsampleplace - 1, $height_note + 1);
+
+					$nexYsampleline[1] = $nexY;
 				}
 				
 				// Print Sampling Person
@@ -459,10 +462,15 @@ class pdf_lims_testreport extends CommonDocGenerator
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->posxsampleperson, $tab_top - 1, $this->page_width - $this->margin_right - $this->posxsampleperson, $height_note + 1);
+					
+					$nexYsampleline[2] = $nexY;
 				}
 				
 				// Print notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
+				
+				$nexY = max($nexYsampleline);
+				$tab_top_note = $nexY + 6;
 				
 				if ($notetoshow)
 				{	
