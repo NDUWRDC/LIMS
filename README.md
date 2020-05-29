@@ -2,7 +2,26 @@
 
 ## Features
 
-Description...
+Manage your samples and generate test reports in accordance to ISO 17025:2017: 
+* Manage Test Methods, where each method has
+  * A linked product or service
+  * A unit, e.g. mS/cm
+  * Accuracy
+  * Measurement Range
+  * Resolution of reading
+* Manage Limit Sets, with each entry/line
+  * Linked to one method
+  * Minimum and Maximum, where one value may be NULL
+* Manage Samples, where each sample has
+  * A linked to a customer
+  * Details on the sample, such as sampling place and time, sampling person, volume, etc.
+  * Muliple tests, where each test is linked to one method; each test is linked to the responsible person
+  * Nonconformities
+  * A limit set applied to the sample results
+* Test Report
+  * Sample details
+  * Results with indication if result is out of the limit range or out of the method's measurement range
+  * Names of person(s) responsible and manager who authorized the sample.
 
 <!--
 ![Screenshot lims](img/screenshot_lims.png?raw=true "LIMS"){imgmd}
