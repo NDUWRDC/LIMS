@@ -27,12 +27,9 @@ require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
-//require_once DOL_DOCUMENT_ROOT.'/core/class/html.form.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/limits.class.php';
-
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
+dol_include_once('/lims/class/results.class.php', 'Results');
+dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/limits.class.php', 'Limits');
 require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
@@ -358,7 +355,7 @@ class Samples extends CommonObject
 	{
 		// Original code provided by Module Builder
 		$result = $this->fetchCommon($id, $ref);
-		require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
+		
 		if ($result > 0 && !empty($this->table_element_line)) $this->fetchLines();
 		return $result;
 	}

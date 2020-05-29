@@ -57,7 +57,7 @@ if (!empty($action) && $action == 'fetch' && !empty($idprod))
 {
 	// action='fetch' is used to get list of methods related to one product -> id must be the product id.
 
-	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
+	dol_include_once('/lims/class/methods.class.php', 'Methods');
 
 	$sql = 'SELECT rowid, ref, label, fk_product';
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods';
@@ -77,8 +77,8 @@ if (!empty($action) && $action == 'fetch' && !empty($idmethod) && !empty($idsamp
 {
 	//to get label, accuracy and unit of methods and min/max of limits
 	
-	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
-	require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/samples.class.php';
+	dol_include_once('/lims/class/methods.class.php', 'Methods');
+	dol_include_once('/lims/class/samples.class.php', 'Samples');
 	
 	dol_syslog('methods_ajax action=fetch idmethod='.$idmethod.' idsample='.$idsample, LOG_DEBUG);
 	

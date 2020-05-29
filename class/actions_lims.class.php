@@ -1,11 +1,10 @@
 <?php
 
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/samples.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/methods.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/results.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/limits.class.php';
-require_once DOL_DOCUMENT_ROOT.'/custom/lims/class/lims_functions.class.php';
-
+dol_include_once('/lims/class/samples.class.php', 'Samples');
+dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/results.class.php', 'Results');
+dol_include_once('/lims/class/limits.class.php', 'Limits');
+dol_include_once('/lims/class/lims_functions.class.php', 'lims_functions');
 
 
 class ActionsLims
