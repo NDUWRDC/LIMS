@@ -20,7 +20,7 @@
 # Module label 'ModuleLIMSName'
 ModuleLIMSName = LIMS
 # Module description 'ModuleLIMSDesc'
-ModuleLIMSDesc = LIMS description
+ModuleLIMSDesc = Laboratory Information Management System according to ISO 17025
 
 #
 # Admin page
