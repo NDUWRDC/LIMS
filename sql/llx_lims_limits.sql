@@ -18,7 +18,7 @@ CREATE TABLE llx_lims_limits(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
-	label varchar(255), 
+	label varchar(255) NOT NULL, 
 	description text, 
 	note_public text, 
 	note_private text, 
