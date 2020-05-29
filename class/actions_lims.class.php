@@ -1024,13 +1024,13 @@ class ActionsLims
 		
 		?>
 		<script>
-		// When changing MethodID, columns are set: MethodStandard, Accuracy, Lower, Upper, Unit
+		// When changing MethodID, columns are set: MethodStandard, Accuracy, Unit
 		$("#MethodID").change(function()
 		{
 			console.log("MethodID.change: value="+$(this).val());
 			
 			$.post('<?php echo dol_buildpath('/lims/methods_ajax.php?action=fetch',1); ?>',
-			{ 'idmethod': $(this).val() },
+			{ 'idmethod': $(this).val(), 'idsample':<?php echo $object->id ?> },
 				function(data) {
 						jQuery("#MethodStandard").val(data.label);
 						jQuery("#MethodAccuracy").val(data.accuracy);
@@ -1038,28 +1038,6 @@ class ActionsLims
 				},
 				'json'
 			);
-		});
-
-		// When changing ProdID, options are populated with available methods for this product
-		$("#ProdID").change(function()
-		{
-			console.log("ProdID.change: value="+$(this).val());
-
-			$.post('<?php echo dol_buildpath('/lims/methods_ajax.php?action=fetch',1); ?>',
-			{ 'idprod': $(this).val() },
-				function(data) {
-						$('select[name="MethodID"]').empty();
-						$.each(data, function(key, value) {
-							$('select[name="MethodID"]').append('<option value="'+ key +'">'+ value +'</option>');
-						});
-				},
-				'json'
-			).done(function() {
-				// This is to avoid a race condition where the field is not updated yet when the change-function is called.
-				console.log("post done");
-				$("#MethodID").change();	// Update other elements with new method details
-				$("#MethodID").focus();		// focus on method selection
-			});
 		});
 		</script>
 		<!-- END ObjectlineCreate Sample LIMS-->
