@@ -215,7 +215,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Limits|FR:Module_Limits_FR|ES:Módulo_Limits";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Limitss"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Limits"));
 
 
 // Build and execute select
