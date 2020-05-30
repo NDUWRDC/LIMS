@@ -226,6 +226,9 @@ if (empty($reshook))
 		$abnormalities = GETPOST('abnormalities');
 		$status = GETPOST('status');
 		
+		// In case fk_user is not set, set it to current user->id
+		$fk_user = is_numeric($fk_user) ? $fk_user : $user->id;
+		
 		dol_syslog('Samples_card action=addline: ---------', LOG_DEBUG);
 		dol_syslog('idprod= '.$idprod, LOG_DEBUG);
 		dol_syslog('rang= '.$rang, LOG_DEBUG);
