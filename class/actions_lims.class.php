@@ -372,7 +372,7 @@ class ActionsLims
 		if ($object->ref != ''){
 			// Result
 			print '<td class="linecolresult right">';
-			print $line->result;
+			print lims_functions::numberFormatPrecision($line->result,$method->resolution);
 			print '</td>';
 		}
 

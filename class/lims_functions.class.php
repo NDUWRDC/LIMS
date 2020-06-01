@@ -51,4 +51,17 @@ class lims_functions
 		
 		return $idprod;
 	}
+	
+	function numberFormatPrecision($number, $precision = 2, $separator = '.')
+	{
+		$numberParts = explode($separator, $number);
+		$response = $numberParts[0];
+
+		if($precision>0){
+			$response .= $separator;
+			$substr = substr($numberParts[1], 0, $precision);
+			$response .= str_pad($substr,$precision,'0');		// Fill trailing 0
+		}
+		return $response;
+	}
 }
