@@ -542,7 +542,7 @@ class ActionsLims
 				$nameID='ProdID'; 
 				$idprod = lims_functions::DropDownProduct($sql, $nameID, $object, 'ref', '', '');
 				
-				GETPOST('idprod');
+				GETPOST('ProdID','alpha', 2); // Only POST
 				
 				if ($idprod > 0){
 					
@@ -553,6 +553,7 @@ class ActionsLims
 					$nameID='MethodID';
 					
 					$methodID = lims_functions::DropDownProduct($sql, $nameID, $object, 'label', '', '');
+					GETPOST('MethodID','alpha', 2); // Only POST
 				}
 				// Test Start and End
 				// Form::selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
@@ -673,6 +674,15 @@ class ActionsLims
 					$("#MethodID").change();	// Update other elements with new method details
 					$("#MethodID").focus();		// focus on method selection
 				});
+			});
+			
+			$(function() {
+				
+				console.log("Page is loaded, fields to be updated");
+				
+				$("#MethodID").change();	// Update other elements with new method details
+				$("#ProdID").focus();		// focus on method selection
+				
 			});
 			</script>
 			<!-- END ObjectlineCreate Sample LIMS-->
