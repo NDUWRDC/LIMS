@@ -182,12 +182,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->sample_gap = 5;
 		
 		$this->posxstandard = 60;
-		$this->posxaccuracy = 90;
-		$this->posxtestdate = 110;
-		$this->posxminimum = 135;
-		$this->posxmaximum = 150;
-		$this->posxresult= 165;
-		$this->posxunit= 180;
+		$this->posxaccuracy = 89;
+		$this->posxtestdate = 106;
+		$this->posxminimum = 125;
+		$this->posxmaximum = 140;
+		$this->posxresult= 155;
+		$this->posxunit= 172;
 
 		$this->posxpicture = $this->posxstandard - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 		if ($this->page_width < 210) // To work with US executive format
@@ -447,7 +447,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 				if ($sample_person_user)
 				{
 					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell($this->page_textwidth - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePerson"), 0, 1);
+					$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePerson"), 0, 1);
 
 					$nexY = $pdf->GetY();
 					$tab_top = $nexY + 1;
@@ -457,7 +457,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$sample_person_user = convertBackOfficeMediasLinksToPublicLinks($sample_person_user);
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell($this->page_textwidth - $this->posxsampleplace, 3, $this->posxsampleperson, $tab_top - 1, dol_htmlentitiesbr($sample_person_user), 0, 1);
+					$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top - 1, dol_htmlentitiesbr($sample_person_user), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
@@ -470,14 +470,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 				
 				// Print notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
-				
 				$nexY = max($nexYsampleline);
-				$tab_top_note = $nexY + 4;
+				$tab_top = $nexY + 4;
 				
 				if ($notetoshow)
 				{	
-					$tab_top = $tab_top_note - 2;
-					//$tab_top -= 2;
+					$tab_top -= 2;
 					$pdf->SetFont('', 'B', $default_font_size-1);
 					$pdf->writeHTMLCell($this->page_textwidth, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleNote"), 0, 1);
 					$nexY = $pdf->GetY();
@@ -616,12 +614,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 					// Accuracy 
 					$accuracy = $method->accuracy;
-					$pdf->SetXY($this->posxaccuracy, $curY);
+					$pdf->SetXY($this->posxaccuracy-1, $curY);
 					$pdf->MultiCell($this->posxtestdate - $this->posxaccuracy, 3, $accuracy, 0, 'C');
 
 					// Test-Date
 					$testdate = dol_print_date($object->lines[$i]->end, 'dayrfc');
-					$pdf->SetXY($this->posxtestdate, $curY);
+					$pdf->SetXY($this->posxtestdate-1, $curY);
 					$pdf->MultiCell($this->posxminimum - $this->posxtestdate, 3, $testdate, 0, 'C'); // Enough for 6 chars
 
 					// Minimum
