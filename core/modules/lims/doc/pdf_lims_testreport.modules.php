@@ -37,6 +37,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/company.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';
 require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/lims_functions.class.php', 'lims_functions');
 
 
 /**
@@ -634,8 +635,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$pdf->MultiCell($this->posxresult - $this->posxmaximum, 3, $maximum, 0, 'C');
 
 					// Result
-					$result = $object->lines[$i]->result;
-
+					$result = lims_functions::numberFormatPrecision($object->lines[$i]->result,$method->resolution);
 					// check if min/max is set and $result outside min/max
 					if ( (!is_null($minimum) && $result < $minimum) || (!is_null($maximum) && $result > $maximum) )
 						$pdf->SetFont('', 'B', $default_font_size - 1); // Make bold if outside min/max
