@@ -140,8 +140,9 @@ class modLIMS extends DolibarrModules
 			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
 			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
 			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
-            4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Pre-fix for Limit objects', 1, 'allentities', 1),
-            10 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template copied from Crabe. Originally used for invoices.', 1, 'allentities', 1),
+			4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Pre-fix for Limit objects', 1, 'allentities', 1),
+			5 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template copied from Crabe. Original used for invoices.', 1, 'allentities', 1),
+			6 => array('LIMS_SUBPERMCATEGORY_FOR_DOCUMENTS', 'chaine', 'report', 'Used to access reports.', 1, 'allentities', 1),
         );
 
         // Some keys to add into the overwriting translation tables
@@ -308,7 +309,10 @@ class modLIMS extends DolibarrModules
         $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
-       
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'View Reports of LIMS'; // Permission label
+        $this->rights[$r][4] = 'report'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         /* END MODULEBUILDER PERMISSIONS */
 
         // Main menu entries to add
