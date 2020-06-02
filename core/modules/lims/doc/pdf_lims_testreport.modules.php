@@ -953,13 +953,20 @@ class pdf_lims_testreport extends CommonDocGenerator
 		if ($abnormalitiesfound){
 			$pdf->SetXY($this->margin_left, $posy);
 			$pdf->MultiCell($this->page_textwidth, 2, $abnormalities, 0, 'L', 0);
-			$posy = $pdf->GetY() + 3;
+			$posy = $pdf->GetY() + 1;
 		}
-		$posy_column = $posy;
+		
+		$posy_column = $posy + 2;
 		// Show responsible person
-		$responsible = $outputlangs->transnoentities("ReportResponsible").'<br />';
+		$responsible = $outputlangs->transnoentities("ReportResponsible");
+		$pdf->SetXY($this->margin_left, $posy_column);
+		$pdf->write(3,$responsible);
+		$posx = $pdf->getX() + 2;
+		
+		$responsible = '';
 		$signingperson = new User($this->db);
 		$i = 0;
+		
 		while ($i < $technician_arr_i)
 		{
 			$signingperson->fetch($technician_arr[$i]);
@@ -970,17 +977,22 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$i++;
 		}
 		
-		$pdf->writeHTMLCell($this->page_textwidth, 3, $this->margin_left, $posy, $responsible, 0, 1);
+		$pdf->writeHTMLCell($this->page_textwidth - $posx, 3, $posx, $posy_column, $responsible, 0, 1);
+		
 		$posy = $posy_column;
 		
 		if (is_numeric($object->fk_user_approval)){	
-			$responsible = $outputlangs->transnoentities("ReportAuthorizing").'<br />';
+			$responsible = $outputlangs->transnoentities("ReportAuthorizing");
+			$pdf->SetXY($this->page_textwidth/2, $posy_column);
+			$pdf->write(3,$responsible);
+			$posx = $pdf->getX() + 2;
+		
 			$signingperson->fetch($object->fk_user_approval);
 			
-			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
+			$responsible = $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 			$responsible .= '<br />'.$outputlangs->transnoentities("DigitalSigned");
 			$responsible .= dol_print_date(dol_now(),'dayrfc');
-			$pdf->writeHTMLCell($this->page_textwidth/2, 3, $this->margin_left+$this->page_textwidth/2, $posy, $responsible, 0, 1);
+			$pdf->writeHTMLCell($this->page_textwidth/2, 3, $posx, $posy, $responsible, 0, 1);
 			$posy = $pdf->GetY() + 3;
 		}
 		return $posy > $posy_column ? $posy : $posy_column;
