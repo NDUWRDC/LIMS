@@ -261,7 +261,7 @@ class Samples extends CommonObject
 	 */
 	public function createFromClone(User $user, $fromid)
 	{
-		global $langs, $extrafields;
+		global $langs, $extrafields, $db;
 	    $error = 0;
 
 	    dol_syslog(__METHOD__, LOG_DEBUG);
@@ -273,11 +273,20 @@ class Samples extends CommonObject
 	    // Load source object
 	    $result = $object->fetchCommon($fromid);
 	    if ($result > 0 && !empty($object->table_element_line)) $object->fetchLines();
-
+		$ResultObj = new Results($db);
 	    // get lines so they will be clone
-	    //foreach($this->lines as $line)
-	    //	$line->fetch_optionals();
-
+		$i = 0;
+	    foreach($this->lines as $line){
+	    	$line->fetch_optionals();
+			$object->lines[$i]->ref = empty($ResultObj->fields['ref']['default']) ? "copy_of_".$line->ref : $ResultObj->fields['ref']['default'];
+			$object->lines[$i]->setDraft($user);
+			$object->lines[$i]->label = empty($ResultObj->fields['label']['default']) ? $langs->trans("CopyOf")." ".$line->label : $ResultObj->fields['label']['default'];
+			unset($object->lines[$i]->id);
+			unset($object->lines[$i]->ref);
+			
+			$i++;
+		}
+		
 	    // Reset some properties
 	    unset($object->id);
 	    unset($object->fk_user_creat);
