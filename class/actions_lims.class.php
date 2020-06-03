@@ -28,20 +28,18 @@ class ActionsLims
 
 		dol_syslog(__METHOD__.' hook on printObjectLineTitle, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 
-		if (in_array('', explode(':', $parameters['invoicecard'])))
+		if ($object->element == 'facture' )
 		{
 			return 0;
 		}
 		
 		if ($object->element == 'samples' )
-		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
 		  // do something only for the context 'samplescard'
 			$this->ObjectlinesTitleSample();
 		}
 		
 		if ($object->element == 'limits' )
-		if (in_array('', explode(':', $parameters['limitscard'])))
 		{
 		  // do something only for the context 'limitscard'
 			$this->ObjectlinesTitleLimits();
@@ -67,13 +65,12 @@ class ActionsLims
 
 		dol_syslog(__METHOD__.' hook on printObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 		
-		if (in_array('', explode(':', $parameters['invoicecard'])))
+		if ($object->element == 'facture' )
 		{
 			return 0;
 		}
 		
 		if ($object->element == 'samples' )
-		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
 			$selected = $parameters['selected'];
 			$line = $parameters['line'];
@@ -92,7 +89,6 @@ class ActionsLims
 		}
 		
 		if ($object->element == 'limits' )
-		if (in_array('', explode(':', $parameters['limitscard'])))
 		{
 			$selected = $parameters['selected'];
 			$line = $parameters['line'];
@@ -129,20 +125,18 @@ class ActionsLims
 
 		dol_syslog(__METHOD__.' hook on formAddObjectLine, paramters='.var_export($parameters, true).' action='.$action, LOG_DEBUG);
 		
-		if (in_array('', explode(':', $parameters['invoicecard'])))
+		if ($object->element == 'facture' )
 		{
 			return 0;
 		}
 		
 		if ($object->element == 'samples' )
-		//if (in_array('', explode(':', $parameters['samplescard'])))
 		{
 		  // do something only for the context 'somecontext'
 			$this->ObjectlineCreateSample($object);
 		}
 
 		if ($object->element == 'limits' )
-		//if (in_array('', explode(':', $parameters['samplescard'])))
 		{
 		  // do something only for the context 'somecontext'
 			$this->ObjectlineCreateLimits($object);
@@ -1362,7 +1356,14 @@ class ActionsLims
 		//if (in_array('', explode(':', $parameters['invoicecard']))) // parameters are empty
 			if (!empty($conf->lims->enabled) && $user->rights->lims->samples->write && $object->statut == (Facture::STATUS_VALIDATED || Facture::STATUS_CLOSED))
 			{
-				print '<a class="butAction" href="'.dol_buildpath('/lims/samples_card.php?action=create',1).'&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("createsample").'</a>';
+				print '<form action="'.dol_buildpath('/lims/samples_card.php?action=create',1).'&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'" id="generatesample_form" method="post">';
+				print '<input type="hidden" name="fk_soc" value="'.$object->socid.'">';
+				print '<input type="hidden" name="fk_project" value="'.(!empty($object->fk_project) ? $object->fk_project : '').'">';
+				dol_syslog('object-ref='.$object->ref,LOG_DEBUG);
+				//print '<input type="hidden" name="fk_facture" value="'.$object->ref.'">';
+				print '<input type="hidden" name="fk_facture" value="'.$object->id.'">';
+				print '<input class="butAction" type="submit" value="'.$langs->trans("createsample").'">';
+				print '</form>';
 				return 0;
 			}
 		}

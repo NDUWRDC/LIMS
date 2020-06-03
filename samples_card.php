@@ -82,7 +82,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sam
 $backtopage	 = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid		 = GETPOST('lineid', 'int');
-
+$origin 	 = GETPOST('origin', 'alpha');
+$originid	 = GETPOST('originid', 'int');
 
 // Initialize technical objects
 $object = new Samples($db);
@@ -348,6 +349,54 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
+	if (!empty($origin) && !empty($originid) && !empty($fk_soc)){
+		
+		/*
+		// We use POST to have values set at commonfields_add.tpl.php
+		
+		// COPIED FROM htdocs/commande/card.php
+		$element = $subelement = $origin;
+		$regs = array();
+		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+		dol_syslog('Sample create from '.$element.' id='.$originid.' socid='.$socid, LOG_DEBUG);
+
+		if ($element == 'project') {
+			$projectid = $originid;
+		} 
+		else {
+			// For compatibility
+			if ($element == 'order' || $element == 'commande') {
+				$element = $subelement = 'commande';
+			} elseif ($element == 'propal') {
+				$element = 'comm/propal';
+				$subelement = 'propal';
+			} elseif ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+
+			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+			
+			$classname = ucfirst($subelement);
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($originid);
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+				$objectsrc->fetch_lines();
+			
+			$object->fk_soc = $socid;
+			$object->fk_project = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			
+			$object->fk_facture = $objectsrc->id;
+			
+			$object->note_public = (!empty($objectsrc->ref_client) ? ('Ref client: '.$objectsrc->ref_client) : '');
+
+			$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$note_public .= $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+		}*/
+	}
+	
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Samples")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -377,7 +426,6 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-
 	//dol_set_focus('input[name="ref"]');
 }
 
