@@ -1355,13 +1355,14 @@ class ActionsLims
 	
 	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
 	{
-		global $langs;
+		global $langs, $conf, $user;
 		
 		dol_syslog(__METHOD__.' hook on addMoreActionsButtons, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
-		if ($object->element == 'facture' ){
+		if ($object->element == 'facture'){
 		//if (in_array('', explode(':', $parameters['invoicecard']))) // parameters are empty
-			if ($object->statut == Facture::STATUS_VALIDATED){
-					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=modif">'.$langs->trans('createsample').'</a>';
+			if (!empty($conf->lims->enabled) && $user->rights->lims->samples->write && $object->statut == (Facture::STATUS_VALIDATED || Facture::STATUS_CLOSED))
+			{
+				print '<a class="butAction" href="'.dol_buildpath('/lims/samples_card.php?action=create',1).'&amp;origin='.$object->element.'&amp;originid='.$object->id.'&amp;socid='.$object->socid.'">'.$langs->trans("createsample").'</a>';
 				return 0;
 			}
 		}
