@@ -5,7 +5,7 @@ dol_include_once('/lims/class/methods.class.php', 'Methods');
 dol_include_once('/lims/class/results.class.php', 'Results');
 dol_include_once('/lims/class/limits.class.php', 'Limits');
 dol_include_once('/lims/class/lims_functions.class.php', 'lims_functions');
-
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 class ActionsLims
 { 
@@ -28,6 +28,11 @@ class ActionsLims
 
 		dol_syslog(__METHOD__.' hook on printObjectLineTitle, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 
+		if (in_array('', explode(':', $parameters['invoicecard'])))
+		{
+			return 0;
+		}
+		
 		if ($object->element == 'samples' )
 		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
@@ -55,14 +60,18 @@ class ActionsLims
 		}
 	}
 	
-	
 	function printObjectLine($parameters, &$object, &$action, $hookmanager)
 	{
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
+		dol_syslog(__METHOD__.' hook on printObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
 		
-		dol_syslog(__METHOD__.' DB hook on printObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
+		if (in_array('', explode(':', $parameters['invoicecard'])))
+		{
+			return 0;
+		}
+		
 		if ($object->element == 'samples' )
 		if (in_array('', explode(':', $parameters['samplescard'])))
 		{
@@ -71,12 +80,13 @@ class ActionsLims
 			// Line in view mode
 			if ($action != 'editline' || $selected != $line->id) 
 			{
+				//dol_syslog(__METHOD__.' VIEW LINE #='.$line->id, LOG_DEBUG);
 				$this->ObjectlineViewSamples($object, $parameters['line'], $parameters['num'], $parameters['i']);
 			}
 			// Line in update mode
 			if ($action == 'editline' && $selected == $line->id)
 			{
-				dol_syslog(__METHOD__.' EDIT LINE #='.$line->id, LOG_DEBUG);
+				//dol_syslog(__METHOD__.' EDIT LINE #='.$line->id, LOG_DEBUG);
 				$this->ObjectlineEditSamples($object, $line, $parameters['i']);
 			}
 		}
@@ -86,17 +96,16 @@ class ActionsLims
 		{
 			$selected = $parameters['selected'];
 			$line = $parameters['line'];
-			dol_syslog(__METHOD__.' DAVID limits line.id #='.$line->id, LOG_DEBUG);
 			// Line in view mode
 			if ($action != 'editline' || $selected != $line->id) 
 			{	
-				dol_syslog(__METHOD__.' VIEW LINE #='.$line->id, LOG_DEBUG);
+				//dol_syslog(__METHOD__.' VIEW LINE #='.$line->id, LOG_DEBUG);
 				$this->ObjectlineViewlimits($object, $parameters['line'], $parameters['num'], $parameters['i']);
 			}
 			// Line in update mode
 			if ($action == 'editline' && $selected == $line->id)
 			{
-				dol_syslog(__METHOD__.' EDIT LINE #='.$line->id, LOG_DEBUG);
+				//dol_syslog(__METHOD__.' EDIT LINE #='.$line->id, LOG_DEBUG);
 				$this->ObjectlineEditLimits($object, $line, $parameters['i']);
 			}
 		}
@@ -118,7 +127,13 @@ class ActionsLims
 		$error = 0; // Error counter
 		$myvalue = 'test'; // A result value
 
-		dol_syslog(__METHOD__.' DB hook on formAddObjectLine, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
+		dol_syslog(__METHOD__.' hook on formAddObjectLine, paramters='.var_export($parameters, true).' action='.$action, LOG_DEBUG);
+		
+		if (in_array('', explode(':', $parameters['invoicecard'])))
+		{
+			return 0;
+		}
+		
 		if ($object->element == 'samples' )
 		//if (in_array('', explode(':', $parameters['samplescard'])))
 		{
@@ -162,7 +177,7 @@ class ActionsLims
 
 		// Description => $methods->label
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-		dol_syslog(__METHOD__.' $this->element='.$this->element, LOG_DEBUG);
+		//dol_syslog(__METHOD__.' $this->element='.$this->element, LOG_DEBUG);
 		if ($this->element == 'samples')
 		{
 			//print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
@@ -227,11 +242,9 @@ class ActionsLims
 		
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
-		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
-
+		
 		$product = new Product ($object->db);
 		$product->fetch($method->fk_product);
-		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 		
 		$usemargins = 0;
 		if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('samples', 'results', 'methods'))) $usemargins = 1;
@@ -260,7 +273,7 @@ class ActionsLims
 			
 			if ($method->fk_product > 0)
 			{	
-				dol_syslog('$method->fk_product > 0', LOG_DEBUG);
+				//dol_syslog('$method->fk_product > 0', LOG_DEBUG);
 
 				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 			}
@@ -302,7 +315,7 @@ class ActionsLims
 			// Add description in form
 			if ($method->fk_product > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 			{
-				dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+				//dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 				//print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
 				
 				print (!empty($method->label)) ? ' - '.dol_htmlentitiesbr($method->label) : '';
@@ -404,7 +417,7 @@ class ActionsLims
 			print '</td>';
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
-				dol_syslog('Linecoledit .... $num='.$num.' $i='.$i, LOG_DEBUG);
+				//dol_syslog('Linecoledit .... $num='.$num.' $i='.$i, LOG_DEBUG);
 				print '<td class="linecolmove tdlineupdown center">';
 				$coldisplay++;
 				if ($i > 0) { ?>
@@ -705,7 +718,7 @@ class ActionsLims
 		
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
-		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
+		//dol_syslog(__METHOD__.' line='.var_export($line, true), LOG_DEBUG);
 
 		$product = new Product ($object->db);
 		$product->fetch($method->fk_product);
@@ -847,7 +860,7 @@ class ActionsLims
 
 		// Description => $methods->label
 		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
-		dol_syslog(__METHOD__.' $this->element='.$this->element, LOG_DEBUG);
+		//dol_syslog(__METHOD__.' $this->element='.$this->element, LOG_DEBUG);
 		if ($this->element == 'limits')
 		{
 			//print '<td class="linerefsupplier"><span id="title_fourn_ref">'.$langs->trans("SupplierRef").'</span></td>';
@@ -1064,8 +1077,7 @@ class ActionsLims
 		
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
-		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
-	
+		
 		if (empty($dateSelector)) $dateSelector = 0;
 		if (empty($forceall)) $forceall = 0;
 
@@ -1087,7 +1099,7 @@ class ActionsLims
 			
 			if ($method->fk_product > 0)
 			{	
-				dol_syslog('$method->fk_product > 0', LOG_DEBUG);
+				//dol_syslog('$method->fk_product > 0', LOG_DEBUG);
 
 				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 			}
@@ -1115,7 +1127,7 @@ class ActionsLims
 			// Add description in form
 			if ($method->fk_product > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 			{
-				dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+				//dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 				//print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
 				
 				print (!empty($method->label)) ? ' - '.dol_htmlentitiesbr($method->label) : '';
@@ -1178,7 +1190,7 @@ class ActionsLims
 			print '</td>';
 
 			if ($num > 1 && $conf->browser->layout != 'phone' && empty($disablemove)) {
-				dol_syslog('Linecoledit .... $num='.$num.' $i='.$i, LOG_DEBUG);
+				//dol_syslog('Linecoledit .... $num='.$num.' $i='.$i, LOG_DEBUG);
 				print '<td class="linecolmove tdlineupdown center">';
 				$coldisplay++;
 				if ($i > 0) { ?>
@@ -1339,5 +1351,21 @@ class ActionsLims
 		$result = $labelproductservice;
 	
 		//return $result;
+	}
+	
+	function addMoreActionsButtons($parameters, &$object, &$action, $hookmanager)
+	{
+		global $langs;
+		
+		dol_syslog(__METHOD__.' hook on addMoreActionsButtons, paramters='.var_export($paramters, true).' action='.$action, LOG_DEBUG);
+		if ($object->element == 'facture' ){
+		//if (in_array('', explode(':', $parameters['invoicecard']))) // parameters are empty
+			if ($object->statut == Facture::STATUS_VALIDATED){
+					print '<a class="butAction'.($conf->use_javascript_ajax ? ' reposition' : '').'" href="'.$_SERVER['PHP_SELF'].'?facid='.$object->id.'&amp;action=modif">'.$langs->trans('createsample').'</a>';
+				return 0;
+			}
+		}
+		else
+			return 0;
 	}
 }
