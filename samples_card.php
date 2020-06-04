@@ -349,10 +349,7 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
-	if (!empty($origin) && !empty($originid) && !empty($fk_soc)){
-		
-		/*
-		// We use POST to have values set at commonfields_add.tpl.php
+	if (!empty($origin) && !empty($originid) && !empty($socid)){
 		
 		// COPIED FROM htdocs/commande/card.php
 		$element = $subelement = $origin;
@@ -392,9 +389,15 @@ if ($action == 'create')
 			
 			$object->note_public = (!empty($objectsrc->ref_client) ? ('Ref client: '.$objectsrc->ref_client) : '');
 
-			$note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
-			$note_public .= $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
-		}*/
+			$object->note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$object->note_public .= $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+			
+			$_POST['fk_facture'] = $object->fk_facture;
+			$_POST['fk_soc'] = $object->fk_soc;
+			$_POST['fk_project'] = $object->fk_project;
+			$_POST['note_public'] = $object->note_public;
+			$_POST['note_private'] = $object->note_private;
+		}
 	}
 	
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Samples")));
