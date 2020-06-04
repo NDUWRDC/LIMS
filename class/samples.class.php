@@ -105,19 +105,19 @@ class Samples extends CommonObject
 		'fk_socpeople' => array('type'=>'integer:Contact:Contact/class/contact.class.php:1:statut=1 AND t.fk_soc=fk_soc', 'label'=>'Client sample taker', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"If client did the sampling",),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Laboratory Sample taker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Own lab techician",),
 		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>0, 'default'=>null, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
-		'volume' => array('type'=>'real', 'label'=>'Volume [liter]', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>3, 'help'=>"Total volume in liters of all containers and bottles",),
-		'qty' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"Amount of containers or bottles",),
-		'date' => array('type'=>'datetime', 'label'=>'Sampling date and time', 'enabled'=>1, 'position'=>100, 'notnull'=>1, 'visible'=>1, 'help'=>"When was the sample taken",),
-		'place' => array('type'=>'varchar(128)', 'label'=>'Sampling place', 'enabled'=>1, 'position'=>110, 'notnull'=>1, 'visible'=>3, 'help'=>"Location of water source",),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'volume' => array('type'=>'real', 'label'=>'Volume [liter]', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"Total volume in liters of all containers and bottles",),
+		'qty' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"Amount of containers or bottles",),
+		'date' => array('type'=>'datetime', 'label'=>'Sampling date and time', 'enabled'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'help'=>"When was the sample taken",),
+		'place' => array('type'=>'varchar(128)', 'label'=>'Sampling place', 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'visible'=>3, 'help'=>"Location of water source",),
 		'place_lon' => array('type'=>'real', 'label'=>'Sampling place GPS longitude', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"X-coordinate (WGS84), e.g. '0.5959513'",),
 		'place_lat' => array('type'=>'real', 'label'=>'Sampling place GPS latitude', 'enabled'=>1, 'position'=>130, 'notnull'=>-1, 'visible'=>3, 'help'=>"Y-coordinate (WGS84), e.g. '32.4569526'",),
-		'date_arrival' => array('type'=>'datetime', 'label'=>'Arrival date and time', 'enabled'=>1, 'position'=>140, 'notnull'=>1, 'visible'=>1, 'help'=>"Date when the sample was received",),
+		'date_arrival' => array('type'=>'datetime', 'label'=>'Arrival date and time', 'enabled'=>1, 'position'=>140, 'notnull'=>0, 'visible'=>1, 'help'=>"Date when the sample was received",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>1, 'position'=>150, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"If many samples belong to the same project",),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'position'=>160, 'notnull'=>1, 'visible'=>3,),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'position'=>160, 'notnull'=>0, 'visible'=>3,),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'position'=>170, 'notnull'=>0, 'visible'=>-1,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'position'=>180, 'notnull'=>0, 'visible'=>-1,),
-		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit Set', 'enabled'=>1, 'position'=>200, 'notnull'=>1, 'visible'=>3, 'help'=>"Limit set applied for judging results",),
+		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit Set', 'enabled'=>1, 'position'=>200, 'notnull'=>0, 'visible'=>3, 'help'=>"Limit set applied for judging results",),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
@@ -125,7 +125,7 @@ class Samples extends CommonObject
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>4, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
@@ -205,6 +205,7 @@ class Samples extends CommonObject
 
 		// TODO: must be handled via constants?
 		$this->model_pdf = 'lims_testreport';
+		$this->status = self::STATUS_DRAFT;
 		
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;

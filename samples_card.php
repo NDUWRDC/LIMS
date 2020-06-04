@@ -82,7 +82,8 @@ $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'sam
 $backtopage	 = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
 $lineid		 = GETPOST('lineid', 'int');
-
+$origin 	 = GETPOST('origin', 'alpha');
+$originid	 = GETPOST('originid', 'int');
 
 // Initialize technical objects
 $object = new Samples($db);
@@ -170,7 +171,7 @@ if (empty($reshook))
 		$object->fk_user_approval = $user->id;
 		$object->update($user);
 	}
-
+	
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 	
@@ -348,11 +349,71 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
+	if (!empty($origin) && !empty($originid) && !empty($socid)){
+		
+		// COPIED FROM htdocs/commande/card.php
+		$element = $subelement = $origin;
+		$regs = array();
+		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+		dol_syslog('Sample create from '.$element.' id='.$originid.' socid='.$socid, LOG_DEBUG);
+
+		if ($element == 'project') {
+			$projectid = $originid;
+		} 
+		else {
+			// For compatibility
+			if ($element == 'order' || $element == 'commande') {
+				$element = $subelement = 'commande';
+			} elseif ($element == 'propal') {
+				$element = 'comm/propal';
+				$subelement = 'propal';
+			} elseif ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+
+			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+			
+			$classname = ucfirst($subelement);
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($originid);
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+				$objectsrc->fetch_lines();
+			
+			$object->fk_soc = $socid;
+			$object->fk_project = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			
+			$object->fk_facture = $objectsrc->id;
+			
+			$object->note_public = (!empty($objectsrc->ref_client) ? ('Ref client: '.$objectsrc->ref_client) : '');
+
+			$object->note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$object->note_public .= $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+			
+			// Processed at /core/tpl/commonfields_add.tpl.php
+			$_POST['fk_facture'] = $object->fk_facture;
+			$_POST['fk_soc'] = $object->fk_soc;
+			$_POST['fk_project'] = $object->fk_project;
+			$_POST['note_public'] = $object->note_public;
+			$_POST['note_private'] = $object->note_private;
+			// Processed after object is created
+			$_POST['socid'] = $object->fk_soc;
+			$_POST['origin'] = $element;
+			$_POST['originid'] = $originid;
+	
+			session_start();
+			$_SESSION['importsample_post'] = $_POST;
+		}
+	}
+	
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Samples")));
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<input type="hidden" name="token" value="'.newToken().'">';
 	print '<input type="hidden" name="action" value="add">';
+	
 	if ($backtopage) print '<input type="hidden" name="backtopage" value="'.$backtopage.'">';
 	if ($backtopageforcancel) print '<input type="hidden" name="backtopageforcancel" value="'.$backtopageforcancel.'">';
 
@@ -377,7 +438,6 @@ if ($action == 'create')
 	print '</div>';
 
 	print '</form>';
-
 	//dol_set_focus('input[name="ref"]');
 }
 
@@ -417,8 +477,83 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
-	dol_syslog('Part to show record: object->fetch_optionals', LOG_DEBUG);
+	dol_syslog('Part to show record', LOG_DEBUG);
 	
+	session_start();
+	if (empty($_POST) && isset($_SESSION['importsample_post'])) {
+		$post = $_SESSION['importsample_post'];
+		unset($_SESSION['importsample_post']);
+		dol_syslog('Restore session importsample_post', LOG_DEBUG);
+	}
+	else $post = $_POST;
+	
+	if (isset($post['origin']) && isset($post['originid']))
+	{
+		$origin = $post['origin'];
+		$originid = $post['originid'];
+		$classname = ucfirst($post['origin']);
+		$objectsrc = new $classname($db);
+		$objectsrc->fetch($post['originid']);
+		
+		dol_syslog('Import lines from '.$classname.' with id='.$originid, LOG_DEBUG);
+		
+		if (!empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+		{
+			$objectsrc->fetch_lines();
+			$i = 0;
+			$products_source = array();
+			foreach ($objectsrc->lines as $line)
+			{
+				$product_import = $line->fk_product;
+				if (is_numeric($product_import))
+					$products_source[$i] = $product_import;
+				$i++;
+			}
+			dol_syslog('Found products_source ...'.var_export($products_source,true), LOG_DEBUG);
+			
+			$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
+			$sql .= ' WHERE fk_product IN ('.implode(',',$products_source).')';
+
+			// Insert line
+			$resql = $object->db->query($sql);
+			if (!$resql)
+			{
+				$object->error = $object->db->lasterror();
+			}
+			else
+			{
+				$num = $object->db->num_rows($resql);
+				//dol_syslog("query num=".$num, LOG_DEBUG);
+				
+				if ($num > 0) 
+				{
+					while ($obj = $object->db->fetch_object($resql))
+					{
+						//dol_syslog(" addline obj".var_export($obj, true), LOG_DEBUG);
+						
+						$idprod = $obj->fk_product;
+						$fk_method = $obj->rowid;
+						$abnormalities = false;
+						$testresult = -1; 			// result NOT NULL
+						$fk_user = $user->id;
+						$date_start = ''; 
+						$date_end = '';
+						$rang = -1;
+						$origin = $origin;			// not handeled by method/class
+						$origin_id = $origin_id;	// not handeled by method/class
+						$fk_parent_line = 0;		// not handeled by method/class
+						$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user, $date_start, $date_end, $rang, $origin, $origin_id, $fk_parent_line);
+						dol_syslog(" addline idprod=".$idprod." idmethod=".$fk_method."  result=".$result, LOG_DEBUG);
+					}
+				}
+			}
+		}
+		else{
+			dol_syslog('No lines or method fetch_lines not existent', LOG_DEBUG);
+		}
+	}
+
 	$res = $object->fetch_optionals();
 
 	$head = samplesPrepareHead($object);
@@ -426,7 +561,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	dol_fiche_head($head, 'card', $langs->trans("Samples"), -1, $object->picto);
 	
 	$formconfirm = '';
-
+	
 	// Confirmation to delete
 	if ($action == 'delete')
 	{

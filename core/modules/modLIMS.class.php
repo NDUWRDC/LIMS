@@ -104,7 +104,7 @@ class modLIMS extends DolibarrModules
 			'hooks' => array(
 					//'printObjectLineTitle'),
 					'data' => array(
-						'samplescard','limitscard'
+						'samplescard','limitscard','invoicecard'
 					),
 					'entity' => '0',
 			),
