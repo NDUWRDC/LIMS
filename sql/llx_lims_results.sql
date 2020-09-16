@@ -30,6 +30,7 @@ CREATE TABLE llx_lims_results(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	rang integer NOT NULL
+	rang integer NOT NULL,
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
