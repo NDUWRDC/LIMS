@@ -1,8 +1,8 @@
 # LABORATORY INFORMATION MANAGEMENT SYSTEM FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
-## Features
+## Features v0.1.0
 
-Manage your samples and generate test reports in accordance to ISO 17025:2017: 
+Manage your samples and generate test reports following ISO 17025:2017: 
 * Manage Test Methods, where each method has
   * A linked product or service
   * A unit, e.g. mS/cm
@@ -31,7 +31,7 @@ Other modules are available on [Dolistore.com](https://www.dolistore.com>).
 
 ## Translations
 
-Translations can be define manually by editing files into directories *langs*.
+Translations can be defined manually by editing files into directories *langs*. Currently available language files: English.
 
 <!--
 This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service.
@@ -41,14 +41,15 @@ For more informations, see the [translator's documentation](https://wiki.dolibar
 There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
 -->
 
-<!--
 
 ## Installation
 
 ### From the ZIP file and GUI interface
 
-- If you get the module in a zip file (like when downloading it from the market place [Dolistore](https://www.dolistore.com)), go into
-menu ```Home - Setup - Modules - Deploy external module``` and upload the zip file.
+* Download a release package from https://github.com/NDUWRDC/LIMS/releases
+* Log into Dolibarr as admininistrator and browse to ```Home - Setup - Modules/Applications```
+  * Select tab ```Deploy/install external app/module```
+  * Select the zip-file (release package) and click SEND
 
 Note: If this screen tell you there is no custom directory, check your setup is correct:
 
@@ -81,18 +82,16 @@ Note: If this screen tell you there is no custom directory, check your setup is 
 
 ```sh
 cd ....../custom
-git clone git@github.com:gitlogin/lims.git lims
+git clone https://github.com/NDUWRDC/LIMS.git lims 
 ```
 
 ### <a name="final_steps"></a>Final steps
 
 From your browser:
 
-  - Log into Dolibarr as a super-administrator
-  - Go to "Setup" -> "Modules"
-  - You should now be able to find and enable the module
-
--->
+  - Log into Dolibarr as administrator
+  - Go to ```Home - Setup - Modules/Applications```
+  - You should now be able to find and enable the module LIMS
 
 ## Licenses
 
