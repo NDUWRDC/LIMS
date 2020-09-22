@@ -13,8 +13,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_rowid (rowid);
-ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_ref (ref);
-ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_fk_limits (fk_limits);
-ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_entries_fk_method (fk_method);
-ALTER TABLE llx_lims_limits_entries ADD CONSTRAINT llx_lims_entries_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_rowid (rowid);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_ref (ref);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_fk_limits (fk_limits);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_fk_method (fk_method);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_fk_user_creat (fk_user_creat);
+ALTER TABLE llx_lims_limits_entries ADD INDEX idx_lims_limits_entries_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_lims_limits_entries ADD CONSTRAINT idx_lims_limits_entries_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);

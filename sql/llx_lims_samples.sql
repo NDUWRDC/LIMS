@@ -36,7 +36,7 @@ CREATE TABLE llx_lims_samples(
 	description text, 
 	note_public text, 
 	note_private text, 
-    fk_limits integer, 
+	fk_limits integer, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 

@@ -20,8 +20,9 @@ CREATE TABLE llx_lims_methods(
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	label varchar(255), 
 	fk_soc integer, 
-	fk_product integer NOT NULL, 
-	unit varchar(14) NOT NULL, 
+	fk_product integer NOT NULL,
+	standard varchar(128),	
+	unit varchar(14) NOT NULL,
 	accuracy varchar(14) NOT NULL, 
 	range_lower real NOT NULL, 
 	range_upper real NOT NULL, 
@@ -34,8 +35,7 @@ CREATE TABLE llx_lims_methods(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	status integer NOT NULL, 
-	model_pdf varchar(255), 
-	standard varchar(128)
+	model_pdf varchar(255),
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

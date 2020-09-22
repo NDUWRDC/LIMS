@@ -18,6 +18,7 @@ CREATE TABLE llx_lims_results(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	rang integer NOT NULL,
 	fk_samples integer NOT NULL, 
 	fk_user integer NOT NULL,
 	fk_method integer NOT NULL, 
@@ -30,7 +31,6 @@ CREATE TABLE llx_lims_results(
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
 	import_key varchar(14), 
-	rang integer NOT NULL,
 	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;
