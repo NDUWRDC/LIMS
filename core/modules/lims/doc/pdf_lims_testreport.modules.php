@@ -1203,12 +1203,19 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$posy += 4;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampling")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		if ($object->date != NULL)
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampling")." : ".dol_print_date($object->date, "day", false, $outputlangs, true), '', 'R');
+		else
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampling")." : ".$outputlangs->transnoentities("DateSamplingUnknown"), '', 'R');
 		// SHOW DATE OF SAMPLE RECEIPT
 		$posy += 3;
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampleReceived")." : ".dol_print_date($object->date_arrival, "day", false, $outputlangs, true), '', 'R');
+		if ($object->date_arrival != NULL)
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampleReceived")." : ".dol_print_date($object->date_arrival, "day", false, $outputlangs, true), '', 'R');
+		else
+			$pdf->MultiCell($w, 3, $outputlangs->transnoentities("DateSampleReceived")." : ".$outputlangs->transnoentities("DateSampleReceivedUnknown"), '', 'R');
+
 		// SHOW DATE OF REPORT
 		$posy += 3;
 		$pdf->SetXY($posx, $posy);
