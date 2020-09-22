@@ -386,31 +386,33 @@ class pdf_lims_testreport extends CommonDocGenerator
 				// Print sample description
 				$sampledescription = empty($object->description) ? '' : $object->description;
 				$nexYsampleline = array();
-				if ($sampledescription)
-				{
-					$tab_top -= 2;
-					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleDescription"), 0, 1);
-					$tab_top_sampleplace = $tab_top;
-					
-					$nexY = $pdf->GetY();
-					$tab_top = $nexY + 1;
-					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$sampledescription = make_substitutions($sampledescription, $substitutionarray, $outputlangs);
-					$sampledescription = convertBackOfficeMediasLinksToPublicLinks($sampledescription);
 
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($sampledescription), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note = $nexY - $tab_top;
+				if (empty($sampledescription))
+					$sampledescription = $outputlangs->transnoentities("HeaderSampleDescriptionUnknown"); 
 
-					// Rect takes a length in 3rd parameter
-					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->margin_left, $tab_top - 1, $this->posxsampleplace - $this->posxdesc, $height_note + 1);
-					
-					$nexYsampleline[0] = $nexY;
-				}
+				// Sample description must have a value in reality - Always print it, even with "Not known"
+				$tab_top -= 2;
+				$pdf->SetFont('', 'B', $default_font_size-1);
+				$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, $outputlangs->transnoentities("HeaderSampleDescription"), 0, 1);
+				$tab_top_sampleplace = $tab_top;
+				
+				$nexY = $pdf->GetY();
+				$tab_top = $nexY + 1;
+				$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				$sampledescription = make_substitutions($sampledescription, $substitutionarray, $outputlangs);
+				$sampledescription = convertBackOfficeMediasLinksToPublicLinks($sampledescription);
+
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->writeHTMLCell($this->posxsampleplace-$this->posxdesc, 3, $this->posxdesc - 1, $tab_top - 1, dol_htmlentitiesbr($sampledescription), 0, 1);
+				$nexY = $pdf->GetY();
+				$height_note = $nexY - $tab_top;
+
+				// Rect takes a length in 3rd parameter
+				$pdf->SetDrawColor(192, 192, 192);
+				$pdf->Rect($this->margin_left, $tab_top - 1, $this->posxsampleplace - $this->posxdesc, $height_note + 1);
+				
+				$nexYsampleline[0] = $nexY;
 				
 				// Print Sampling Place 
 				$sample_place = empty($object->place) ? '' : $object->place;
@@ -418,29 +420,31 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$lat = empty($object->place_lat) ? '' : $object->place_lat;
 				if( !empty($lon) && !empty($lat) ) $sample_place .= '<br />'.$lon.' | '.$lat;
 				
-				if ($sample_place)
-				{
-					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePlace"), 0, 1);
+				
+				if (empty($sample_place))
+					$sample_place =  $outputlangs->transnoentities("HeaderSamplePlaceUnknown");
+				
+				// Always print information on sample place
+				$pdf->SetFont('', 'B', $default_font_size-1);
+				$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePlace"), 0, 1);
 
-					$nexY = $pdf->GetY();
-					$tab_top = $nexY + 1;
-					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$sample_place = make_substitutions($sample_place, $substitutionarray, $outputlangs);
-					$sample_place = convertBackOfficeMediasLinksToPublicLinks($sample_place);
+				$nexY = $pdf->GetY();
+				$tab_top = $nexY + 1;
+				$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				$sample_place = make_substitutions($sample_place, $substitutionarray, $outputlangs);
+				$sample_place = convertBackOfficeMediasLinksToPublicLinks($sample_place);
 
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top - 1, dol_htmlentitiesbr($sample_place), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note = $nexY - $tab_top;
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->writeHTMLCell($this->posxsampleperson - $this->posxsampleplace, 3, $this->posxsampleplace, $tab_top - 1, dol_htmlentitiesbr($sample_place), 0, 1);
+				$nexY = $pdf->GetY();
+				$height_note = $nexY - $tab_top;
 
-					// Rect takes a length in 3rd parameter
-					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->posxsampleplace, $tab_top - 1, $this->posxsampleperson - $this->posxsampleplace - 1, $height_note + 1);
+				// Rect takes a length in 3rd parameter
+				$pdf->SetDrawColor(192, 192, 192);
+				$pdf->Rect($this->posxsampleplace, $tab_top - 1, $this->posxsampleperson - $this->posxsampleplace - 1, $height_note + 1);
 
-					$nexYsampleline[1] = $nexY;
-				}
+				$nexYsampleline[1] = $nexY;
 				
 				// Print Sampling Person
 				// TODO: fk_socpeople not yet working!!
@@ -452,29 +456,30 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$userobj->fetch($object->fk_user);
 					$sample_person_user = $userobj->getFullName($outputlangs);
 				}
-				if ($sample_person_user)
-				{
-					$pdf->SetFont('', 'B', $default_font_size-1);
-					$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePerson"), 0, 1);
+				if (empty($sample_person_user))
+					$sample_person_user = $outputlangs->transnoentities("HeaderSamplePersonUnknown");
+				
+				// Always print information on sampling person
+				$pdf->SetFont('', 'B', $default_font_size-1);
+				$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top_sampleplace - 1, $outputlangs->transnoentities("HeaderSamplePerson"), 0, 1);
 
-					$nexY = $pdf->GetY();
-					$tab_top = $nexY + 1;
-					$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
-					complete_substitutions_array($substitutionarray, $outputlangs, $object);
-					$sample_person_user = make_substitutions($sample_person_user, $substitutionarray, $outputlangs);
-					$sample_person_user = convertBackOfficeMediasLinksToPublicLinks($sample_person_user);
+				$nexY = $pdf->GetY();
+				$tab_top = $nexY + 1;
+				$substitutionarray = pdf_getSubstitutionArray($outputlangs, null, $object);
+				complete_substitutions_array($substitutionarray, $outputlangs, $object);
+				$sample_person_user = make_substitutions($sample_person_user, $substitutionarray, $outputlangs);
+				$sample_person_user = convertBackOfficeMediasLinksToPublicLinks($sample_person_user);
 
-					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top - 1, dol_htmlentitiesbr($sample_person_user), 0, 1);
-					$nexY = $pdf->GetY();
-					$height_note = $nexY - $tab_top;
+				$pdf->SetFont('', '', $default_font_size - 1);
+				$pdf->writeHTMLCell($this->page_width - $this->margin_right - $this->posxsampleperson, 3, $this->posxsampleperson, $tab_top - 1, dol_htmlentitiesbr($sample_person_user), 0, 1);
+				$nexY = $pdf->GetY();
+				$height_note = $nexY - $tab_top;
 
-					// Rect takes a length in 3rd parameter
-					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->posxsampleperson, $tab_top - 1, $this->page_width - $this->margin_right - $this->posxsampleperson, $height_note + 1);
-					
-					$nexYsampleline[2] = $nexY;
-				}
+				// Rect takes a length in 3rd parameter
+				$pdf->SetDrawColor(192, 192, 192);
+				$pdf->Rect($this->posxsampleperson, $tab_top - 1, $this->page_width - $this->margin_right - $this->posxsampleperson, $height_note + 1);
+				
+				$nexYsampleline[2] = $nexY;
 				
 				// Print notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;
