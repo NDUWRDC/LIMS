@@ -966,7 +966,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		while ($i < $nblines)
 		{
 			if ($object->lines[$i]->abnormalities){
-				$abnormalities .= '('.$i.')';
+				$abnormalities .= "(" . ($i+1) . ")";
 				$abnormalitiesfound = true;
 			}
 			
