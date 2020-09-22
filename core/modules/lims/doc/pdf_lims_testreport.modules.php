@@ -203,6 +203,14 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$this->posxresult -= 20;
 			$this->posxunit -= 20;
 		}
+		// set width for columns
+		$this->width_standard = $this->posxaccuracy - $this->posxstandard; 
+		$this->width_accuracy = $this->posxtestdate - $this->posxaccuracy;
+		$this->width_testdate = $this->posxminimum - $this->posxtestdate;
+		$this->width_minimum = $this->posxmaximum - $this->posxminimum;
+		$this->width_maximum = $this->posxresult - $this->posxmaximum;
+		$this->width_result = $this->posxunit - $this->posxresult;
+		$this->width_unit = $this->page_width - $this->margin_right - $this->posxunit;
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -512,6 +520,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$curY = $nexY;
 					$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
 					$pdf->SetTextColor(0, 0, 0);
+					$LineHeight = 3;
 
 					// Define size of image if we need it
 					$imglinesize = array();
@@ -555,7 +564,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 					$pdf->startTransaction();
 					// hook on pdf_writelinedesc called here
-					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, 3, $curX, $curY, $hideref, $hidedesc);
+					pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, $LineHeight, $curX, $curY, $hideref, $hidedesc);
 					$pageposafter = $pdf->getPage();
 					if ($pageposafter > $pageposbefore)	// There is a pagebreak
 					{
@@ -563,7 +572,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
 						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, 3, $curX, $curY, $hideref, $hidedesc);
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, $LineHeight, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
 						//var_dump($posyafter); var_dump(($this->page_height - ($heightforfooter+$heightforfreetext+$heightforinfotests))); exit;
@@ -610,27 +619,37 @@ class pdf_lims_testreport extends CommonDocGenerator
 					// Standard (ISO...)
 					$standard = $method->standard;
 					$pdf->SetXY($this->posxstandard, $curY);
-					$pdf->MultiCell($this->posxaccuracy - $this->posxstandard, 3, $standard, 0, 'L');
+					$cellheight = $pdf->getStringHeight($this->width_standard, $standard);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_standard, $LineHeight, $standard, 0, 'L');
 
 					// Accuracy 
 					$accuracy = $method->accuracy;
 					$pdf->SetXY($this->posxaccuracy-1, $curY);
-					$pdf->MultiCell($this->posxtestdate - $this->posxaccuracy, 3, $accuracy, 0, 'C');
+					$cellheight = $pdf->getStringHeight($this->width_accuracy, $accuracy);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_accuracy, $LineHeight, $accuracy, 0, 'C');
 
 					// Test-Date
 					$testdate = dol_print_date($object->lines[$i]->end, 'dayrfc');
 					$pdf->SetXY($this->posxtestdate-1, $curY);
-					$pdf->MultiCell($this->posxminimum - $this->posxtestdate, 3, $testdate, 0, 'C'); // Enough for 6 chars
+					$cellheight = $pdf->getStringHeight($this->width_testdate,$testdate);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_testdate, $LineHeight, $testdate, 0, 'C'); // Enough for 6 chars
 
 					// Minimum
 					$minimum = $object->lines[$i]->minimum;
 					$pdf->SetXY($this->posxminimum, $curY);
-					$pdf->MultiCell($this->posxmaximum - $this->posxminimum, 3, $minimum, 0, 'C');
+					$cellheight = $pdf->getStringHeight($this->width_minimum,$minimum);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_minimum, $LineHeight, $minimum, 0, 'C');
 
 					// Maximum
 					$pdf->SetXY($this->posxmaximum, $curY);
 					$maximum = $object->lines[$i]->maximum;
-					$pdf->MultiCell($this->posxresult - $this->posxmaximum, 3, $maximum, 0, 'C');
+					$cellheight = $pdf->getStringHeight($this->width_maximum,$maximum);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_maximum, $LineHeight, $maximum, 0, 'C');
 
 					// Result
 					$result = lims_functions::numberFormatPrecision($object->lines[$i]->result,$method->resolution);
@@ -645,23 +664,31 @@ class pdf_lims_testreport extends CommonDocGenerator
 						$result = '> '.$method->range_upper;
 					
 					$pdf->SetXY($this->posxresult, $curY);
-					$pdf->MultiCell($this->posxunit - $this->posxresult, 3, $result, 0, 'C');
+					$cellheight = $pdf->getStringHeight($this->width_result,$result);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_result, $LineHeight, $result, 0, 'C');
 					$pdf->SetFont('', '', $default_font_size - 1); // in any case reset text style
 
 					// Unit
 					$unit = $method->unit;
 					$pdf->SetXY($this->posxunit, $curY);
-					$pdf->MultiCell($this->page_width - $this->margin_right - $this->posxunit, 3, $unit, 0, 'L');
+					$cellheight = $pdf->getStringHeight($this->width_result,$unit);
+					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+					$pdf->MultiCell($this->width_unit, $LineHeight, $unit, 0, 'L');
 
 					if ($posYAfterImage > $posYAfterDescription) $nexY = $posYAfterImage;
 
-					// Add line
+					// Get height of the line and add it to nexY
+					//$LineHeight = $pdf->GetY() - $curY;
+					$nexY += $LineHeight;
+
+					// Draw dashed line
 					if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
 					{
 						$pdf->setPage($pageposafter);
 						$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 						//$pdf->SetDrawColor(190,190,200);
-						$pdf->line($this->margin_left, $nexY + 1, $this->page_width - $this->margin_right, $nexY + 1);
+						$pdf->line($this->margin_left, $nexY, $this->page_width - $this->margin_right, $nexY);
 						$pdf->SetLineStyle(array('dash'=>0));
 					}
 

@@ -1339,9 +1339,13 @@ class ActionsLims
 		$labelproductservice = $method->label;
 		
 		// Print Number starting with 1
-		$pdf->writeHTMLCell(7, $h, $posx, $posy, $i+1, 0, 1, false, true, 'J', true);
+		//$pdf->writeHTMLCell(7, $h, $posx, $posy, $i+1, 0, 1, false, true, 'J', true);
+		$pdf->MultiCell(7, $h, $i+1, 0, 'L', false, 0, $posx, $posy); // $reseth, 0, true, $autopadding, 0, 'T', false);
+
 		// Print Description
-		$pdf->writeHTMLCell($w-7, $h, $posx+7, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		//$pdf->writeHTMLCell($w-7, $h, $posx+7, $posy, $outputlangs->convToOutputCharset($labelproductservice), 0, 1, false, true, 'J', true);
+		$pdf->MultiCell($w-7, $h, $outputlangs->convToOutputCharset($labelproductservice), 0, 'L', false, 0, $posx+7, $posy); // $reseth, 0, true, $autopadding, 0, 'T', false);
+		
 		$result = $labelproductservice;
 	
 		//return $result;
