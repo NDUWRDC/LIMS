@@ -243,21 +243,36 @@ class modLIMS extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Read objects of LIMS'; // Permission label
+		$this->rights[$r][1] = 'View Equipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update objects of LIMS'; // Permission label
+		$this->rights[$r][1] = 'Create/Update Equipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Delete objects of LIMS'; // Permission label
+		$this->rights[$r][1] = 'Validate and Delete Equipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		/* END MODULEBUILDER PERMISSIONS */
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'View Methods'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Methods'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Validate and Delete Methods'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
 
 		// Main menu entries to add
 		$this->menu = array();
@@ -364,8 +379,69 @@ class modLIMS extends DolibarrModules
             // 0=Menu for internal users, 1=external users, 2=both
             'user'=>2
         );
-
 		/* END MODULEBUILDER LEFTMENU EQUIPMENT */
+		/* BEGIN LEFTMENU METHODS */
+		 $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'Methods',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods',
+            'url'=>'/lims/methods_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New Method',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods_new',
+            'url'=>'/lims/methods_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List Methods',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods_list',
+            'url'=>'/lims/methods_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+		/* END LEFTMENU METHODS */
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT EQUIPMENT */
