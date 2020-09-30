@@ -28,6 +28,7 @@ CREATE TABLE llx_lims_equipment(
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
+	last_main_doc varchar(255), 
 	import_key varchar(14), 
 	model_pdf varchar(255), 
 	status smallint
