@@ -21,6 +21,8 @@ CREATE TABLE llx_lims_equipment(
 	fk_product integer NOT NULL, 
 	category smallint NOT NULL, 
 	maintenance smallint, 
+	maintain_last datetime, 
+	maintain_interval integer, 
 	description text, 
 	note_public text, 
 	note_private text, 
