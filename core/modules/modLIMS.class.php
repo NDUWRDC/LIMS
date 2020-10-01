@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2018  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2018-2019  Nicolas ZABOURI         <info@inovea-conseil.com>
  * Copyright (C) 2019-2020  Frédéric France         <frederic.france@netlogic.fr>
- * Copyright (C) 2020 SuperAdmin
+ * Copyright (C) 2020       David Bensel            <david@bensel.cc>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -294,6 +294,69 @@ class modLIMS extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
+		/* BEGIN LEFTMENU METHODS */
+		 $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'Methods',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods',
+            'url'=>'/lims/methods_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'New Method',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods_new',
+            'url'=>'/lims/methods_card.php?action=create',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2
+        );
+        $this->menu[$r++]=array(
+            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
+            // This is a Left menu entry
+            'type'=>'left',
+            'titre'=>'List Methods',
+            'mainmenu'=>'lims',
+            'leftmenu'=>'lims_methods_list',
+            'url'=>'/lims/methods_list.php',
+            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+            'langs'=>'lims@lims',
+            'position'=>1100+$r,
+            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+            'enabled'=>'$conf->lims->enabled',
+            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+            'perms'=>'1',
+            'target'=>'',
+            // 0=Menu for internal users, 1=external users, 2=both
+            'user'=>2,
+        );
+		/* END LEFTMENU METHODS */
+
 		/* BEGIN MODULEBUILDER LEFTMENU EQUIPMENT
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -380,68 +443,6 @@ class modLIMS extends DolibarrModules
             'user'=>2
         );
 		/* END MODULEBUILDER LEFTMENU EQUIPMENT */
-		/* BEGIN LEFTMENU METHODS */
-		 $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=lims',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'Methods',
-            'mainmenu'=>'lims',
-            'leftmenu'=>'lims_methods',
-            'url'=>'/lims/methods_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'lims@lims',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->lims->enabled',
-            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'New Method',
-            'mainmenu'=>'lims',
-            'leftmenu'=>'lims_methods_new',
-            'url'=>'/lims/methods_card.php?action=create',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'lims@lims',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->lims->enabled',
-            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2
-        );
-        $this->menu[$r++]=array(
-            // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-            'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
-            // This is a Left menu entry
-            'type'=>'left',
-            'titre'=>'List Methods',
-            'mainmenu'=>'lims',
-            'leftmenu'=>'lims_methods_list',
-            'url'=>'/lims/methods_list.php',
-            // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-            'langs'=>'lims@lims',
-            'position'=>1100+$r,
-            // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-            'enabled'=>'$conf->lims->enabled',
-            // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-            'perms'=>'1',
-            'target'=>'',
-            // 0=Menu for internal users, 1=external users, 2=both
-            'user'=>2,
-        );
-		/* END LEFTMENU METHODS */
 		// Exports profiles provided by this module
 		$r = 1;
 		/* BEGIN MODULEBUILDER EXPORT EQUIPMENT */
