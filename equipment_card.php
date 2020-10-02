@@ -165,11 +165,14 @@ if (empty($reshook))
 	}
 
 	// Actions to send emails
+	// No Email function for now
+	/*
 	$triggersendname = 'LIMS_EQUIPMENT_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_EQUIPMENT_TO';
 	$trackid = 'equipment'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
-}
+	*/
+	}
 
 
 
@@ -463,9 +466,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook))
 		{
 			// Send
+			/* No Email Button for now
 			if (empty($user->socid)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
 			}
+			*/
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
@@ -578,12 +583,14 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) $action = 'presend';
 
 	// Presend form
+	/* No EMail functionality for now
 	$modelmail = 'equipment';
 	$defaulttopic = 'InformationMessage';
 	$diroutput = $conf->lims->dir_output;
 	$trackid = 'equipment'.$object->id;
 
 	include DOL_DOCUMENT_ROOT.'/core/tpl/card_presend.tpl.php';
+	*/
 }
 
 // End of page
