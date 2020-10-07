@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,10 +68,10 @@ $langs->loadLangs(array("lims@lims", "other"));
 
 // Get parameters
 $id = GETPOST('id', 'int');
-$ref        = GETPOST('ref', 'alpha');
+$ref = GETPOST('ref', 'alpha');
 $action = GETPOST('action', 'aZ09');
-$confirm    = GETPOST('confirm', 'alpha');
-$cancel     = GETPOST('cancel', 'aZ09');
+$confirm = GETPOST('confirm', 'alpha');
+$cancel = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'equipmentcard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
@@ -109,6 +109,20 @@ $permissionnote = $user->rights->lims->equipment->write; // Used by the include 
 $permissiondellink = $user->rights->lims->equipment->write; // Used by the include of actions_dellink.inc.php
 $upload_dir = $conf->lims->multidir_output[isset($object->entity) ? $object->entity : 1];
 
+// Set STATUS_OPERATIONAL if (Last Maintaned + Interval) > Current date
+// DoTo: use a chron job instead
+if ($object->maintenance)
+{
+	dol_syslog(__METHOD__.' maintain_last = '.$object->maintain_last, LOG_DEBUG);
+	dol_syslog(__METHOD__.' maintain_interval*86400 = '.$object->maintain_interval*86400, LOG_DEBUG);
+	dol_syslog(__METHOD__.' dol_now = '.dol_now(), LOG_DEBUG);
+	dol_syslog(__METHOD__.' status = '.$object->status, LOG_DEBUG);
+	
+	// maintain_interval*86400 => Days to Seconds
+	if (($object->maintain_last + $object->maintain_interval*86400) > dol_now() && $object->status ==  $object::STATUS_VALIDATED)
+		$object->status = $object::STATUS_OPERATIONAL;
+}
+		
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
@@ -139,6 +153,27 @@ if (empty($reshook))
 		}
 	}
 	$triggermodname = 'LIMS_EQUIPMENT_MODIFY'; // Name of trigger action code to execute when we modify record
+
+	if ($action == 'confirm_enable' && $confirm == 'yes')
+	{
+		// save person who renewed mainteance status
+		dol_syslog(__METHOD__.' action=enable & confirm=yes ', LOG_DEBUG);
+		$object->maintain_last = dol_now();
+		$object->fk_user_maintain_renew = $user->id;
+		$object->status = $object::STATUS_OPERATIONAL;
+		$object->update($user);
+	}
+
+	if ($action == 'confirm_disable' && $confirm == 'yes')
+	{
+		// save person who revoked READY status
+		dol_syslog(__METHOD__.' action=disable & confirm=yes ', LOG_DEBUG);
+		$object->maintain_last = 0;
+		$object->fk_user_maintain_renew = $user->id;
+		$object->status = $object::STATUS_VALIDATED;
+		
+		$object->update($user);
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -172,7 +207,7 @@ if (empty($reshook))
 	$trackid = 'equipment'.$object->id;
 	include DOL_DOCUMENT_ROOT.'/core/actions_sendmails.inc.php';
 	*/
-	}
+}
 
 
 
@@ -304,21 +339,36 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Confirmation of action xxxx
-	if ($action == 'xxx')
+	// Enable confirmation - EquipmentMaintainRenew
+	if ($action == 'enable')
 	{
 		$formquestion = array();
-		/*
+		
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 		$formquestion = array(
-			// 'text' => $langs->trans("ConfirmClone"),
+			'text' => $langs->trans("EquipmentConfirmRenew"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 		);
-		*/
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('XXX'), $text, 'confirm_xxx', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EquipmentConfirmTitle'), $text, 'confirm_enable', $formquestion, 0, 1, 220);
+	}
+
+	// Disable confirmation - EquipmentMaintainRenew
+	if ($action == 'disable')
+	{
+		$formquestion = array();
+		
+		$forcecombo=0;
+		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
+		$formquestion = array(
+			'text' => $langs->trans("EquipmentConfirmRevoke"),
+			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
+			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
+			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
+		);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EquipmentConfirmTitle'), $text, 'confirm_disable', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
@@ -330,6 +380,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Print form confirm
 	print $formconfirm;
 
+	
 
 	// Object card
 	// ------------------------------------------------------------
@@ -498,21 +549,25 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 			}
+			
+			// Calibrate / Maintain: Show button if object is to maintain
+			if ($permissiontoadd && $object->maintenance)
+			{
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("EquipmentMaintainRenew").'</a>'."\n";
 
+				// Dedicated button for Revoke
+				if ($object->status == $object::STATUS_OPERATIONAL) 
+				{
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("EquipmentMaintainRevoke").'</a>'."\n";
+				}
+			}
+			
 			// Clone
 			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=equipment">'.$langs->trans("ToClone").'</a>'."\n";
 			}
-
+			
 			/*
-			if ($permissiontoadd)
-			{
-				if ($object->status == $object::STATUS_ENABLED) {
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("Disable").'</a>'."\n";
-				} else {
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("Enable").'</a>'."\n";
-				}
-			}
 			if ($permissiontoadd)
 			{
 				if ($object->status == $object::STATUS_VALIDATED) {

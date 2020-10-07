@@ -66,6 +66,7 @@ class Equipment extends CommonObject
 
 	const STATUS_DRAFT = 0;
 	const STATUS_VALIDATED = 1;
+	const STATUS_OPERATIONAL = 2;
 	const STATUS_CANCELED = 9;
 
 
@@ -100,13 +101,14 @@ class Equipment extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>0, 'showoncombobox'=>'0', 'comment'=>"Reference of object"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'comment'=>"Reference of object"),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Equipment', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Product or Service",),
 		'category' => array('type'=>'smallint', 'label'=>'Category', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Category ", 'arrayofkeyval'=>array('0'=>'Equipment', '1'=>'Consumable', '2'=>'Facility', '3'=>'Sales Item'),),
 		'maintenance' => array('type'=>'smallint', 'label'=>'Maintenance', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'help'=>"Set if the item needs regular maintenance or calibration", 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'),),
-		'maintain_interval' => array('type'=>'integer', 'label'=>'IntervallMaintenance', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>4, 'noteditable'=>'0', 'help'=>"After this amount of days the maintenance or calibration must be rerun",),
+		'maintain_interval' => array('type'=>'integer', 'label'=>'IntervallMaintenance', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>4, 'help'=>"After this amount of days the maintenance or calibration must be rerun",),
 		'maintain_last' => array('type'=>'datetime', 'label'=>'DateLastMaintained', 'enabled'=>'1', 'position'=>53, 'notnull'=>-1, 'visible'=>4, 'noteditable'=>'1', 'help'=>"Last time item was maintained or calibrated",),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,'help'=>"Details on the maintenance / calibration procedure",),
+		'fk_user_maintain_renew' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserMaintainRenew', 'enabled'=>'1', 'position'=>54, 'notnull'=>-1, 'visible'=>4, 'foreignkey'=>'user.rowid','noteditable'=>'1',),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'help'=>"Details on the maintenance / calibration procedure",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
@@ -123,8 +125,9 @@ class Equipment extends CommonObject
 	public $fk_product;
 	public $category;
 	public $maintenance;
-	public $maintain_last;
 	public $maintain_interval;
+	public $maintain_last;
+	public $fk_user_maintain_renew;
 	public $description;
 	public $note_public;
 	public $note_private;

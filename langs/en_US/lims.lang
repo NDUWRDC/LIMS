@@ -42,6 +42,14 @@ LIMSAbout = About LIMS
 LIMSAboutPage = LIMS about page
 
 #
+# Equipment page
+#
+EquipmentMaintainRevoke = Revoke Readiness
+EquipmentMaintainRenew = Renew Readiness
+EquipmentConfirmTitle = Confirmation
+EquipmentConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
+EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
+#
 # Sample page
 #
 MyPageName = My page name
