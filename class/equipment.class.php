@@ -801,11 +801,13 @@ class Equipment extends CommonObject
 		if (empty($this->labelStatus) || empty($this->labelStatusShort))
 		{
 			global $langs;
-			//$langs->load("lims@lims");
+			$langs->load("lims@lims");
 			$this->labelStatus[self::STATUS_DRAFT] = $langs->trans('Draft');
 			$this->labelStatus[self::STATUS_VALIDATED] = $langs->trans('Enabled');
+			$this->labelStatus[self::STATUS_OPERATIONAL] = $langs->trans('Ready');
 			$this->labelStatus[self::STATUS_CANCELED] = $langs->trans('Disabled');
 			$this->labelStatusShort[self::STATUS_DRAFT] = $langs->trans('Draft');
+			$this->labelStatusShort[self::STATUS_OPERATIONAL] = $langs->trans('Ready');
 			$this->labelStatusShort[self::STATUS_VALIDATED] = $langs->trans('Enabled');
 			$this->labelStatusShort[self::STATUS_CANCELED] = $langs->trans('Disabled');
 		}

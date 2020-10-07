@@ -49,6 +49,7 @@ EquipmentMaintainRenew = Renew Readiness
 EquipmentConfirmTitle = Confirmation
 EquipmentConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
 EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
+EquipmentStatusReady = READY
 #
 # Sample page
 #
