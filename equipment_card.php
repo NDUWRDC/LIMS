@@ -117,12 +117,12 @@ if ($object->maintenance)
 	dol_syslog(__METHOD__.' maintain_interval*86400 = '.$object->maintain_interval*86400, LOG_DEBUG);
 	dol_syslog(__METHOD__.' dol_now = '.dol_now(), LOG_DEBUG);
 	dol_syslog(__METHOD__.' status = '.$object->status, LOG_DEBUG);
-	
+
 	// maintain_interval*86400 => Days to Seconds
 	if (($object->maintain_last + $object->maintain_interval*86400) > dol_now() && $object->status ==  $object::STATUS_VALIDATED)
 		$object->status = $object::STATUS_OPERATIONAL;
 }
-		
+
 // Security check - Protection if external user
 //if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;
@@ -152,16 +152,26 @@ if (empty($reshook))
 			else $backtopage = dol_buildpath('/lims/equipment_card.php', 1).'?id='.($id > 0 ? $id : '__ID__');
 		}
 	}
-	$triggermodname = 'LIMS_EQUIPMENT_MODIFY'; // Name of trigger action code to execute when we modify record
+	$triggermodname = 'EQUIPMENT_MODIFY'; // Name of trigger action code to execute when we modify record
 
 	if ($action == 'confirm_enable' && $confirm == 'yes')
 	{
 		// save person who renewed mainteance status
 		dol_syslog(__METHOD__.' action=enable & confirm=yes ', LOG_DEBUG);
-		$object->maintain_last = dol_now();
-		$object->fk_user_maintain_renew = $user->id;
-		$object->status = $object::STATUS_OPERATIONAL;
-		$object->update($user);
+
+		// update will call trigger ClassName_MODIFY
+		$error = $object->update($user, true); //false: enable trigger, true: disable trigger
+
+		dol_syslog(__METHOD__.' befor call_trigger, update error='.$error, LOG_DEBUG);
+
+		if ($error>0) {
+			// Call trigger
+			$result = $object->call_trigger('EQUIPMENT_RENEW', $user); // Event insert into agenda
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}
 	}
 
 	if ($action == 'confirm_disable' && $confirm == 'yes')
@@ -171,9 +181,11 @@ if (empty($reshook))
 		$object->maintain_last = 0;
 		$object->fk_user_maintain_renew = $user->id;
 		$object->status = $object::STATUS_VALIDATED;
-		
+
 		$object->update($user);
 	}
+
+
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
@@ -343,7 +355,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'enable')
 	{
 		$formquestion = array();
-		
+
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 		$formquestion = array(
@@ -359,7 +371,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if ($action == 'disable')
 	{
 		$formquestion = array();
-		
+
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 		$formquestion = array(
@@ -380,7 +392,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Print form confirm
 	print $formconfirm;
 
-	
+
 
 	// Object card
 	// ------------------------------------------------------------
@@ -549,24 +561,24 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 					}
 				}
 			}
-			
+
 			// Calibrate / Maintain: Show button if object is to maintain
 			if ($permissiontoadd && $object->maintenance)
 			{
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("EquipmentMaintainRenew").'</a>'."\n";
 
 				// Dedicated button for Revoke
-				if ($object->status == $object::STATUS_OPERATIONAL) 
+				if ($object->status == $object::STATUS_OPERATIONAL)
 				{
 					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("EquipmentMaintainRevoke").'</a>'."\n";
 				}
 			}
-			
+
 			// Clone
 			if ($permissiontoadd) {
 				print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&socid='.$object->socid.'&action=clone&object=equipment">'.$langs->trans("ToClone").'</a>'."\n";
 			}
-			
+
 			/*
 			if ($permissiontoadd)
 			{

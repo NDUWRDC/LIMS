@@ -1,4 +1,4 @@
-# Copyright (C) 2020 SuperAdmin
+# Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -50,6 +50,11 @@ EquipmentConfirmTitle = Confirmation
 EquipmentConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
 EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
 EquipmentStatusReady = READY
+#Trigger event log
+Equipment = Equipment
+validated = validated
+modified = modified
+renewed = maintenance renewed or item calibrated
 #
 # Sample page
 #
