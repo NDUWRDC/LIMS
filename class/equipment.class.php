@@ -106,15 +106,18 @@ class Equipment extends CommonObject
 		'category' => array('type'=>'smallint', 'label'=>'Category', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Category ", 'arrayofkeyval'=>array('0'=>'Equipment', '1'=>'Consumable', '2'=>'Facility', '3'=>'Sales Item'),),
 		'maintenance' => array('type'=>'smallint', 'label'=>'Maintenance', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'help'=>"Set if the item needs regular maintenance or calibration", 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'),),
 		'maintain_interval' => array('type'=>'integer', 'label'=>'IntervallMaintenance', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>4, 'help'=>"After this amount of days the maintenance or calibration must be rerun",),
-		'maintain_last' => array('type'=>'datetime', 'label'=>'DateLastMaintained', 'enabled'=>'1', 'position'=>53, 'notnull'=>-1, 'visible'=>4, 'noteditable'=>'1', 'help'=>"Last time item was maintained or calibrated",),
-		'fk_user_maintain_renew' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserMaintainRenew', 'enabled'=>'1', 'position'=>54, 'notnull'=>-1, 'visible'=>4, 'foreignkey'=>'user.rowid','noteditable'=>'1',),
+		'date_maintain_last' => array('type'=>'datetime', 'label'=>'DateLastMaintained', 'enabled'=>'1', 'position'=>53, 'notnull'=>-1, 'visible'=>4, 'noteditable'=>'1', 'help'=>"Last time item was maintained or calibrated",),
+		'fk_user_maintain_renew' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserMaintainRenew', 'enabled'=>'1', 'position'=>54, 'notnull'=>-1, 'visible'=>4, 'noteditable'=>'1', 'foreignkey'=>'user.rowid',),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3, 'help'=>"Details on the maintenance / calibration procedure",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>-1, 'visible'=>-2,),
+		'date_validation' => array('type'=>'datetime', 'label'=>'DateValidation', 'enabled'=>'1', 'position'=>501, 'notnull'=>-1, 'visible'=>-2,),
+		'date_modification' => array('type'=>'datetime', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>502, 'notnull'=>-1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>505, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>-1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValid', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2,),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
@@ -126,15 +129,18 @@ class Equipment extends CommonObject
 	public $category;
 	public $maintenance;
 	public $maintain_interval;
-	public $maintain_last;
+	public $date_maintain_last;
 	public $fk_user_maintain_renew;
 	public $description;
 	public $note_public;
 	public $note_private;
 	public $date_creation;
+	public $date_validation;
+	public $date_modification;
 	public $tms;
 	public $fk_user_creat;
 	public $fk_user_modif;
+	public $fk_user_valid;
 	public $last_main_doc;
 	public $import_key;
 	public $model_pdf;
@@ -526,7 +532,7 @@ class Equipment extends CommonObject
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
 			$sql .= " SET ref = '".$this->db->escape($num)."',";
 			$sql .= " status = ".self::STATUS_VALIDATED;
-			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."',";
+			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."'";
 			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
 			$sql .= " WHERE rowid = ".$this->id;
 
@@ -628,7 +634,7 @@ class Equipment extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EQUIPMENT_UNVALIDATE');
+		return $this->setStatusCommon($user, self::STATUS_DRAFT, $notrigger, 'EQUIPMENT_INVALIDATE');
 	}
 
 	/**
@@ -641,7 +647,7 @@ class Equipment extends CommonObject
 	public function cancel($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_VALIDATED)
+		if ($this->status != (self::STATUS_VALIDATED || self::STATUS_OPERATIONAL))
 		{
 			return 0;
 		}
@@ -653,7 +659,7 @@ class Equipment extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_CANCELED, $notrigger, 'EQUIPMENT_CLOSE');
+		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EQUIPMENT_REVOKE');
 	}
 
 	/**
@@ -666,7 +672,7 @@ class Equipment extends CommonObject
 	public function reopen($user, $notrigger = 0)
 	{
 		// Protection
-		if ($this->status != self::STATUS_CANCELED)
+		if ($this->status != (self::STATUS_OPERATIONAL || self::STATUS_VALIDATED))
 		{
 			return 0;
 		}
@@ -678,7 +684,7 @@ class Equipment extends CommonObject
 		 return -1;
 		 }*/
 
-		return $this->setStatusCommon($user, self::STATUS_VALIDATED, $notrigger, 'EQUIPMENT_REOPEN');
+		return $this->setStatusCommon($user, self::STATUS_OPERATIONAL, $notrigger, 'EQUIPMENT_RENEW');
 	}
 
 	/**

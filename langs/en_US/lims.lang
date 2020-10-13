@@ -52,9 +52,12 @@ EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the 
 EquipmentStatusReady = READY
 #Trigger event log
 Equipment = Equipment
+created = added
 validated = validated
+invalidated = invalidated (set to DRAFT)
 modified = modified
-renewed = maintenance renewed or item calibrated
+renewed = maintenance renewed or item calibrated (set to READY)
+revoked = maintenance or item calibration status revoked (set to ENABLED)
 #
 # Sample page
 #

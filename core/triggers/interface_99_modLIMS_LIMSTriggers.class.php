@@ -101,7 +101,13 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 
 		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
-
+		if (!empty($action)) {
+			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
+			$product = new Product($this->db);
+			$product->fetch($id = $object->fk_product, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
+			$equipment = $langs->transnoentitiesnoconv("Equipment")." ";
+			$equipmentproduct = $equipment." ($product->label) ";
+		}
 		switch ($action) {
 			// Users
 			//case 'USER_CREATE':
@@ -305,16 +311,40 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			//case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
 
+			case 'EQUIPMENT_CREATE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("created"); // (note, long text)
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("created"); // (label, short text)
+				break;
+
+			case 'EQUIPMENT_VALIDATE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("validated"); // (note, long text)
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("validated"); // (label, short text)
+				break;
+
+			case 'EQUIPMENT_INVALIDATE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
+				break;
+
 			case 'EQUIPMENT_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionmsg = $langs->transnoentitiesnoconv("Equipment"," ","modified"); // (note, long text)
-				$actionmsg2 = $langs->transnoentitiesnoconv("Equipment"," ","Modified"); // (label, short text)
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("modified"); // (note, long text)
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("modified"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_RENEW':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionmsg2 = $langs->trans("EquipmentRenewed");
-				$actionmsg = $langs->trans("EquipmentRenewed");
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("renewed");
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("EquipmentMaintainRenew");
+				break;
+
+			case 'EQUIPMENT_REVOKE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("revoked");
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("EquipmentMaintainRevoke");
 				break;
 
 			default:
@@ -326,15 +356,15 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 
 		$actioncomm->type_code = 'AC_OTH_AUTO'; // Type of event ('AC_OTH', 'AC_OTH_AUTO', 'AC_XXX'...)
 		$actioncomm->code = 'AC_'.$action;
-		$actioncomm->label = $actionmsg2;
-		$actioncomm->note_private = $actionmsg;
+		$actioncomm->label = $actionlabel;
+		$actioncomm->note_private = $actionnote;
 		$actioncomm->fk_project = 0;
-		$actioncomm->datep = dol_now();
-		$actioncomm->datef = dol_now();
+		$actioncomm->datep = dol_now();	// Date action start
+		$actioncomm->datef = dol_now();	// Date action end
 		$actioncomm->percentage = -1; // Not applicable
 		$actioncomm->socid = $object->thirdparty->id;
 		$actioncomm->contact_id = 0;
-		$actioncomm->authorid = $user->id; // User saving action
+		$actioncomm->authorid = $user->id; // User creating action
 		$actioncomm->userownerid = $user->id; // Owner of action
 		// Fields when action is en email (content should be added into note)
 		/*

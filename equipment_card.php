@@ -156,14 +156,15 @@ if (empty($reshook))
 
 	if ($action == 'confirm_enable' && $confirm == 'yes')
 	{
-		// save person who renewed mainteance status
+		// save person who RENEWed mainteance status
 		dol_syslog(__METHOD__.' action=enable & confirm=yes ', LOG_DEBUG);
-
-		// update will call trigger ClassName_MODIFY
-		$error = $object->update($user, true); //false: enable trigger, true: disable trigger
-
-		dol_syslog(__METHOD__.' befor call_trigger, update error='.$error, LOG_DEBUG);
-
+		$object->fk_user_maintain_renew = $user->id;
+		$object->date_maintain_last = dol_now();
+		$object->update($user, true); // save values, but don't issue trigger
+		// update will call trigger EQUIPMENT_RENEW, new status => STATUS_OPERATIONAL
+		$error = $object->reopen($user, false); //false: enable trigger, true: disable trigger
+		$action = 'view';
+		/* Trigger called in method update
 		if ($error>0) {
 			// Call trigger
 			$result = $object->call_trigger('EQUIPMENT_RENEW', $user); // Event insert into agenda
@@ -171,18 +172,28 @@ if (empty($reshook))
 				$error++;
 			}
 			// End call triggers
-		}
+		}*/
 	}
 
 	if ($action == 'confirm_disable' && $confirm == 'yes')
 	{
-		// save person who revoked READY status
+		// save person who REVOKEd READY status
 		dol_syslog(__METHOD__.' action=disable & confirm=yes ', LOG_DEBUG);
 		$object->maintain_last = 0;
 		$object->fk_user_maintain_renew = $user->id;
-		$object->status = $object::STATUS_VALIDATED;
-
-		$object->update($user);
+		$object->update($user, true); // save values, but don't issue trigger
+		// cancel will call trigger EQUIPMENT_REVOKE, new status => STATUS_VALIDATED
+		$error = $object->cancel($user, false);
+		$action = 'view';
+		/* Trigger called in method cancel by setStatusCommon
+		if ($error>0) {
+			// Call trigger
+			$result = $object->call_trigger('EQUIPMENT_REVOKE', $user); // Event insert into agenda
+			if ($result < 0) {
+				$error++;
+			}
+			// End call triggers
+		}*/
 	}
 
 
@@ -447,7 +458,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	$keyforbreak='maintain_last';						// We change column just before this field
+	$keyforbreak='date_maintain_last';						// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
