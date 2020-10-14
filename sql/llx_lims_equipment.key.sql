@@ -18,6 +18,7 @@
 ALTER TABLE llx_lims_equipment ADD INDEX idx_lims_equipment_rowid (rowid);
 ALTER TABLE llx_lims_equipment ADD INDEX idx_lims_equipment_ref (ref);
 ALTER TABLE llx_lims_equipment ADD INDEX idx_lims_equipment_fk_product (fk_product);
+ALTER TABLE llx_lims_equipment ADD INDEX idx_lims_equipment_maintenance (maintenance);
 ALTER TABLE llx_lims_equipment ADD CONSTRAINT llx_lims_equipment_fk_user_maintain_renew FOREIGN KEY (fk_user_maintain_renew) REFERENCES llx_user(rowid);
 ALTER TABLE llx_lims_equipment ADD CONSTRAINT llx_lims_equipment_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 ALTER TABLE llx_lims_equipment ADD INDEX idx_lims_equipment_status (status);
