@@ -136,7 +136,10 @@ class modLIMS extends DolibarrModules
 		// Example: $this->const=array(1 => array('LIMS_MYNEWCONST1', 'chaine', 'myvalue', 'This is a constant to add', 1),
 		//                             2 => array('LIMS_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
-		$this->const = array();
+		$this->const = array(
+			0 => array('EQUIPMENT_PDF', 'chaine', 'standard_equipment', 'PDF template for report on specific device', 1, 'allentities', 1),
+			1 => array('EQUIPMENT_LIST_PDF', 'chaine', 'standard_equipmentlist', 'PDF template for report on list of all devices', 1, 'allentities', 1),
+		);
 
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
@@ -528,9 +531,13 @@ class modLIMS extends DolibarrModules
 		$moduledir = 'lims';
 		$myTmpObjects = array();
 		$myTmpObjects['Equipment']=array('includerefgeneration'=>0, 'includedocgeneration'=>0);
+		dol_syslog(__METHOD__.' module parts = '.var_export($this->module_parts, true), LOG_DEBUG);
 
+/*		if (is_array($this->module_parts) && !empty($this->module_parts)) {
+			foreach ($this->module_parts as $key => $value)
+*/
 		foreach ($myTmpObjects as $myTmpObjectKey => $myTmpObjectArray) {
-			if ($myTmpObjectKey == 'Equipment') continue;
+			//if ($myTmpObjectKey == 'Equipment') continue;
 			if ($myTmpObjectArray['includerefgeneration']) {
 				$src=DOL_DOCUMENT_ROOT.'/install/doctemplates/lims/template_equipments.odt';
 				$dirodt=DOL_DATA_ROOT.'/doctemplates/lims';
@@ -555,6 +562,7 @@ class modLIMS extends DolibarrModules
 					"DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = 'generic_".strtolower($myTmpObjectKey)."_odt' AND type = '".strtolower($myTmpObjectKey)."' AND entity = ".$conf->entity,
 					"INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type, entity) VALUES('generic_".strtolower($myTmpObjectKey)."_odt', '".strtolower($myTmpObjectKey)."', ".$conf->entity.")"
 				));
+				dol_syslog(__METHOD__.' sql = '.var_export($sql, true), LOG_DEBUG);
 			}
 		}
 

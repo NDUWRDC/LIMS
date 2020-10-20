@@ -104,7 +104,7 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		if (!empty($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$product = new Product($this->db);
-			$product->fetch($id = $object->fk_product, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
+			$product->fetch($object->fk_product);//, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
 			$equipment = $langs->transnoentitiesnoconv("Equipment")." ";
 			$equipmentproduct = $equipment." ($product->label) ";
 		}
@@ -345,6 +345,18 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("revoked");
 				$actionlabel = $equipment.$langs->transnoentitiesnoconv("EquipmentMaintainRevoke");
+				break;
+
+			// TODO: ECMFILE trigger changes object => elementtype = 'ecmfiles@' instead of 'equipment@lims'
+			case 'ECMFILES_CREATE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("PDFcreated");
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("PDFcreated");
+				break;
+			case 'ECMFILES_MODIFY':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("PDFmodified");
+				$actionlabel = $equipment.$langs->transnoentitiesnoconv("PDFmodified");
 				break;
 
 			default:

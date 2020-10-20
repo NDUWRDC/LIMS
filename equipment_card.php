@@ -623,7 +623,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 0;
+		$includedocgeneration = 1;
 
 		// Documents
 		if ($includedocgeneration) {
@@ -633,7 +633,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
 			$genallowed = $user->rights->lims->equipment->read;	// If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->lims->equipment->write;	// If you can create/edit, you can remove a file on card
+
 			print $formfile->showdocuments('lims:Equipment', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			//print $formfile->showdocuments('lims:Equipment', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 
 		// Show links to link elements

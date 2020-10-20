@@ -51,7 +51,7 @@ abstract class ModelePDFEquipment extends CommonDocGenerator
 		// phpcs:enable
 		global $conf;
 
-		$type = 'equipment';
+		$type = 'lims';
 		$list = array();
 
 		include_once DOL_DOCUMENT_ROOT.'/core/lib/functions2.lib.php';

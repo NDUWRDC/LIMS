@@ -199,7 +199,7 @@ class pdf_standard_equipment extends ModelePDFEquipment
 	    // phpcs:enable
 	    global $user, $langs, $conf, $mysoc, $db, $hookmanager, $nblines;
 
-	    dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'));
+	    dol_syslog("write_file outputlangs->defaultlang=".(is_object($outputlangs) ? $outputlangs->defaultlang : 'null'), LOG_DEBUG);
 
 	    if (!is_object($outputlangs)) $outputlangs = $langs;
 	    // For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO

@@ -58,6 +58,8 @@ invalidated = invalidated (set to DRAFT)
 modified = modified
 renewed = maintenance renewed or item calibrated (set to READY)
 revoked = maintenance or item calibration status revoked (set to ENABLED)
+PDFcreated = PDF created
+PDFmodified = PDF modified
 #
 # Sample page
 #

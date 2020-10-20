@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2007-2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,6 +211,9 @@ if (empty($reshook))
 	$objectlabel = 'Equipment';
 	$uploaddir = $conf->lims->dir_output;
 	include DOL_DOCUMENT_ROOT.'/core/actions_massactions.inc.php';
+
+	// Actions to build doc
+	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
 }
 
 
@@ -362,8 +365,8 @@ include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_list_search_param.tpl.php';
 // List of mass actions available
 $arrayofmassactions = array(
 	//'validate'=>$langs->trans("Validate"),
-	//'generate_doc'=>$langs->trans("ReGeneratePDF"),
-	//'builddoc'=>$langs->trans("PDFMerge"),
+	'generate_doc'=>$langs->trans("ReGeneratePDF"),
+	'builddoc'=>$langs->trans("PDFMerge"),
 	//'presend'=>$langs->trans("SendByMail"),
 );
 if ($permissiontodelete) $arrayofmassactions['predelete'] = '<span class="fa fa-trash paddingrightonly"></span>'.$langs->trans("Delete");
@@ -578,10 +581,13 @@ print '</table>'."\n";
 print '</div>'."\n";
 
 print '</form>'."\n";
+dol_syslog(__METHOD__.' befor builddoc $arrayofmassactions ... '.var_export($arrayofmassactions, true), LOG_DEBUG);
+dol_syslog(__METHOD__.' befor builddoc $array ... '.var_export(array('builddoc'), true), LOG_DEBUG);
 
-if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $nbtotalofrecords))
+//if (in_array('builddoc', $arrayofmassactions))// && ($nbtotalofrecords === '' || $nbtotalofrecords))
 {
-	$hidegeneratedfilelistifempty = 1;
+	dol_syslog(__METHOD__.'START formfile->showdocuments', LOG_DEBUG);
+	$hidegeneratedfilelistifempty = 0;
 	if ($massaction == 'builddoc' || $action == 'remove_file' || $show_files) $hidegeneratedfilelistifempty = 0;
 
 	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
@@ -594,8 +600,13 @@ if (in_array('builddoc', $arrayofmassactions) && ($nbtotalofrecords === '' || $n
 	$filedir = $diroutputmassaction;
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
-
+	//showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
+	$object->model_pdf = 'standard_equipmentlist';
+	// TODO Hook commonGenerateDocument to allow object of class Entrepot
+	print $formfile->showdocuments('lims:Equipment', '', $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 1, 0, 0, 0, $param='', $title='', '', $langs->defaultlang, '', $objectWAREHOUSE, $hidegeneratedfilelistifempty);
+	//massfilesarea not working
 	print $formfile->showdocuments('massfilesarea_lims', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
+	dol_syslog(__METHOD__.'END formfile->showdocuments', LOG_DEBUG);
 }
 
 // End of page
