@@ -1,4 +1,4 @@
-<?php
+$msg_text<?php
 /* Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -104,9 +104,26 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		if (!empty($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$product = new Product($this->db);
-			$product->fetch($object->fk_product);//, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
-			$equipment = $langs->transnoentitiesnoconv("Equipment")." ";
-			$equipmentproduct = $equipment." ($product->label) ";
+
+			// ECMFILES_trigger will send object of class EcmFiles
+			if ($object->element == 'ecmfiles'){
+				$arr = explode('_', $object->src_object_type, 2);
+				$originalmodule = $arr[0];  // should always be 'lims'
+				$originalclass = $arr[1];
+				// we only expect lims-classes
+				dol_include_once('/'.$originalmodule.'/class/'.$originalclass.'.class.php');
+				$original_object = new $originalclass($object->db);
+				$original_object->fetch($object->src_object_id);
+				$product->fetch($original_object->fk_product);
+			}
+			else {
+				$product->fetch($object->fk_product);//, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
+			}
+
+			if ($object->element == 'equipment' || $originalclass == 'equipment'){
+				$msg_label = $langs->transnoentitiesnoconv("Equipment")." ";
+				$msg_text = $msg_label." ($product->label) ";
+			}
 		}
 		switch ($action) {
 			// Users
@@ -313,50 +330,49 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 
 			case 'EQUIPMENT_CREATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("created"); // (note, long text)
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("created"); // (label, short text)
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("created"); // (note, long text)
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("created"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_VALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("validated"); // (note, long text)
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("validated"); // (label, short text)
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("validated"); // (note, long text)
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("validated"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_INVALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("modified"); // (note, long text)
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("modified"); // (label, short text)
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("modified"); // (note, long text)
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("modified"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_RENEW':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("renewed");
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("EquipmentMaintainRenew");
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("renewed");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EquipmentMaintainRenew");
 				break;
 
 			case 'EQUIPMENT_REVOKE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("revoked");
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("EquipmentMaintainRevoke");
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("revoked");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EquipmentMaintainRevoke");
 				break;
 
-			// TODO: ECMFILE trigger changes object => elementtype = 'ecmfiles@' instead of 'equipment@lims'
 			case 'ECMFILES_CREATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("PDFcreated");
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("PDFcreated");
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFcreated");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("PDFcreated");
 				break;
 			case 'ECMFILES_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $equipmentproduct.$langs->transnoentitiesnoconv("PDFmodified");
-				$actionlabel = $equipment.$langs->transnoentitiesnoconv("PDFmodified");
+				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFmodified");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("PDFmodified");
 				break;
 
 			default:
@@ -389,9 +405,15 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		$actioncomm->email_subject = $subject;
 		$actioncomm->errors_to = '';
 		*/
-		$actioncomm->fk_element = $object->id;	// (ID of object to link action event to)
-		$actioncomm->elementtype = $object->element.'@'.$object->module;
-
+		// ECMFILE trigger sends object of class EcmFiles => elementtype = 'ecmfiles@' instead of 'equipment@lims'
+		if ($object->element == 'ecmfiles'){
+			$actioncomm->fk_element = $object->src_object_id;
+			$actioncomm->elementtype = $originalclass.'@'.$originalmodule;
+		}
+		else{
+			$actioncomm->fk_element = $object->id;	// (ID of object to link action event to)
+			$actioncomm->elementtype = $object->element.'@'.$object->module;
+		}
 		//$actioncomm->extraparams = $extraparams;
 
 		$actioncomm->create($user, true); // don't call trigger to avoid recursive loop
