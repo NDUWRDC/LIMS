@@ -195,25 +195,37 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// phpcs:enable
 		global $user, $langs, $conf, $mysoc, $db, $hookmanager;
 
+    //unset($object); // terminate object of class
+    $object_entrepot = new Entrepot($db);
+    //TODO: which warehouse to pick?
+    $id=2;
+    $ret = $object_entrepot->fetch($id);
+    if ($ret <= 0) {
+      setEventMessages($object_entrepot->error, $object_entrepot->errors, 'errors');
+    }
+
 		if (!is_object($outputlangs)) $outputlangs = $langs;
 		// For backward compatibility with FPDF, force output charset to ISO, because FPDF expect text to be encoded in ISO
 		if (!empty($conf->global->MAIN_USE_FPDF)) $outputlangs->charset_output = 'ISO-8859-1';
 
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
-	dol_syslog(__METHOD__.' object='.var_export($object,true), LOG_DEBUG);
-		$nblines = count($object->lines);
+
+    $records = array();
+    $records = $object->fetchAll();
+
+		$nblines = count($records);
 
 		if ($conf->stock->dir_output)
 		{
 			// Definition of $dir and $file
 			if ($object->specimen)
 			{
-				$dir = $conf->stock->dir_output;
+				$dir = $conf->lims->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->stock->dir_output."/".$objectref;
+				$dir = $conf->lims->dir_output."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 
@@ -844,8 +856,8 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Description").' : </b>'.nl2br($object->description), 0, 1);
 		$nexY = $pdf->GetY();
 
-		$calcproductsunique = $object->nb_different_products();
-		$calcproducts = $object->nb_products();
+		//$calcproductsunique = $object->nb_different_products();
+		//$calcproducts = $object->nb_products();
 
 		// Total nb of different products
 		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("NumberOfDifferentProducts").' : </b>'.(empty($calcproductsunique['nb']) ? '0' : $calcproductsunique['nb']), 0, 1);
