@@ -1,4 +1,4 @@
-<?php
+table<?php
 /* Copyright (C) 2017 	Laurent Destailleur <eldy@stocks.sourceforge.net>
  * Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
  *
@@ -70,14 +70,14 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	public $version = 'dolibarr';
 
 	/**
-	 * @var int page_largeur
+	 * @var int page_width
 	 */
-	public $page_largeur;
+	public $page_width;
 
 	/**
-	 * @var int page_hauteur
+	 * @var int page_height
 	 */
-	public $page_hauteur;
+	public $page_height;
 
 	/**
 	 * @var array format
@@ -85,30 +85,30 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	public $format;
 
 	/**
-	 * @var int marge_gauche
+	 * @var int left_margin
 	 */
-	public $marge_gauche;
+	public $left_margin;
 
 	/**
-	 * @var int marge_droite
+	 * @var int right_margin
 	 */
-	public $marge_droite;
+	public $right_margin;
 
 	/**
-	 * @var int marge_haute
+	 * @var int top_margin
 	 */
-	public $marge_haute;
+	public $top_margin;
 
 	/**
-	 * @var int marge_basse
+	 * @var int bottom_margin
 	 */
-	public $marge_basse;
+	public $bottom_margin;
 
 	/**
 	 * Issuer
 	 * @var Societe
 	 */
-	public $emetteur;
+	public $issuer;
 
 
 	/**
@@ -130,45 +130,46 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// Page size for A4 format
 		$this->type = 'pdf';
 		$formatarray = pdf_getFormat();
-		$this->page_largeur = $formatarray['width'];
-		$this->page_hauteur = $formatarray['height'];
-		$this->format = array($this->page_largeur, $this->page_hauteur);
-		$this->marge_gauche = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
-		$this->marge_droite = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
-		$this->marge_haute = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
-		$this->marge_basse = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
+		$this->page_width = $formatarray['width'];
+		$this->page_height = $formatarray['height'];
+		$this->format = array($this->page_width, $this->page_height);
+		$this->left_margin = isset($conf->global->MAIN_PDF_MARGIN_LEFT) ? $conf->global->MAIN_PDF_MARGIN_LEFT : 10;
+		$this->right_margin = isset($conf->global->MAIN_PDF_MARGIN_RIGHT) ? $conf->global->MAIN_PDF_MARGIN_RIGHT : 10;
+		$this->top_margin = isset($conf->global->MAIN_PDF_MARGIN_TOP) ? $conf->global->MAIN_PDF_MARGIN_TOP : 10;
+		$this->bottom_margin = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 
 		$this->option_logo = 1; // Affiche logo
+		$this->option_issuer = 1; // Show Company Name
 		$this->option_codestockservice = 0; // Affiche code stock-service
 		$this->option_multilang = 1; // Dispo en plusieurs langues
 		$this->option_freetext = 0; // Support add of a personalised text
 
-		// Recupere emetteur
-		$this->emetteur = $mysoc;
-		if (!$this->emetteur->country_code) $this->emetteur->country_code = substr($langs->defaultlang, -2); // By default if not defined
+		// Recupere issuer
+		$this->issuer = $mysoc;
+		if (!$this->issuer->country_code) $this->issuer->country_code = substr($langs->defaultlang, -2); // By default if not defined
 
 		// Define position of columns
 		$this->wref = 35;
-		$this->posxdesc = $this->marge_gauche + 1;
+		$this->posxdesc = $this->left_margin + 1;
 		$this->posxlabel = $this->posxdesc + $this->wref;
-		$this->posxtva = 80;
-		$this->posxqty = 95;
-		$this->posxup = 115;
-		$this->posxunit = 135;
-		$this->posxdiscount = 155;
-		$this->postotalht = 175;
+		$this->posxfrequency = 80;
+		$this->posxlast = 95;
+		$this->posxuser = 115;
+		$this->posxstatus = 135;
+		//$this->posxdiscount = 155;
+		//$this->postotalht = 175;
 
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxtva = $this->posxup;
-		$this->posxpicture = $this->posxtva - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
-		if ($this->page_largeur < 210) // To work with US executive format
+		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxfrequency = $this->posxuser;
+		$this->posxpicture = $this->posxfrequency - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		if ($this->page_width < 210) // To work with US executive format
 		{
 			$this->posxpicture -= 20;
-			$this->posxtva -= 20;
-			$this->posxup -= 20;
-			$this->posxqty -= 20;
-			$this->posxunit -= 20;
-			$this->posxdiscount -= 20;
-			$this->postotalht -= 20;
+			$this->posxfrequency -= 20;
+			$this->posxuser -= 20;
+			$this->posxlast -= 20;
+			$this->posxstatus -= 20;
+		//	$this->posxdiscount -= 20;
+		//	$this->postotalht -= 20;
 		}
 		$this->tva = array();
 		$this->localtax1 = array();
@@ -233,8 +234,6 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			$supplierprices = $stockFournisseur->list_product_fournisseur_price($object->id);
 			$object->supplierprices = $supplierprices;
 
-			$productstatic = new Product($this->db);
-
 			if (!file_exists($dir))
 			{
 				if (dol_mkdir($dir) < 0)
@@ -264,7 +263,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->marge_basse + 8; // Height reserved to output the footer (value include bottom margin)
+				$heightforfooter = $this->bottom_margin + 8; // Height reserved to output the footer (value include bottom margin)
 
 				if (class_exists('TCPDF'))
 				{
@@ -280,8 +279,8 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				}
 
 				$pdf->Open();
-				$pagenb = 0;
-				$pdf->SetDrawColor(128, 128, 128);
+
+        $pdf->SetDrawColor(128, 128, 128);
 
 				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
 				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
@@ -290,22 +289,27 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)) $pdf->SetCompression(false);
 
-				$pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite); // Left, Top, Right
+				$pdf->SetMargins($this->left_margin, $this->top_margin, $this->right_margin); // Left, Top, Right
 
 
 				// New page
 				$pdf->AddPage();
 				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-				$pagenb++;
+				$pagenb = 1;
 				$top_shift = $this->_pagehead($pdf, $object, 1, $outputlangs);
 				$pdf->SetFont('', '', $default_font_size - 1);
 				$pdf->MultiCell(0, 3, ''); // Set interline to 3
 				$pdf->SetTextColor(0, 0, 0);
 
-				$tab_top = 80 + $top_shift;
-				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 42 + $top_shift : 10);
+				$tab_top = $top_shift + 40;
+				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 40 + $top_shift : 10);
 
-				$tab_height = 130;
+				dol_syslog('tab_top='.$tab_top, LOG_DEBUG);
+				dol_syslog('tab_top_newpage='.$tab_top_newpage, LOG_DEBUG);
+				dol_syslog('top_shift='.$top_shift, LOG_DEBUG);
+
+				// Not used
+				//$tab_height = 130;
 
 
 				/* ************************************************************************** */
@@ -346,7 +350,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$objp = $this->db->fetch_object($resql);
 
 						// Multilangs
-						if (!empty($conf->global->MAIN_MULTILANGS)) // si l'option est active
+						if (!empty($conf->global->MAIN_MULTILANGS)) // if the option is active
 						{
 							$sql = "SELECT label";
 							$sql .= " FROM ".MAIN_DB_PREFIX."product_lang";
@@ -375,7 +379,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$showpricebeforepagebreak = 1;
 
 						$pdf->startTransaction();
-						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 3, $curX, $curY, $hideref, $hidedesc);
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxfrequency - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
@@ -383,16 +387,16 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxtva - $curX, 4, $curX, $curY, $hideref, $hidedesc);
+							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxfrequency - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
-							if ($posyafter > ($this->page_hauteur - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
+							if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
 							{
 								if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 								{
 									$pdf->AddPage('', '', true);
 									if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+									if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 									$pdf->setPage($pageposafter + 1);
 								}
 							} else {
@@ -413,7 +417,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$pageposafter = $pdf->getPage();
 
 						$pdf->setPage($pageposbefore);
-						$pdf->setTopMargin($this->marge_haute);
+						$pdf->setTopMargin($this->top_margin);
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 
 						// We suppose that a too long description is moved completely on next page
@@ -421,96 +425,44 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 							$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
 						}
 
-						$pdf->SetFont('', '', $default_font_size - 1); // On repositionne la police par defaut
+						$pdf->SetFont('', '', $default_font_size - 1); // We reset the default font
+						// Print Rows
+						$this->tablerow($pdf, $nexY, $objp, $i, $nblines, $totalunit, $pageposafter);
+						$nexY = $pdf->GetY(); // Linebreak in cells possible
 
-						$productstatic->id = $objp->rowid;
-						$productstatic->ref = $objp->ref;
-						$productstatic->label = $objp->produit;
-						$productstatic->type = $objp->type;
-						$productstatic->entity = $objp->entity;
-						$productstatic->status_batch = $objp->tobatch;
-
-						// Ref.
-						$pdf->SetXY($this->posxdesc, $curY);
-						$pdf->MultiCell($this->wref, 3, $productstatic->ref, 0, 'L');
-
-						// Label
-						$pdf->SetXY($this->posxlabel + 0.8, $curY);
-						$pdf->MultiCell($this->posxqty - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
-
-						// Quantity
-						$valtoshow = price2num($objp->value, 'MS');
-						$towrite = (empty($valtoshow) ? '0' : $valtoshow);
-
-						$pdf->SetXY($this->posxqty, $curY);
-						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $towrite, 0, 'R');
-
-						// AWP
-						$totalunit += $objp->value;
-
-						$pdf->SetXY($this->posxup, $curY);
-						$pdf->MultiCell($this->posxunit - $this->posxup - 0.8, 3, price(price2num($objp->ppmp, 'MU'), 0, $outputlangs), 0, 'R');
-
-						// Total PMP
-						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
-						$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
-
-						// Price sell min
-						if (empty($conf->global->PRODUIT_MULTIPRICES))
-						{
-							$pricemin = $objp->price;
-							$pdf->SetXY($this->posxdiscount, $curY);
-							$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
-
-							// Total sell min
-							$pdf->SetXY($this->postotalht, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($pricemin * $objp->value, 'MT'), 0, $outputlangs), 0, 'R', 0);
-						}
-						$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
-
-						// Add line
-						if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
-						{
-							$pdf->setPage($pageposafter);
-							$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
-							//$pdf->SetDrawColor(190,190,200);
-							$pdf->line($this->marge_gauche, $nexY + 1, $this->page_largeur - $this->marge_droite, $nexY + 1);
-							$pdf->SetLineStyle(array('dash'=>0));
-						}
-
-						$nexY += 2; // Add space between lines
-
-						// Detect if some page were added automatically and output _tableau for past pages
+						// Detect if some page were added automatically and output table for past pages
 						while ($pagenb < $pageposafter)
 						{
 							$pdf->setPage($pagenb);
-							if ($pagenb == 1)
+							if ($pagenb == 1) // First page of report
 							{
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-							} else {
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+								// parameter $currency $object->multicurrency_code to show text
+								$this->tableheader($pdf, $tab_top-8, $this->page_height - $tab_top - $heightforfooter, $outputlangs, 0, 1, 'none');
+							}
+							else
+							{
+								$this->tableheader($pdf, $tab_top_newpage-8, $this->page_height - $tab_top_newpage - $heightforfooter, $outputlangs, 0, 1, 'none');
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							$pagenb++;
 							$pdf->setPage($pagenb);
 							$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
 						{
 							if ($pagenb == 1)
 							{
-								$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+								$this->tableheader($pdf, $tab_top-8, $this->page_height - $tab_top - $heightforfooter, $outputlangs, 0, 1, 'none');
 							} else {
-								$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+								$this->tableheader($pdf, $tab_top_newpage-8, $this->page_height - $tab_top_newpage - $heightforfooter, $outputlangs, 0, 1, 'none');
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
 							// New page
 							$pdf->AddPage();
 							if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 							$pagenb++;
-							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+							if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 						}
 					}
 
@@ -519,41 +471,12 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 					/**
 					 * Footer table
 					 */
+
 					$nexY = $pdf->GetY();
 					$nexY += 2;
 					$curY = $nexY;
 
-					if ($nblines > 0) {
-						$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
-						$pdf->line($this->marge_gauche, $curY - 1, $this->page_largeur - $this->marge_droite, $curY - 1);
-						$pdf->SetLineStyle(array('dash'=>0));
-
-						$pdf->SetFont('', 'B', $default_font_size - 1);
-						$pdf->SetTextColor(0, 0, 120);
-
-						// Ref.
-						$pdf->SetXY($this->posxdesc, $curY);
-						$pdf->MultiCell($this->wref, 3, $langs->trans("Total"), 0, 'L');
-
-						// Quantity
-						$valtoshow = price2num($totalunit, 'MS');
-						$towrite = empty($valtoshow) ? '0' : $valtoshow;
-
-						$pdf->SetXY($this->posxqty, $curY);
-						$pdf->MultiCell($this->posxup - $this->posxqty - 0.8, 3, $towrite, 0, 'R');
-
-						// Total PMP
-						$pdf->SetXY($this->posxunit, $curY);
-						$pdf->MultiCell($this->posxdiscount - $this->posxunit - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
-
-						// Price sell min
-						if (empty($conf->global->PRODUIT_MULTIPRICES))
-						{
-							// Total sell min
-							$pdf->SetXY($this->postotalht, $curY);
-							$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
-						}
-					}
+					$this->tablesum($pdf, $curY, $outputlangs, $nblines, $totalunit);
 				} else {
 					dol_print_error($this->db);
 				}
@@ -577,7 +500,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 					// Rect takes a length in 3rd parameter
 					$pdf->SetDrawColor(192, 192, 192);
-					$pdf->Rect($this->marge_gauche, $tab_top - 1, $this->page_largeur - $this->marge_gauche - $this->marge_droite, $height_note + 1);
+					$pdf->Rect($this->left_margin, $tab_top - 1, $this->page_width - $this->left_margin - $this->right_margin, $height_note + 1);
 
 					$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
@@ -594,22 +517,20 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_hauteur - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->tableheader($pdf, $tab_top-8, $this->page_height - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs, 0, 1, 'none');
 				} else {
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_hauteur - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+					$this->tableheader($pdf, $tab_top_newpage-8, $this->page_height - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs, 0, 1, 'none');
 				}
 
-				$bottomlasttab = $this->page_hauteur - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
+				$bottomlasttab = $this->page_height - $heightforinfotot - $heightforfreetext - $heightforfooter + 1;
 
-				// Affiche zone infos
+				// Displays info zone
 				//$posy=$this->_tableau_info($pdf, $object, $bottomlasttab, $outputlangs);
 
-				// Affiche zone totaux
+				// Displays totals area
 				//$posy=$this->_tableau_tot($pdf, $object, $deja_regle, $bottomlasttab, $outputlangs);
 
-				// Pied de page
+				// Footer
 				$this->_pagefoot($pdf, $object, $outputlangs);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
@@ -644,26 +565,102 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		}
 	}
 
-	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.Protected
 	/**
-	 *   Show table for lines
+	 *   Print a row of the table
 	 *
-	 *   @param     TCPDF		$pdf     		Object PDF
-	 *   @param     string		$tab_top		Top position of table
-	 *   @param     string		$tab_height		Height of table (rectangle)
-	 *   @param     int			$nexY			Y (not used)
-	 *   @param     Translate	$outputlangs	Langs object
-	 *   @param     int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param     int			$hidebottom		Hide bottom bar of array
-	 *   @param     string		$currency		Currency code
+	 *   @param     TCPDF		$pdf						Object PDF
+	 *   @param     int			$curY						Y
+	 *	 @param			object  $objp
+	 *	 @param			int     $i
+	 *	 @param			int			$nblines
+	 *	 @param			int			$totalunit
+	 *	 @param			int			$pageposafter
 	 *   @return    void
 	 */
-	protected function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	protected function tablerow(&$pdf, &$curY, $objp, $i, $nblines, &$totalunit, $pageposafter)
 	{
 		global $conf;
 
-		// Force to disable hidetop and hidebottom
-		$hidebottom = 0;
+		$productstatic = new Product($this->db);
+
+		$productstatic->id = $objp->rowid;
+		$productstatic->ref = $objp->ref;
+		$productstatic->label = $objp->produit;
+		$productstatic->type = $objp->type;
+		$productstatic->entity = $objp->entity;
+		$productstatic->status_batch = $objp->tobatch;
+
+		// Ref.
+		$pdf->SetXY($this->posxdesc, $curY);
+		$pdf->MultiCell($this->wref, 3, $productstatic->ref, 0, 'L');
+
+		// Label
+		$pdf->SetXY($this->posxlabel + 0.8, $curY);
+		$pdf->MultiCell($this->posxlast - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
+
+		// Quantity
+		$valtoshow = price2num($objp->value, 'MS');
+		$towrite = (empty($valtoshow) ? '0' : $valtoshow);
+
+		$pdf->SetXY($this->posxlast, $curY);
+		$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, $towrite, 0, 'R');
+
+		// AWP
+		$totalunit += $objp->value;
+
+		$pdf->SetXY($this->posxuser, $curY);
+		$pdf->MultiCell($this->posxstatus - $this->posxuser - 0.8, 3, price(price2num($objp->ppmp, 'MU'), 0, $outputlangs), 0, 'R');
+
+		// Total PMP
+		/*
+		$pdf->SetXY($this->posxstatus, $curY);
+		$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
+		$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
+
+		// Price sell min
+		if (empty($conf->global->PRODUIT_MULTIPRICES))
+		{
+			$pricemin = $objp->price;
+			$pdf->SetXY($this->posxdiscount, $curY);
+			$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
+
+			// Total sell min
+			$pdf->SetXY($this->postotalht, $curY);
+			$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 3, price(price2num($pricemin * $objp->value, 'MT'), 0, $outputlangs), 0, 'R', 0);
+		}
+		$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
+		*/
+
+		// Draw line
+		if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
+		{
+			$pdf->setPage($pageposafter);
+			$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+			//$pdf->SetDrawColor(190,190,200);
+			$pdf->line($this->left_margin, $curY-1, $this->page_width - $this->right_margin, $curY - 1);
+			$pdf->SetLineStyle(array('dash'=>0));
+		}
+	}
+
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.Public
+	/**
+	 *   Print table header for lines
+	 *
+	 *   @param     TCPDF			$pdf     			Object PDF
+	 *   @param     string		$tab_top			Top position of table
+	 *   @param     string		$tab_height		Height of table (rectangle)
+	 *   @param     Translate	$outputlangs	Langs object
+	 *   @param     int				$hidetop			1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param     int				$hidebottom		Hide bottom bar of array
+	 *   @param     string		$currency			Currency code
+	 *   @return    void
+	 */
+	protected function tableheader(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
+	{
+		global $conf;
+
+		if ($hidebottom) $hidebottom = -1;
 		if ($hidetop) $hidetop = -1;
 
 		$currency = !empty($currency) ? $currency : $conf->currency;
@@ -673,32 +670,32 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$pdf->SetTextColor(0, 0, 0);
 		$pdf->SetFont('', '', $default_font_size - 2);
 
-		if (empty($hidetop))
+		if (empty($hidetop) && $currency != 'none')
 		{
 			$titre = $outputlangs->transnoentities("AmountInCurrency", $outputlangs->transnoentitiesnoconv("Currency".$currency));
-			$pdf->SetXY($this->page_largeur - $this->marge_droite - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
+			$pdf->SetXY($this->page_width - $this->right_margin - ($pdf->GetStringWidth($titre) + 3), $tab_top - 4);
 			$pdf->MultiCell(($pdf->GetStringWidth($titre) + 3), 2, $titre);
 
 			//$conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR='230,230,230';
-			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite - $this->marge_gauche, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
+			if (!empty($conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR)) $pdf->Rect($this->left_margin, $tab_top, $this->page_width - $this->right_margin - $this->left_margin, 5, 'F', null, explode(',', $conf->global->MAIN_PDF_TITLE_BACKGROUND_COLOR));
 		}
 
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetFont('', 'B', $default_font_size - 3);
 
 		// Output Rect
-		//$this->printRect($pdf,$this->marge_gauche, $tab_top, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
+		//$this->printRect($pdf,$this->left_margin, $tab_top, $this->page_width-$this->left_margin-$this->right_margin, $tab_height, $hidetop, $hidebottom);	// Rect takes a length in 3rd parameter and 4th parameter
 
 		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
 		$pdf->SetDrawColor(200, 200, 200);
-		$pdf->line($this->marge_gauche, $tab_top, $this->page_largeur - $this->marge_droite, $tab_top);
+		$pdf->line($this->left_margin, $tab_top, $this->page_width - $this->right_margin, $tab_top);
 		$pdf->SetLineStyle(array('dash'=>0));
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetTextColor(0, 0, 120);
 
 		if (empty($hidetop))
 		{
-			//$pdf->line($this->marge_gauche, $tab_top+5, $this->page_largeur-$this->marge_droite, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
+			//$pdf->line($this->left_margin, $tab_top+5, $this->page_width-$this->right_margin, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
 			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);
 			$pdf->MultiCell($this->wref, 3, $outputlangs->transnoentities("Ref"), '', 'L');
 		}
@@ -707,28 +704,29 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxlabel - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxqty - $this->posxlabel - 1, 2, $outputlangs->transnoentities("Label"), '', 'L');
+			$pdf->MultiCell($this->posxlast - $this->posxlabel - 1, 2, $outputlangs->transnoentities("Label"), '', 'L');
 		}
 
-		//$pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
+		//$pdf->line($this->posxlast-1, $tab_top, $this->posxlast-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxqty - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxup - $this->posxqty - 1, 2, $outputlangs->transnoentities("Units"), '', 'R');
+			$pdf->SetXY($this->posxlast - 1, $tab_top + 1);
+			$pdf->MultiCell($this->posxuser - $this->posxlast - 1, 2, $outputlangs->transnoentities("Units"), '', 'R');
 		}
 
-		//$pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
+		//$pdf->line($this->posxuser-1, $tab_top, $this->posxuser-1, $tab_top + $tab_height);
 		if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxup - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxunit - $this->posxup - 1, 2, $outputlangs->transnoentities("AverageUnitPricePMPShort"), '', 'R');
+			$pdf->SetXY($this->posxuser - 1, $tab_top + 1);
+			$pdf->MultiCell($this->posxstatus - $this->posxuser - 1, 2, $outputlangs->transnoentities("AverageUnitPricePMPShort"), '', 'R');
 		}
 
-		//$pdf->line($this->posxunit - 1, $tab_top, $this->posxunit - 1, $tab_top + $tab_height);
-		if (empty($hidetop))
+		//$pdf->line($this->posxstatus - 1, $tab_top, $this->posxstatus - 1, $tab_top + $tab_height);
+    /*
+    if (empty($hidetop))
 		{
-			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxunit - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '', 'R');
+			$pdf->SetXY($this->posxstatus - 1, $tab_top + 1);
+			$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '', 'R');
 		}
 
 		//$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
@@ -742,13 +740,68 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->postotalht - 1, $tab_top + 1);
-			$pdf->MultiCell($this->page_largeur - $this->marge_droite - $this->postotalht, 2, $outputlangs->transnoentities("EstimatedStockValueSellShort"), '', 'R');
+			$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 2, $outputlangs->transnoentities("EstimatedStockValueSellShort"), '', 'R');
 		}
+    */
+		if (empty($hidebottom))
+		{
+			$pdf->SetDrawColor(200, 200, 200);
+			$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
+			$pdf->line($this->left_margin, $tab_top + 11, $this->page_width - $this->right_margin, $tab_top + 11);
+			$pdf->SetLineStyle(array('dash'=>0));
+		}
+	}
 
-		$pdf->SetDrawColor(200, 200, 200);
-		$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
-		$pdf->line($this->marge_gauche, $tab_top + 11, $this->page_largeur - $this->marge_droite, $tab_top + 11);
-		$pdf->SetLineStyle(array('dash'=>0));
+	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.Protected
+	/**
+	 *   Print sum of table column
+	 *
+	 *   @param     TCPDF		$pdf						Object PDF
+	 *   @param     int			$curY						Y
+	 *	 @param			int		  $outputlangs
+	 *	 @param			int			$nblines
+	 *	 @param			int			$totalunit
+	 *   @return    void
+	 */
+	protected function tablesum(&$pdf, &$curY, $outputlangs, $nblines, &$totalunit)
+	{
+		global $conf, $langs;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+
+		if ($nblines > 0) {
+			$pdf->SetLineStyle(array('dash'=>'0', 'color'=>array(200, 200, 200)));
+			$pdf->line($this->left_margin, $curY - 1, $this->page_width - $this->right_margin, $curY - 1);
+			$pdf->SetLineStyle(array('dash'=>0));
+
+			$pdf->SetFont('', 'B', $default_font_size - 1);
+			$pdf->SetTextColor(0, 0, 120);
+
+			// Ref.
+			$pdf->SetXY($this->posxdesc, $curY);
+			$pdf->MultiCell($this->wref, 3, $langs->trans("Total"), 0, 'L');
+
+			// Quantity
+			$valtoshow = price2num($totalunit, 'MS');
+			$towrite = empty($valtoshow) ? '0' : $valtoshow;
+
+			$pdf->SetXY($this->posxlast, $curY);
+			$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, $towrite, 0, 'R');
+
+			// Total PMP
+			/*
+			$pdf->SetXY($this->posxstatus, $curY);
+			$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
+
+			// Price sell min
+			if (empty($conf->global->PRODUIT_MULTIPRICES))
+			{
+				// Total sell min
+				$pdf->SetXY($this->postotalht, $curY);
+				$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
+			}
+			*/
+		}
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
@@ -766,145 +819,91 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	{
 		global $conf, $langs, $db, $hookmanager;
 
-		// Load traductions files required by page
-		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks"));
+		// Load translation files required by page
+		// TODO: remove not required files
+		$outputlangs->loadLangs(array("main", "propal", "companies", "bills", "orders", "stocks", "lims"));
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 
-		if ($object->type == 1) $titlekey = 'ServiceSheet';
-		else $titlekey = 'StockSheet';
-
-		pdf_pagehead($pdf, $outputlangs, $this->page_hauteur);
+		// Print Company Logo in background if MAIN_USE_BACKGROUND_ON_PDF is set
+		pdf_pagehead($pdf, $outputlangs, $this->page_height);
 
 		// Show Draft Watermark
 		if ($object->statut == 0 && (!empty($conf->global->COMMANDE_DRAFT_WATERMARK)))
 		{
-			pdf_watermark($pdf, $outputlangs, $this->page_hauteur, $this->page_largeur, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
+			pdf_watermark($pdf, $outputlangs, $this->page_height, $this->page_width, 'mm', $conf->global->COMMANDE_DRAFT_WATERMARK);
 		}
 
 		$pdf->SetTextColor(0, 0, 60);
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 
-		$posy = $this->marge_haute;
-		$posx = $this->page_largeur - $this->marge_droite - 100;
+		$posy = $this->top_margin;
+		$posx = $this->page_width - $this->right_margin - 100;
 
-		$pdf->SetXY($this->marge_gauche, $posy);
+		$pdf->SetXY($this->left_margin, $posy);
 
 		// Logo
-		$logo = $conf->mycompany->dir_output.'/logos/'.$this->emetteur->logo;
-		if ($this->emetteur->logo)
+		$logo = $conf->mycompany->dir_output.'/logos/'.$this->issuer->logo;
+		if ($this->issuer->logo)
 		{
 			if (is_readable($logo))
 			{
 				$height = pdf_getHeightForLogo($logo);
-				$pdf->Image($logo, $this->marge_gauche, $posy, 0, $height); // width=0 (auto)
+				$pdf->Image($logo, $this->left_margin, $posy, 0, $height); // width=0 (auto)
 			} else {
 				$pdf->SetTextColor(200, 0, 0);
 				$pdf->SetFont('', 'B', $default_font_size - 2);
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound", $logo), 0, 'L');
 				$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 			}
-		} else {
-			$text = $this->emetteur->name;
+			$posy = $pdf->GetY() + $height;
+		}
+
+		$posyAfterCompanyName = $posy;
+
+		if ($this->option_issuer) // Print Company Name
+		{
+			$pdf->SetXY($this->left_margin, $posy);
+			$text = $this->issuer->name;
 			$pdf->MultiCell(100, 4, $outputlangs->convToOutputCharset($text), 0, 'L');
+			$posyAfterCompanyName = $pdf->GetY();
+			$posy = $this->top_margin;
 		}
 
 		$pdf->SetFont('', 'B', $default_font_size + 3);
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$title = $outputlangs->transnoentities("Warehouse");
+		if ($titlekey == "")
+			$title = $outputlangs->transnoentities("EquipmentListReportTitle");
+		else
+			$title = $outputlangs->transnoentities($titlekey);
 		$pdf->MultiCell(100, 3, $title, '', 'R');
 
-		$pdf->SetFont('', 'B', $default_font_size);
+		$posy += 7;
+		$pdf->SetXY($posx, $posy);
+		$pdf->SetTextColor(0, 0, 60);
+		$pdf->SetFont('', '', $default_font_size);
+		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("DateBuild")." : ".dol_print_date(dol_now(), 'dayrfc'), '', 'R');
 
 		$posy += 5;
+		$numCalibrated = $object->numCalibrated();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-
-		$pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->label), '', 'R');
+		$pdf->SetFont('', '', $default_font_size);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("EquipmentListReportNumCalibrated").' : '.$numCalibrated, '', 'R');
 
 		$posy += 5;
-		$pdf->SetFont('', '', $default_font_size - 1);
+		$numMaintained = $object->numMaintained();
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
-		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("LocationSummary").' :', '', 'R');
+		$pdf->SetFont('', '', $default_font_size);
+		$pdf->MultiCell(100, 3, $outputlangs->transnoentities("EquipmentListReportNumMaintained").' : '.$numMaintained, '', 'R');
 
-		$posy += 4;
-		$pdf->SetXY($posx - 50, $posy);
-		$pdf->MultiCell(150, 3, $object->lieu, '', 'R');
-
-		$posy += 4;
-		$pdf->SetXY($posx, $posy);
-		$pdf->SetTextColor(0, 0, 60);
-
-		// Parent entrepot
-		$e = new Entrepot($this->db);
-		$hasparent = (!empty($object->fk_parent) && $e->fetch($object->fk_parent) > 0);
-
-		if ($hasparent) {
-			$pdf->MultiCell(100, 3, $outputlangs->transnoentities("ParentWarehouse").' :', '', 'R');
-
-			$posy += 4;
-			$pdf->SetXY($posx - 50, $posy);
-			$pdf->MultiCell(150, 3, $e->label, '', 'R');
+		if ($posyAfterCompanyName > $posy){
+			$top_shift = $posyAfterCompanyName - $this->top_margin;
 		}
-
-		// Description
-		$nexY = $pdf->GetY();
-		$nexY += 5;
-		$pdf->SetXY($posx, $posy);
-		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("Description").' : </b>'.nl2br($object->description), 0, 1);
-		$nexY = $pdf->GetY();
-
-		//$calcproductsunique = $object->nb_different_products();
-		//$calcproducts = $object->nb_products();
-
-		// Total nb of different products
-		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("NumberOfDifferentProducts").' : </b>'.(empty($calcproductsunique['nb']) ? '0' : $calcproductsunique['nb']), 0, 1);
-		$nexY = $pdf->GetY();
-
-		// Nb of products
-		$valtoshow = price2num($calcproducts['nb'], 'MS');
-		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("NumberOfProducts").' : </b>'.(empty($valtoshow) ? '0' : $valtoshow), 0, 1);
-		$nexY = $pdf->GetY();
-
-		// Value
-		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("EstimatedStockValueShort").' : </b>'.price((empty($calcproducts['value']) ? '0' : price2num($calcproducts['value'], 'MT')), 0, $langs, 0, -1, -1, $conf->currency), 0, 1);
-		$nexY = $pdf->GetY();
-
-
-		// Last movement
-		$sql = "SELECT max(m.datem) as datem";
-		$sql .= " FROM ".MAIN_DB_PREFIX."stock_mouvement as m";
-		$sql .= " WHERE m.fk_entrepot = ".((int) $object->id);
-		$resqlbis = $this->db->query($sql);
-		if ($resqlbis)
-		{
-			$obj = $this->db->fetch_object($resqlbis);
-			$lastmovementdate = $this->db->jdate($obj->datem);
-		} else {
-			dol_print_error($this->db);
-		}
-
-		if ($lastmovementdate)
-		{
-			$toWrite = dol_print_date($lastmovementdate, 'dayhour').' ';
-		} else {
-			$toWrite = $outputlangs->transnoentities("None");
-		}
-
-		$pdf->writeHTMLCell(190, 2, $this->marge_gauche, $nexY, '<b>'.$outputlangs->transnoentities("LastMovement").' : </b>'.$toWrite, 0, 1);
-		$nexY = $pdf->GetY();
-
-		$posy += 2;
-
-		$top_shift = 0;
-		// Show list of linked objects
-		$current_y = $pdf->getY();
-		$posy = pdf_writeLinkedObjects($pdf, $object, $outputlangs, $posx, $posy, 100, 3, 'R', $default_font_size);
-		if ($current_y < $pdf->getY())
-		{
-			$top_shift = $pdf->getY() - $current_y;
+		else {
+			$top_shift = $posy - $this->top_margin;
 		}
 
 		$pdf->SetTextColor(0, 0, 0);
@@ -914,7 +913,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.PublicUnderscore
 	/**
-	 *   	Show footer of page. Need this->emetteur object
+	 *   	Show footer of page. Need this->issuer object
 	 *
 	 *   	@param	TCPDF		$pdf     			PDF
 	 * 		@param	Object		$object				Object to show
@@ -926,6 +925,6 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	{
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->emetteur, $this->marge_basse, $this->marge_gauche, $this->page_hauteur, $object, $showdetails, $hidefreetext);
+		return pdf_pagefoot($pdf, $outputlangs, 'PRODUCT_FREE_TEXT', $this->issuer, $this->bottom_margin, $this->left_margin, $this->page_height, $object, $showdetails, $hidefreetext);
 	}
 }

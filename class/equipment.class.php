@@ -69,7 +69,9 @@ class Equipment extends CommonObject
 	const STATUS_OPERATIONAL = 2;
 	const STATUS_CANCELED = 9;
 
-
+	const MAINTAIN_NONE = 0;
+	const MAINTAIN_MAINTENANCE = 1;
+	const MAINTAIN_CALIBRATE = 2;
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
@@ -1011,6 +1013,49 @@ class Equipment extends CommonObject
 		}
 
 		return $result;
+	}
+
+	public function fetchCalibrated()
+	{
+		// '2'=>'Calibration'
+		$result = $this->fetchAll('ASC', '', 0, 0, array('customsql'=>'maintenance = '.self::MAINTAIN_CALIBRATE));
+
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+			return 0;
+		}
+		else
+			return $result;
+	}
+
+	public function numCalibrated()
+	{
+		$result = $this->fetchCalibrated();
+
+		return count($result);
+	}
+
+	public function fetchMaintained()
+	{
+		// '1'=>'Maintenance'
+		$result = $this->fetchAll('ASC', '', 0, 0, array('customsql'=>'maintenance = '.self::MAINTAIN_MAINTENANCE));
+
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+		}
+
+		return $result;
+	}
+
+	public function numMaintained()
+	{
+		$result = $this->fetchMaintained();
+
+		return count($result);
 	}
 
 	/**

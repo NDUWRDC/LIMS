@@ -61,6 +61,12 @@ revoked = maintenance or item calibration status revoked (set to ENABLED)
 PDFcreated = PDF created
 PDFmodified = PDF modified
 #
+# Report List Equipmet
+#
+EquipmentListReportTitle = Calibration and Maintenance Report
+EquipmentListReportNumCalibrated = Number of equipment calibrated
+EquipmentListReportNumMaintained = Number of equipment maintained
+#
 # Sample page
 #
 MyPageName = My page name
