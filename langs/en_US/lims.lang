@@ -66,6 +66,13 @@ PDFmodified = PDF modified
 EquipmentListReportTitle = Calibration and Maintenance Report
 EquipmentListReportNumCalibrated = Number of equipment calibrated
 EquipmentListReportNumMaintained = Number of equipment maintained
+EquipmentListReportTblHeadEquipment = Equipment
+EquipmentListReportTblHeadLabel = Equipment Label
+EquipmentListReportTblHeadDescription = Procedure Description
+EquipmentListReportTblHeadIntervall = Interval
+EquipmentListReportTblHeadLastDate = Last on
+EquipmentListReportTblHeadLastUSer = By user
+EquipmentListReportTblHeadStatus = Status
 #
 # Sample page
 #

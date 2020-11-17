@@ -121,7 +121,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		global $conf, $langs, $mysoc;
 
 		// Load traductions files required by page
-		$langs->loadLangs(array("main", "companies"));
+		$langs->loadLangs(array("main", "companies", "lims"));
 
 		$this->db = $db;
 		$this->name = "standard";
@@ -148,15 +148,24 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$this->issuer = $mysoc;
 		if (!$this->issuer->country_code) $this->issuer->country_code = substr($langs->defaultlang, -2); // By default if not defined
 
-		// Define position of columns
-		$this->wref = 35;
-		$this->posxdesc = $this->left_margin + 1;
-		$this->posxlabel = $this->posxdesc + $this->wref;
-		$this->posxfrequency = 80;
-		$this->posxlast = 95;
-		$this->posxuser = 115;
-		$this->posxstatus = 135;
-		//$this->posxdiscount = 155;
+		// Define names and positions of columns
+		$this->tblposx = array("EquipmentListReportTblHeadEquipment" => $this->left_margin + 1,
+													"EquipmentListReportTblHeadLabel" => $this->left_margin + 35,
+													"EquipmentListReportTblHeadDescription" => $this->left_margin + 80,
+													"EquipmentListReportTblHeadIntervall" => $this->left_margin + 115,
+													"EquipmentListReportTblHeadLastDate" => $this->left_margin + 135,
+													"EquipmentListReportTblHeadLastUSer" => $this->left_margin + 155,
+													"EquipmentListReportTblHeadStatus" => $this->left_margin + 175
+												);
+
+		$this->wref = 35;																	// Equipment / Product-Ref
+		$this->posxdesc = $this->left_margin + 1; 				// Description
+		$this->posxlabel = $this->posxdesc + $this->wref;	// Label
+		$this->posxfrequency = 80;												// Frequency
+		$this->posxlast = 95;															// Last
+		$this->posxuser = 115;														// User
+		$this->posxstatus = 135;													// Status
+		//$this->posxdate = 155;
 		//$this->postotalht = 175;
 
 		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxfrequency = $this->posxuser;
@@ -168,14 +177,9 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			$this->posxuser -= 20;
 			$this->posxlast -= 20;
 			$this->posxstatus -= 20;
-		//	$this->posxdiscount -= 20;
+		//	$this->posxdate -= 20;
 		//	$this->postotalht -= 20;
 		}
-		$this->tva = array();
-		$this->localtax1 = array();
-		$this->localtax2 = array();
-		$this->atleastoneratenotnull = 0;
-		$this->atleastonediscount = 0;
 	}
 
 
@@ -615,15 +619,15 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// Total PMP
 		/*
 		$pdf->SetXY($this->posxstatus, $curY);
-		$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
+		$pdf->MultiCell($this->posxdate - $this->posxstatus - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
 		$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
 
 		// Price sell min
 		if (empty($conf->global->PRODUIT_MULTIPRICES))
 		{
 			$pricemin = $objp->price;
-			$pdf->SetXY($this->posxdiscount, $curY);
-			$pdf->MultiCell($this->postotalht - $this->posxdiscount, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
+			$pdf->SetXY($this->posxdate, $curY);
+			$pdf->MultiCell($this->postotalht - $this->posxdate, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
 
 			// Total sell min
 			$pdf->SetXY($this->postotalht, $curY);
@@ -693,56 +697,17 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetTextColor(0, 0, 120);
 
-		if (empty($hidetop))
-		{
-			//$pdf->line($this->left_margin, $tab_top+5, $this->page_width-$this->right_margin, $tab_top+5);	// line takes a position y in 2nd parameter and 4th parameter
-			$pdf->SetXY($this->posxdesc - 1, $tab_top + 1);
-			$pdf->MultiCell($this->wref, 3, $outputlangs->transnoentities("Ref"), '', 'L');
+		$i = 1;
+		$num = count($this->tblposx);
+		foreach ($this->tblposx as $key => $value) {
+			$pdf->SetXY($value, $tab_top);
+			if ($i < $num)
+				$pdf->MultiCell($this->tblposx[$i] - $value, 3, $outputlangs->transnoentities($key), '', 'L');
+			else
+				$pdf->MultiCell($this->page_width - $value, 3, $outputlangs->transnoentities($key), '', 'L');
+			$i++;
 		}
 
-		//$pdf->line($this->posxlabel-1, $tab_top, $this->posxlabel-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxlabel - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxlast - $this->posxlabel - 1, 2, $outputlangs->transnoentities("Label"), '', 'L');
-		}
-
-		//$pdf->line($this->posxlast-1, $tab_top, $this->posxlast-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxlast - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxuser - $this->posxlast - 1, 2, $outputlangs->transnoentities("Units"), '', 'R');
-		}
-
-		//$pdf->line($this->posxuser-1, $tab_top, $this->posxuser-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxuser - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxstatus - $this->posxuser - 1, 2, $outputlangs->transnoentities("AverageUnitPricePMPShort"), '', 'R');
-		}
-
-		//$pdf->line($this->posxstatus - 1, $tab_top, $this->posxstatus - 1, $tab_top + $tab_height);
-    /*
-    if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxstatus - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 1, 2, $outputlangs->transnoentities("EstimatedStockValueShort"), '', 'R');
-		}
-
-		//$pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->posxdiscount - 1, $tab_top + 1);
-			$pdf->MultiCell($this->postotalht - $this->posxdiscount + 1, 2, $outputlangs->transnoentities("SellPriceMin"), '', 'R');
-		}
-
-		//$pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
-		if (empty($hidetop))
-		{
-			$pdf->SetXY($this->postotalht - 1, $tab_top + 1);
-			$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 2, $outputlangs->transnoentities("EstimatedStockValueSellShort"), '', 'R');
-		}
-    */
 		if (empty($hidebottom))
 		{
 			$pdf->SetDrawColor(200, 200, 200);
@@ -791,7 +756,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			// Total PMP
 			/*
 			$pdf->SetXY($this->posxstatus, $curY);
-			$pdf->MultiCell($this->posxdiscount - $this->posxstatus - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
+			$pdf->MultiCell($this->posxdate - $this->posxstatus - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
 
 			// Price sell min
 			if (empty($conf->global->PRODUIT_MULTIPRICES))
