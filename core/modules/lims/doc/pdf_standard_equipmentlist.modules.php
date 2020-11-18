@@ -148,37 +148,24 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$this->issuer = $mysoc;
 		if (!$this->issuer->country_code) $this->issuer->country_code = substr($langs->defaultlang, -2); // By default if not defined
 
-		// Define names and positions of columns
-		$this->tblposx = array("EquipmentListReportTblHeadEquipment" => $this->left_margin + 1,
-													"EquipmentListReportTblHeadLabel" => $this->left_margin + 35,
-													"EquipmentListReportTblHeadDescription" => $this->left_margin + 80,
-													"EquipmentListReportTblHeadIntervall" => $this->left_margin + 115,
-													"EquipmentListReportTblHeadLastDate" => $this->left_margin + 130,
-													"EquipmentListReportTblHeadLastUSer" => $this->left_margin + 150,
-													"EquipmentListReportTblHeadOK" => $this->left_margin + 170,
-													"EquipmentListReportTblHeadNOK" => $this->left_margin + 180,
-												);
-
-		$this->wref = 35;																	// Equipment / Product-Ref
-		$this->posxdesc = $this->left_margin + 1; 				// Description
-		$this->posxlabel = $this->posxdesc + $this->wref;	// Label
-		$this->posxfrequency = 80;												// Frequency
-		$this->posxlast = 95;															// Last
-		$this->posxuser = 115;														// User
-		$this->posxstatus = 135;													// Status
-		//$this->posxdate = 155;
-		//$this->postotalht = 175;
-
-		// Report not VAT specific
-		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxfrequency = $this->posxuser;
+		// Define columns: name - left position - alignment
+		$this->tblposx = array(
+			 array("EquipmentListReportTblHeadEquipment", $this->left_margin + 1, 'L'),
+			 array("EquipmentListReportTblHeadLabel", $this->left_margin + 37, 'L'),
+			 array("EquipmentListReportTblHeadDescription", $this->left_margin + 81, 'L'),
+			 array("EquipmentListReportTblHeadIntervall", $this->left_margin + 115, 'C'),
+			 array("EquipmentListReportTblHeadLastDate", $this->left_margin + 130, 'L'),
+			 array("EquipmentListReportTblHeadLastUser", $this->left_margin + 150, 'L'),
+			 array("EquipmentListReportTblHeadStatus", $this->left_margin + 170, 'C'),
+		);
 
 		// Report does not handle pics
-		//$this->posxpicture = $this->posxfrequency - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		//$this->posxpicture = $this->tblposx[2][1] - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
 
 		if ($this->page_width < 210) // To work with US executive format
 		{
 			for ($i = 0; $i < count($this->tblposx); $i++)  {
-				$this->tblposx[$i] -= 20;
+				$this->tblposx[$i][1] -= 20;
 			}
 		}
 	}
@@ -375,12 +362,12 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$pageposbefore = $pdf->getPage();
 
 						// Description of product line
-						$curX = $this->posxdesc - 1;
+						$curX = $this->tblposx[0][1] - 1;
 
 						$showpricebeforepagebreak = 1;
 
 						$pdf->startTransaction();
-						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxfrequency - $curX, 3, $curX, $curY, $hideref, $hidedesc);
+						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->tblposx[2][1] - $curX, 3, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
 						if ($pageposafter > $pageposbefore)	// There is a pagebreak
 						{
@@ -388,7 +375,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 							$pageposafter = $pageposbefore;
 							//print $pageposafter.'-'.$pageposbefore;exit;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxfrequency - $curX, 4, $curX, $curY, $hideref, $hidedesc);
+							pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->tblposx[2][1] - $curX, 4, $curX, $curY, $hideref, $hidedesc);
 							$pageposafter = $pdf->getPage();
 							$posyafter = $pdf->GetY();
 							if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotot)))	// There is no space left for total+free text
@@ -494,7 +481,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 					$tab_top = 88;
 
 					$pdf->SetFont('', '', $default_font_size - 1);
-					$pdf->writeHTMLCell(190, 3, $this->posxdesc - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
+					$pdf->writeHTMLCell(190, 3, $this->tblposx[1][1] - 1, $tab_top, dol_htmlentitiesbr($notetoshow), 0, 1);
 					$nexY = $pdf->GetY();
 					$height_note = $nexY - $tab_top;
 
@@ -597,72 +584,25 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 		$rowitems = array();
 		$rowitems = $this->tblposx;
-		$rowitems[0] = dol_trunc($productstatic->ref, 18);
-		$rowitems[1] = dol_trunc($productstatic->label, 24);
-		$rowitems[2] = $towrite;
-		$rowitems[3] = '1d';
-		$rowitems[4] = 'yyyy-mm-dd';
-		$rowitems[5] = 'Some User';
-		$rowitems[6] = 'x';
-		$rowitems[7] = 'x';
+		$rowitems[0][1] = dol_trunc($productstatic->ref, 18);
+		$rowitems[1][1] = dol_trunc($productstatic->label, 24);
+		$rowitems[2][1] = $towrite;
+		$rowitems[3][1] = '1d';
+		$rowitems[4][1] = 'yyyy-mm-dd';
+		$rowitems[5][1] = 'Some User';
+		$rowitems[6][1] = 'x';
 		//$curY_max = $curY;
-		$index = 1;
+		$index = 0;
 		$num = count($this->tblposx);
 		foreach ($this->tblposx as $key => $value) {
-			$pdf->SetXY($value, $curY);
-			if ($index < $num)
-				$pdf->MultiCell($this->tblposx[$index] - $value, 3, $rowitems[$index-1], '', 'L');
+			$pdf->SetXY($value[1], $curY);
+			if ($index < $num-1)
+				$pdf->MultiCell($this->tblposx[$index+1][1] - $value[1], 3, $rowitems[$index][1], '', $value[2]);
 			else
-				$pdf->MultiCell($this->page_width - $value, 3, $rowitems[$index-1], '', 'L');
+				$pdf->MultiCell($this->page_width - $this->left_margin - $value[1], 3, $rowitems[$index][1], '', $value[2]);
 			//$curY_max = ($curY_max > $pdf->GetY() ? $curY_max : $pdf->GetY()); // In case height gets set dynamically
 			$index++;
 		}
-		//$curY = $curY_max;
-
-/*
-		// Ref.
-		$pdf->SetXY($this->posxdesc, $curY);
-		$pdf->MultiCell($this->wref, 3, $productstatic->ref, 0, 'L');
-
-		// Label
-		$pdf->SetXY($this->posxlabel + 0.8, $curY);
-		$pdf->MultiCell($this->posxlast - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
-		//$pdf->MultiCell($this->posxlast - $this->posxlabel - 0.8, 3, 'ABC', 0, 'L');
-
-		// Quantity
-		$valtoshow = price2num($objp->value, 'MS');
-		$towrite = (empty($valtoshow) ? '0' : $valtoshow);
-
-		$pdf->SetXY($this->posxlast, $curY);
-		$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, $towrite, 0, 'R');
-		//$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, 'ABC', 0, 'R');
-
-		// AWP
-
-
-		$pdf->SetXY($this->posxuser, $curY);
-		$pdf->MultiCell($this->posxstatus - $this->posxuser + 10, 3, price(price2num($objp->ppmp, 'MU'), 0, $outputlangs), 0, 'R');
-		//$pdf->MultiCell($this->posxstatus - $this->posxuser - 0.8, 3, 'ABC', 0, 'R');
-
-		// Total PMP
-		/*
-		$pdf->SetXY($this->posxstatus, $curY);
-		$pdf->MultiCell($this->posxdate - $this->posxstatus - 0.8, 3, price(price2num($objp->ppmp * $objp->value, 'MT'), 0, $outputlangs), 0, 'R');
-		$totalvalue += price2num($objp->ppmp * $objp->value, 'MT');
-
-		// Price sell min
-		if (empty($conf->global->PRODUIT_MULTIPRICES))
-		{
-			$pricemin = $objp->price;
-			$pdf->SetXY($this->posxdate, $curY);
-			$pdf->MultiCell($this->postotalht - $this->posxdate, 3, price(price2num($pricemin, 'MU'), 0, $outputlangs), 0, 'R', 0);
-
-			// Total sell min
-			$pdf->SetXY($this->postotalht, $curY);
-			$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 3, price(price2num($pricemin * $objp->value, 'MT'), 0, $outputlangs), 0, 'R', 0);
-		}
-		$totalvaluesell += price2num($pricemin * $objp->value, 'MT');
-		*/
 
 		// Draw line
 		if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
@@ -725,14 +665,14 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$pdf->SetDrawColor(128, 128, 128);
 		$pdf->SetTextColor(0, 0, 120);
 
-		$i = 1;
+		$i = 0;
 		$num = count($this->tblposx);
-		foreach ($this->tblposx as $key => $value) {
-			$pdf->SetXY($value, $tab_top);
-			if ($i < $num)
-				$pdf->MultiCell($this->tblposx[$i] - $value, 3, $outputlangs->transnoentities($key), '', 'L');
+		foreach ($this->tblposx as $value) {
+			$pdf->SetXY($value[1], $tab_top);
+			if ($i < $num-1)
+				$pdf->MultiCell($this->tblposx[$i+1][1] - $value[1], 3, $outputlangs->transnoentities($value[0]), '', $value[2]);
 			else
-				$pdf->MultiCell($this->page_width - $value, 3, $outputlangs->transnoentities($key), '', 'L');
+				$pdf->MultiCell($this->page_width - $this->left_margin - $value[1], 3, $outputlangs->transnoentities($value[0]), '', $value[2]);
 			$i++;
 		}
 
@@ -770,30 +710,16 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			$pdf->SetFont('', 'B', $default_font_size - 1);
 			$pdf->SetTextColor(0, 0, 120);
 
-			// Ref.
-			$pdf->SetXY($this->posxdesc, $curY);
-			$pdf->MultiCell($this->wref, 3, $langs->trans("Total"), 0, 'L');
+			// Print "Total" to column #2
+			$pdf->SetXY($this->tblposx[1][1], $curY);
+			$pdf->MultiCell($this->tblposx[2][1] - $this->tblposx[2][1], 3, $langs->trans("Total"), 0, $this->tblposx[1][2]);
 
-			// Quantity
+			// Print quantity to column #3
 			$valtoshow = price2num($totalunit, 'MS');
 			$towrite = empty($valtoshow) ? '0' : $valtoshow;
 
-			$pdf->SetXY($this->posxlast, $curY);
-			$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, $towrite, 0, 'R');
-
-			// Total PMP
-			/*
-			$pdf->SetXY($this->posxstatus, $curY);
-			$pdf->MultiCell($this->posxdate - $this->posxstatus - 0.8, 3, price(price2num($totalvalue, 'MT'), 0, $outputlangs), 0, 'R');
-
-			// Price sell min
-			if (empty($conf->global->PRODUIT_MULTIPRICES))
-			{
-				// Total sell min
-				$pdf->SetXY($this->postotalht, $curY);
-				$pdf->MultiCell($this->page_width - $this->right_margin - $this->postotalht, 3, price(price2num($totalvaluesell, 'MT'), 0, $outputlangs), 0, 'R', 0);
-			}
-			*/
+			$pdf->SetXY($this->tblposx[2][1], $curY);
+			$pdf->MultiCell($this->tblposx[3][1] - $this->tblposx[2][1] - 0.8, 3, $towrite, 0, $this->tblposx[1][2]);
 		}
 	}
 

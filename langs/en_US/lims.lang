@@ -71,9 +71,8 @@ EquipmentListReportTblHeadLabel = Equipment Label
 EquipmentListReportTblHeadDescription = Procedure Description
 EquipmentListReportTblHeadIntervall = Interval
 EquipmentListReportTblHeadLastDate = Last on
-EquipmentListReportTblHeadLastUSer = By user
-EquipmentListReportTblHeadOK = OK
-EquipmentListReportTblHeadNOK = NOK
+EquipmentListReportTblHeadLastUser = By user
+EquipmentListReportTblHeadStatus = Status
 #
 # Sample page
 #
