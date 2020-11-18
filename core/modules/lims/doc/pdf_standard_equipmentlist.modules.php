@@ -153,9 +153,10 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 													"EquipmentListReportTblHeadLabel" => $this->left_margin + 35,
 													"EquipmentListReportTblHeadDescription" => $this->left_margin + 80,
 													"EquipmentListReportTblHeadIntervall" => $this->left_margin + 115,
-													"EquipmentListReportTblHeadLastDate" => $this->left_margin + 135,
-													"EquipmentListReportTblHeadLastUSer" => $this->left_margin + 155,
-													"EquipmentListReportTblHeadStatus" => $this->left_margin + 175
+													"EquipmentListReportTblHeadLastDate" => $this->left_margin + 130,
+													"EquipmentListReportTblHeadLastUSer" => $this->left_margin + 150,
+													"EquipmentListReportTblHeadOK" => $this->left_margin + 170,
+													"EquipmentListReportTblHeadNOK" => $this->left_margin + 180,
 												);
 
 		$this->wref = 35;																	// Equipment / Product-Ref
@@ -168,17 +169,17 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		//$this->posxdate = 155;
 		//$this->postotalht = 175;
 
-		if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxfrequency = $this->posxuser;
-		$this->posxpicture = $this->posxfrequency - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+		// Report not VAT specific
+		//if (!empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT) || !empty($conf->global->MAIN_GENERATE_DOCUMENTS_WITHOUT_VAT_COLUMN)) $this->posxfrequency = $this->posxuser;
+
+		// Report does not handle pics
+		//$this->posxpicture = $this->posxfrequency - (empty($conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH) ? 20 : $conf->global->MAIN_DOCUMENTS_WITH_PICTURE_WIDTH); // width of images
+
 		if ($this->page_width < 210) // To work with US executive format
 		{
-			$this->posxpicture -= 20;
-			$this->posxfrequency -= 20;
-			$this->posxuser -= 20;
-			$this->posxlast -= 20;
-			$this->posxstatus -= 20;
-		//	$this->posxdate -= 20;
-		//	$this->postotalht -= 20;
+			for ($i = 0; $i < count($this->tblposx); $i++)  {
+				$this->tblposx[$i] -= 20;
+			}
 		}
 	}
 
@@ -267,7 +268,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 				$heightforinfotot = 40; // Height reserved to output the info and total part
 				$heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
-				$heightforfooter = $this->bottom_margin + 8; // Height reserved to output the footer (value include bottom margin)
+				$heightforfooter = $this->bottom_margin + 20; // Height reserved to output the footer (value include bottom margin)
 
 				if (class_exists('TCPDF'))
 				{
@@ -307,10 +308,6 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 				$tab_top = $top_shift + 40;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 40 + $top_shift : 10);
-
-				dol_syslog('tab_top='.$tab_top, LOG_DEBUG);
-				dol_syslog('tab_top_newpage='.$tab_top_newpage, LOG_DEBUG);
-				dol_syslog('top_shift='.$top_shift, LOG_DEBUG);
 
 				// Not used
 				//$tab_height = 130;
@@ -476,7 +473,6 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 					 * Footer table
 					 */
 
-					$nexY = $pdf->GetY();
 					$nexY += 2;
 					$curY = $nexY;
 
@@ -595,6 +591,35 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$productstatic->entity = $objp->entity;
 		$productstatic->status_batch = $objp->tobatch;
 
+		$valtoshow = price2num($objp->value, 'MS');
+		$towrite = (empty($valtoshow) ? '0' : $valtoshow);
+		$totalunit += $objp->value;
+
+		$rowitems = array();
+		$rowitems = $this->tblposx;
+		$rowitems[0] = dol_trunc($productstatic->ref, 18);
+		$rowitems[1] = dol_trunc($productstatic->label, 24);
+		$rowitems[2] = $towrite;
+		$rowitems[3] = '1d';
+		$rowitems[4] = 'yyyy-mm-dd';
+		$rowitems[5] = 'Some User';
+		$rowitems[6] = 'x';
+		$rowitems[7] = 'x';
+		//$curY_max = $curY;
+		$index = 1;
+		$num = count($this->tblposx);
+		foreach ($this->tblposx as $key => $value) {
+			$pdf->SetXY($value, $curY);
+			if ($index < $num)
+				$pdf->MultiCell($this->tblposx[$index] - $value, 3, $rowitems[$index-1], '', 'L');
+			else
+				$pdf->MultiCell($this->page_width - $value, 3, $rowitems[$index-1], '', 'L');
+			//$curY_max = ($curY_max > $pdf->GetY() ? $curY_max : $pdf->GetY()); // In case height gets set dynamically
+			$index++;
+		}
+		//$curY = $curY_max;
+
+/*
 		// Ref.
 		$pdf->SetXY($this->posxdesc, $curY);
 		$pdf->MultiCell($this->wref, 3, $productstatic->ref, 0, 'L');
@@ -602,6 +627,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// Label
 		$pdf->SetXY($this->posxlabel + 0.8, $curY);
 		$pdf->MultiCell($this->posxlast - $this->posxlabel - 0.8, 3, dol_trunc($objp->produit, 24), 0, 'L');
+		//$pdf->MultiCell($this->posxlast - $this->posxlabel - 0.8, 3, 'ABC', 0, 'L');
 
 		// Quantity
 		$valtoshow = price2num($objp->value, 'MS');
@@ -609,12 +635,14 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 		$pdf->SetXY($this->posxlast, $curY);
 		$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, $towrite, 0, 'R');
+		//$pdf->MultiCell($this->posxuser - $this->posxlast - 0.8, 3, 'ABC', 0, 'R');
 
 		// AWP
-		$totalunit += $objp->value;
+
 
 		$pdf->SetXY($this->posxuser, $curY);
-		$pdf->MultiCell($this->posxstatus - $this->posxuser - 0.8, 3, price(price2num($objp->ppmp, 'MU'), 0, $outputlangs), 0, 'R');
+		$pdf->MultiCell($this->posxstatus - $this->posxuser + 10, 3, price(price2num($objp->ppmp, 'MU'), 0, $outputlangs), 0, 'R');
+		//$pdf->MultiCell($this->posxstatus - $this->posxuser - 0.8, 3, 'ABC', 0, 'R');
 
 		// Total PMP
 		/*
@@ -642,7 +670,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			$pdf->setPage($pageposafter);
 			$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 			//$pdf->SetDrawColor(190,190,200);
-			$pdf->line($this->left_margin, $curY-1, $this->page_width - $this->right_margin, $curY - 1);
+			$pdf->line($this->left_margin, $curY-1, $this->page_width - $this->right_margin, $curY-1);
 			$pdf->SetLineStyle(array('dash'=>0));
 		}
 	}
@@ -728,7 +756,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	 *	 @param			int			$totalunit
 	 *   @return    void
 	 */
-	protected function tablesum(&$pdf, &$curY, $outputlangs, $nblines, &$totalunit)
+	protected function tablesum(&$pdf, $curY, $outputlangs, $nblines, $totalunit)
 	{
 		global $conf, $langs;
 
