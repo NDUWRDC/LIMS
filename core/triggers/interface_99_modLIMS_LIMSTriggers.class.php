@@ -99,7 +99,6 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 	{
 		if (empty($conf->lims->enabled)) return 0; // If module is not enabled, we do nothing
 
-		// Put here code you want to execute when a Dolibarr business events occurs.
 		// Data and type of action are stored into $object and $action
 		if (!empty($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
@@ -110,6 +109,10 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				$arr = explode('_', $object->src_object_type, 2);
 				$originalmodule = $arr[0];  // should always be 'lims'
 				$originalclass = $arr[1];
+				if ($originalmodule != 'lims'){
+					dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". orignalmodule=".$originalmodule.": Call not from LIMS, exit runTrigger");
+					return 0;
+				}
 				// we only expect lims-classes
 				dol_include_once('/'.$originalmodule.'/class/'.$originalclass.'.class.php');
 				$original_object = new $originalclass($object->db);
@@ -117,13 +120,22 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				$product->fetch($original_object->fk_product);
 			}
 			else {
-				$product->fetch($object->fk_product);//, $ref = '', $ref_ext = '', $barcode = '', $ignore_expression = 1, $ignore_price_load = 1, $ignore_lang_load = 0);
+				$product->fetch($object->fk_product);
 			}
 
 			if ($object->element == 'equipment' || $originalclass == 'equipment'){
 				$msg_label = $langs->transnoentitiesnoconv("Equipment")." ";
 				$msg_text = $msg_label." ($product->label) ";
 			}
+		}
+		else {
+			dol_syslog("Trigger '".$this->name."' launched by ".__FILE__.": Action empty, exit runTrigger");
+			return 0; // exit if action is empty
+		}
+
+		if ($object->module != 'lims' && $originalmodule != 'lims'){ // exit if trigger is called by other module
+			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". object->module=".$object->module." originalmodule=".$originalmodule." : Call not from LIMS, exit runTrigger");
+			return 0;
 		}
 		switch ($action) {
 			// Users
