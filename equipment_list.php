@@ -96,6 +96,8 @@ $pagenext = $page + 1;
 $object = new Equipment($db);
 $extrafields = new ExtraFields($db);
 $diroutputmassaction = $conf->lims->dir_output.'/temp/massgeneration/'.$user->id;
+$diroutputlistreport = $conf->lims->dir_output."/".dol_sanitizeFileName($object->element);
+
 $hookmanager->initHooks(array('equipmentlist')); // Note that conf->hooks_modules contains array
 
 // Fetch optionals attributes and labels
@@ -603,7 +605,7 @@ dol_syslog(__METHOD__.' befor builddoc $array ... '.var_export(array('builddoc')
 	//showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
 	$object->model_pdf = 'standard_equipmentlist';
 	// TODO Hook commonGenerateDocument to allow object of class Entrepot
-	print $formfile->showdocuments('lims:Equipment', '', $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 1, 0, 0, 0, $param='', $title='', '', $langs->defaultlang, '', $objectWAREHOUSE, $hidegeneratedfilelistifempty);
+	print $formfile->showdocuments('lims:Equipment', $object->element, $diroutputlistreport, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 1, 0, 0, 0, $param='', $title='', '', $langs->defaultlang, '', '', $hidegeneratedfilelistifempty);
 	//massfilesarea not working
 	print $formfile->showdocuments('massfilesarea_lims', '', $filedir, $urlsource, 0, $delallowed, '', 1, 1, 0, 48, 1, $param, $title, '', '', '', null, $hidegeneratedfilelistifempty);
 	dol_syslog(__METHOD__.'END formfile->showdocuments', LOG_DEBUG);
