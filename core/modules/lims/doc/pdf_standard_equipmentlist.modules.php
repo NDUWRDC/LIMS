@@ -281,7 +281,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				// Show list of products which are added to Equipment
 				// **************************************************************************
 				$totalunit = 0;
-				$resql = $object->fetchCalibratedMantained();
+				$resql = $object->fetchCalibrated() + $object->fetchMaintained();
 				if ($resql){
 					$nblines = count($resql); // $this->db->num_rows($resql);
 
@@ -402,17 +402,15 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$i++;
 						}
 
-					$this->db->free($resql);
-
 					/**
 					 * Footer table
 					 */
 
 					$nexY += 2;
 					$curY = $nexY;
-					// TODO: Sum could be generalized, maybe using tblposx[][sumdetail] 
-					//$this->tablesum($pdf, $curY, $outputlangs, $nblines, $totalunit);
-				} 
+				}
+				// TODO: Sum could be generalized, maybe using tblposx[][sumdetail] 
+				//$this->tablesum($pdf, $curY, $outputlangs, $nblines, $totalunit);
 			}else {
 				dol_print_error($this->db);
 			}
@@ -521,7 +519,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// DoTo: Use pdf_writelinedesc here??
 		$rowitems = array();
 		$rowitems = $this->tblposx;
-		$rowitems[0][1] = dol_trunc($productstatic->ref, 18);
+		$rowitems[0][1] = dol_trunc($productstatic->ref, 16);
 		$rowitems[1][1] = dol_trunc($productstatic->label, 24);
 		$rowitems[2][1] = $objp->description;
 		$rowitems[3][1] = $objp->maintain_interval.'d';
