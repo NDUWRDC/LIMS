@@ -316,25 +316,21 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotot); // The only function to edit the bottom margin of current page to set it.
 						$pageposbefore = $pdf->getPage();
 						
-						// Description of product line
-						$curX = $this->tblposx[0][1] - 1;
-
 						$showpricebeforepagebreak = 1;
 
 						$pdf->startTransaction();
-						$this->tablerow($pdf, $curY, $objp, $i, $nblines, $totalunit);
+						$posyafter = $this->tablerow($pdf, $curY, $objp, $i, $nblines, $totalunit);
 						
 						$pageposafter = $pdf->getPage();
-						dol_syslog('pageposafter='.$pageposafter.' - pageposbefore='.$pageposbefore.' #1',LOG_DEBUG);
-						dol_syslog('nblines='.$nblines.' - i='.$i,LOG_DEBUG);
+						
 						if ($pageposafter > $pageposbefore){	// There is a pagebreak
 							$pdf->rollbackTransaction(true);
 							$pageposafter = $pageposbefore;
 							$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 							
-							$this->tablerow($pdf, $curY, $objp, $i, $nblines, $totalunit);
+							$posyafter = $this->tablerow($pdf, $curY, $objp, $i, $nblines, $totalunit);
 							$pageposafter = $pdf->getPage();
-							$posyafter = $pdf->GetY();
+							//$posyafter = $pdf->GetY();
 							if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotot))){	// There is no space left for total+free text
 								if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 								{
@@ -359,9 +355,8 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						} else{ // No pagebreak
 							$pdf->commitTransaction();
 						}
-						$posYAfterDescription = $pdf->GetY();
-
-						$nexY = $pdf->GetY();
+						
+						$nexY = $posyafter; // was:  = $pdf->GetY();
 						$pageposafter = $pdf->getPage();
 
 						$pdf->setPage($pageposbefore);
@@ -500,12 +495,12 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	 *
 	 *   @param     TCPDF		$pdf						Object PDF
 	 *   @param     int			$curY						Y
-	 *	 @param			object  $objp
-	 *	 @param			int     $i
-	 *	 @param			int			$nblines
-	 *	 @param			int			$totalunit
-	 *	 @param			int			$pageposafter
-	 *   @return    void
+	 *	 @param		object  	$objp
+	 *	 @param		int			$i
+	 *	 @param		int			$nblines
+	 *	 @param		int			$totalunit
+	 *	 @param		int			$pageposafter
+	 *   @return    int 		$posyafter
 	 */
 	protected function tablerow(&$pdf, &$curY, $objp, $i, $nblines, &$totalunit)
 	{
@@ -533,7 +528,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		$rowitems[4][1] = dol_print_date($objp->date_maintain_last, 'dayrfc');
 		$rowitems[5][1] = $user;
 		$rowitems[6][1] = $objp->getLibStatut();
-		$curY_max = $curY;
+		$posyafter = $curY;
 		$index = 0;
 		$num = count($this->tblposx);
 		foreach ($this->tblposx as $key => $value) {
@@ -544,7 +539,8 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 			else{
 				$pdf->MultiCell($this->page_width - $this->left_margin - $value[1], 3, $rowitems[$index][1], '', $value[2]);
 			}
-			$curY_max = ($curY_max > $pdf->GetY() ? $curY_max : $pdf->GetY()); // height gets set dynamically
+			$colY = $pdf->GetY();
+			$posyafter = ($posyafter > $colY ? $posyafter : $colY); // height for next row gets set dynamically
 			$index++;
 		}
 
@@ -553,9 +549,11 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		{
 			$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
 			//$pdf->SetDrawColor(190,190,200);
-			$pdf->line($this->left_margin, $curY_max, $this->page_width - $this->right_margin, $curY_max);
+			$pdf->line($this->left_margin, $posyafter, $this->page_width - $this->right_margin, $posyafter);
 			$pdf->SetLineStyle(array('dash'=>0));
 		}
+
+		return $posyafter;
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.Public
