@@ -272,15 +272,10 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				$tab_top = $top_shift+ 40;
 				$tab_top_newpage = (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD) ? 40 + $top_shift : 10);
 
-				// Table heading 
-				if ($pagenb == 1){
-					$this->tableheader($pdf, $tab_top-7, $this->page_height - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs, 0, 1, 'none');
-				} else {
-					$this->tableheader($pdf, $tab_top_newpage-7, $this->page_height - $tab_top_newpage - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs, 0, 1, 'none');
-				}
-
-				// Not used
-				//$tab_height = 130;
+				// Table heading - First page of report
+				$this->tableheader($pdf, $tab_top-7, $this->page_height - $tab_top - $heightforinfotot - $heightforfreetext - $heightforfooter, $outputlangs, 0, 1, 'none');
+				
+				// $tab_height = 130; // Not used
 
 				// **************************************************************************
 				// Show list of products which are added to Equipment
@@ -384,11 +379,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 						// Detect if some page were added automatically and output table for past pages
 						while ($pagenb < $pageposafter){
 							$pdf->setPage($pagenb);
-							if ($pagenb == 1){ // First page of report
-								// parameter $currency $object->multicurrency_code to show text
-								$this->tableheader($pdf, $tab_top-65, $this->page_height - $tab_top - $heightforfooter, $outputlangs, 0, 1, 'none');
-							}
-							else{
+							if ($pagenb > 1){
 								$this->tableheader($pdf, $tab_top_newpage-65, $this->page_height - $tab_top_newpage - $heightforfooter, $outputlangs, 0, 1, 'none');
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -400,9 +391,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 							}
 						}
 						if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak){
-							if ($pagenb == 1){
-								$this->tableheader($pdf, $tab_top-65, $this->page_height - $tab_top - $heightforfooter, $outputlangs, 0, 1, 'none');
-							} else {
+							if ($pagenb > 1){
 								$this->tableheader($pdf, $tab_top_newpage-65, $this->page_height - $tab_top_newpage - $heightforfooter, $outputlangs, 0, 1, 'none');
 							}
 							$this->_pagefoot($pdf, $object, $outputlangs, 1);
@@ -452,7 +441,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 					$pdf->SetDrawColor(192, 192, 192);
 					$pdf->Rect($this->left_margin, $tab_top - 1, $this->page_width - $this->left_margin - $this->right_margin, $height_note + 1);
 
-					$tab_height = $tab_height - $height_note;
+					//$tab_height = $tab_height - $height_note;
 					$tab_top = $nexY + 6;
 				} else {
 					$height_note = 0;
@@ -573,13 +562,13 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 	/**
 	 *   Print table header for lines
 	 *
-	 *   @param     TCPDF			$pdf     			Object PDF
-	 *   @param     string		$tab_top			Top position of table
+	 *   @param     TCPDF		$pdf     		Object PDF
+	 *   @param     string		$tab_top		Top position of table
 	 *   @param     string		$tab_height		Height of table (rectangle)
 	 *   @param     Translate	$outputlangs	Langs object
-	 *   @param     int				$hidetop			1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
-	 *   @param     int				$hidebottom		Hide bottom bar of array
-	 *   @param     string		$currency			Currency code
+	 *   @param     int			$hidetop		1=Hide top bar of array and title, 0=Hide nothing, -1=Hide only title
+	 *   @param     int			$hidebottom		Hide bottom bar of array
+	 *   @param     string		$currency		Currency code
 	 *   @return    void
 	 */
 	protected function tableheader(&$pdf, $tab_top, $tab_height, $outputlangs, $hidetop = 0, $hidebottom = 0, $currency = '')
