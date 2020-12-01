@@ -201,9 +201,10 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				$dir = $conf->lims->dir_output;
 				$file = $dir."/SPECIMEN.pdf";
 			} else {
-				$objectref = dol_sanitizeFileName($object->ref);
+				//$objectref = dol_sanitizeFileName($object->ref);
+				$objectref = dol_sanitizeFileName($object->element);
 				$dir = $conf->lims->dir_output."/".$objectref;
-				$file = $dir."/".$objectref.".pdf";
+				$file = $dir."/CalibrationList.pdf"; // ToDo: Make variable through LIMS settings
 			}
 
 			if (!file_exists($dir)){
@@ -283,7 +284,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				$totalunit = 0;
 				$resql = $object->fetchCalibrated() + $object->fetchMaintained();
 				if ($resql){
-					$nblines = count($resql); // $this->db->num_rows($resql);
+					$nblines = count($resql);
 
 					$this->tabTitleHeight = 0;
 					$nexY = $tab_top + $this->tabTitleHeight;
