@@ -50,6 +50,7 @@ EquipmentConfirmTitle = Confirmation
 EquipmentConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
 EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
 EquipmentStatusReady = READY
+LIMSMassAction= LIMS Mass Action
 #Trigger event log
 Equipment = Equipment
 created = added

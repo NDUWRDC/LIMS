@@ -118,8 +118,8 @@ class Equipment extends CommonObject
 		'date_modification' => array('type'=>'datetime', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>502, 'notnull'=>-1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>505, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>-1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValid', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2,),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_valid' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserValid', 'enabled'=>'1', 'position'=>512, 'notnull'=>-1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
@@ -1054,6 +1054,28 @@ class Equipment extends CommonObject
 	public function numMaintained()
 	{
 		$result = $this->fetchMaintained();
+
+		return count($result);
+	}
+
+	public function fetchCalibratedMantained()
+	{
+		$filter = array('customsql' => '(maintenance = '.self::MAINTAIN_CALIBRATE.') OR (maintenance = '.self::MAINTAIN_MAINTENANCE.')'); // '1'=>'Maintenance'
+
+		$result = $this->fetchAll('ASC', '', 0, 0, $filter);
+
+		if (is_numeric($result))
+		{
+			$this->error = $this->error;
+			$this->errors = $this->errors;
+		}
+
+		return $result;
+	}
+
+	public function numCalibratedMaintained()
+	{
+		$result = $this->fetchCalibratedMantained();
 
 		return count($result);
 	}

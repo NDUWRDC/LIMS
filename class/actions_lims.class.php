@@ -226,7 +226,7 @@ class ActionsLIMS
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		if (in_array($parameters['currentcontext'], array('equipmentlist')))			// do something only for the context 'equipmentlist'
 		{
-			dol_syslog('context=equipmentlist: '.get_class($object).'::object will be changed to class Entrepot',LOG_DEBUG);
+			dol_syslog('context=equipmentlist: '.get_class($object),LOG_DEBUG);
 
 		// 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
 		// 	unset($object); // terminate object of class
