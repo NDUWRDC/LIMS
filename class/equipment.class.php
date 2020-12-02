@@ -1080,30 +1080,30 @@ class Equipment extends CommonObject
 		return count($result);
 	}
 
-	public function CheckAndSetCalStatus($user)
+	public function CheckAndSetCalStatus($user, $notrigger = 0)
 	{
 		// maintain_interval*86400 => Days to Seconds										
 		if (($this->date_maintain_last + $this->maintain_interval*86400) > dol_now()){
 			if ($this->status ==  self::STATUS_VALIDATED){
 				dol_syslog(__METHOD__." Calibration is valid, set status to STATUS_OPERATIONAL", LOG_DEBUG);
-				$this->reopen($user); //$this->status = $this::STATUS_OPERATIONAL;
+				$this->reopen($user, $notrigger); //$this->status = $this::STATUS_OPERATIONAL;
 			}
 		}
 		else {
 			if ($this->status ==  self::STATUS_OPERATIONAL){
 				dol_syslog(__METHOD__." Calibration has expired, set status to STATUS_VALIDATED", LOG_DEBUG);
-				$this->validate($user); //$this->status = $this::STATUS_VALIDATED;
+				$this->validate($user, $notrigger); //$this->status = $this::STATUS_VALIDATED;
 			}
 		}
 	}
 
-	public function CheckAndSetCalStatusAll($user)
+	public function CheckAndSetCalStatusAll($user, $notrigger = 0)
 	{
 		$result = $this->fetchCalibratedMantained();
 		
 		if ($result){
 			foreach ($result as $key){
-				$key->CheckAndSetCalStatus($user);
+				$key->CheckAndSetCalStatus($user, $notrigger);
 			}
 		}
 	}
