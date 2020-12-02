@@ -218,27 +218,14 @@ class ActionsLIMS
 		global $conf, $user, $langs, $db;
 		global $hookmanager;
 
-		$outputlangs = $langs;
-
-		$ret = 0; $deltemp = array();
-		dol_syslog(get_class($this).'::executeHooks action='.$action);
+		$ret = 0; 
+		
+		dol_syslog(get_class($this).'::executeHooks action='.$action, LOG_DEBUG);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		if (in_array($parameters['currentcontext'], array('equipmentlist')))			// do something only for the context 'equipmentlist'
 		{
-			dol_syslog('context=equipmentlist: '.get_class($object),LOG_DEBUG);
-
-		// 	require_once DOL_DOCUMENT_ROOT.'/product/stock/class/entrepot.class.php';
-		// 	unset($object); // terminate object of class
-		// 	$object = new Entrepot($db);
-		// 	//TODO: which warehouse to pick?
-		// 	$id=2;
-		// 	$ret = $object->fetch($id);
-		// 	dol_syslog('object='.var_export($object,true),LOG_DEBUG);
-		// 	if ($ret <= 0) {
-		// 		setEventMessages($object->error, $object->errors, 'errors');
-		// 		$action = '';
-		// 	}
+			dol_syslog('context=equipmentlist: '.get_class($object), LOG_DEBUG);
 		}
 
 		return $ret;
@@ -259,9 +246,7 @@ class ActionsLIMS
 		global $conf, $user, $langs;
 		global $hookmanager;
 
-		$outputlangs = $langs;
-
-		$ret = 0; $deltemp = array();
+		$ret = 0;
 		dol_syslog(get_class($this).'::executeHooks action='.$action);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */

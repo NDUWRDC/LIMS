@@ -20,7 +20,9 @@
 # Module label 'ModuleLIMSName'
 ModuleLIMSName = LIMS
 # Module description 'ModuleLIMSDesc'
-ModuleLIMSDesc = LIMS description
+ModuleLIMSDesc = Laboratory Information Management System for Dolibarr
+# Keywords
+ModuleLIMSkeywords = LIMS, ISO-17025, Laboratory, Management 
 
 #
 # Admin page

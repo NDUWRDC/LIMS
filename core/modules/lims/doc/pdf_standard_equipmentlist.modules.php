@@ -195,7 +195,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 		// Load traductions files required by page
 		$outputlangs->loadLangs(array("main", "dict", "companies", "bills", "stocks", "orders", "deliveries"));
 
-		if ($conf->stock->dir_output){ // TODO: Set directory to LIMS?
+		if ($conf->stock->dir_output){
 			// Definition of $dir and $file
 			if ($object->specimen){
 				$dir = $conf->lims->dir_output;
@@ -247,12 +247,12 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 
 				$pdf->SetDrawColor(128, 128, 128);
 
-				// TODO: Set correct Metadata
-				$pdf->SetTitle($outputlangs->convToOutputCharset($object->ref));
-				$pdf->SetSubject($outputlangs->transnoentities("Stock"));
+				// Set meta data
+				$pdf->SetTitle($outputlangs->transnoentities("EquipmentListReportTitle"));
+				$pdf->SetSubject($outputlangs->transnoentities("ModuleLIMSDesc"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($outputlangs->convToOutputCharset($user->getFullName($outputlangs)));
-				$pdf->SetKeyWords($outputlangs->convToOutputCharset($object->ref)." ".$outputlangs->transnoentities("Stock")." ".$outputlangs->convToOutputCharset($object->label));
+				$pdf->SetKeyWords($outputlangs->transnoentities("ModuleLIMSkeywords"));
 				if (!empty($conf->global->MAIN_DISABLE_PDF_COMPRESSION)){
 					$pdf->SetCompression(false);
 				}
