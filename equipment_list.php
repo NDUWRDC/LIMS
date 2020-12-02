@@ -163,6 +163,11 @@ $permissiontoread = $user->rights->lims->equipment->read;
 $permissiontoadd = $user->rights->lims->equipment->write;
 $permissiontodelete = $user->rights->lims->equipment->delete;
 
+// Set STATUS_OPERATIONAL if (Last Maintaned + Interval) > Current date
+// Set STATUS_VALIDATED if (Last Maintaned + Interval) < Current date
+// DoTo: use a chron job instead
+$object->CheckAndSetCalStatusAll($user);
+
 // Security check
 if (empty($conf->lims->enabled)) accessforbidden('Module not enabled');
 $socid = 0;
@@ -173,7 +178,6 @@ if ($user->socid > 0)	// Protection if external user
 }
 //$result = restrictedArea($user, 'lims', $id, '');
 //if (!$permissiontoread) accessforbidden();
-
 
 
 /*

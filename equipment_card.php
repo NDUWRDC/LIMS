@@ -110,17 +110,11 @@ $permissiondellink = $user->rights->lims->equipment->write; // Used by the inclu
 $upload_dir = $conf->lims->multidir_output[isset($object->entity) ? $object->entity : 1];
 
 // Set STATUS_OPERATIONAL if (Last Maintaned + Interval) > Current date
+// Set STATUS_VALIDATED if (Last Maintaned + Interval) < Current date
 // DoTo: use a chron job instead
 if ($object->maintenance)
 {
-	dol_syslog(__METHOD__.' maintain_last = '.$object->maintain_last, LOG_DEBUG);
-	dol_syslog(__METHOD__.' maintain_interval*86400 = '.$object->maintain_interval*86400, LOG_DEBUG);
-	dol_syslog(__METHOD__.' dol_now = '.dol_now(), LOG_DEBUG);
-	dol_syslog(__METHOD__.' status = '.$object->status, LOG_DEBUG);
-
-	// maintain_interval*86400 => Days to Seconds
-	if (($object->maintain_last + $object->maintain_interval*86400) > dol_now() && $object->status ==  $object::STATUS_VALIDATED)
-		$object->status = $object::STATUS_OPERATIONAL;
+	$object->CheckAndSetCalStatus($user);
 }
 
 // Security check - Protection if external user

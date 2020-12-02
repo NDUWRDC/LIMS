@@ -46,6 +46,7 @@ LIMSAboutPage = LIMS about page
 #
 # Equipment page
 #
+Equipments = Equipments
 EquipmentMaintainRevoke = Revoke Readiness
 EquipmentMaintainRenew = Renew Readiness
 EquipmentConfirmTitle = Confirmation

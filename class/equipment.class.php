@@ -1080,6 +1080,34 @@ class Equipment extends CommonObject
 		return count($result);
 	}
 
+	public function CheckAndSetCalStatus($user)
+	{
+		// maintain_interval*86400 => Days to Seconds										
+		if (($this->date_maintain_last + $this->maintain_interval*86400) > dol_now()){
+			if ($this->status ==  self::STATUS_VALIDATED){
+				dol_syslog(__METHOD__." Calibration is valid, set status to STATUS_OPERATIONAL", LOG_DEBUG);
+				$this->reopen($user); //$this->status = $this::STATUS_OPERATIONAL;
+			}
+		}
+		else {
+			if ($this->status ==  self::STATUS_OPERATIONAL){
+				dol_syslog(__METHOD__." Calibration has expired, set status to STATUS_VALIDATED", LOG_DEBUG);
+				$this->validate($user); //$this->status = $this::STATUS_VALIDATED;
+			}
+		}
+	}
+
+	public function CheckAndSetCalStatusAll($user)
+	{
+		$result = $this->fetchCalibratedMantained();
+		
+		if ($result){
+			foreach ($result as $key){
+				$key->CheckAndSetCalStatus($user);
+			}
+		}
+	}
+
 	/**
 	 * Action executed by scheduler
 	 * CAN BE A CRON TASK. In such a case, parameters come from the schedule job setup field 'Parameters'
