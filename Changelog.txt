@@ -1,0 +1,36 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+- Equipment Management: Add Equipment from existing Products or Services
+- Equipment Management: Define category 'Equipment', 'Consumable', 'Facility', 'Sales Item'
+- Equipment Management: Define one of options 'No calibration, or maintainance', 'maintainance', 'calibration'
+- Equipment Management: Define maintainance/calibration intervall
+- Equipment Management: Each Event is logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
+- Equipment Management: List Equipment view
+- Equipment Management: Calibration and Maintenance Report (Doc template 'standard_equipmentlist')
+
+## [0.0.1] - 2020-09-16
+### Added
+- Manage Test Methods, where each method has
+- A linked product or service
+A unit, e.g. mS/cm
+Accuracy
+Measurement Range
+Resolution of reading
+Manage Limit Sets, with each entry/line
+Linked to one method
+Minimum and Maximum, where one value may be NULL
+Manage Samples, where each sample has
+A linked to a customer
+Details on the sample, such as sampling place and time, sampling person, volume, etc.
+Muliple tests, where each test is linked to one method; each test is linked to the responsible person
+Nonconformities
+A limit set applied to the sample results
+Test Report
+Sample details
+Results with indication if result is out of the limit range or out of the method's measurement range
+Names of person(s) responsible and manager who authorized the sample.
