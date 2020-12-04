@@ -225,7 +225,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Methods|FR:Module_Methods_FR|ES:Módulo_Methods";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Methodss"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Methods"));
 
 
 // Build and execute select

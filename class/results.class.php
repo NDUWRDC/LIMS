@@ -90,7 +90,9 @@ class Results extends CommonObject
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
 	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
-	public $fields=array(
+	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 **/
+	 public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'fk_samples' => array('type'=>'integer:Samples:lims/class/samples.class.php', 'label'=>'Sample', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),

@@ -141,6 +141,10 @@ class modLIMS extends DolibarrModules
 			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
 			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
 			4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Pre-fix for Limit objects', 1, 'allentities', 1),
+			5 => array('LIMS_PREFIX_EQUIPMENT', 'chaine', 'EQ', 'Pre-fix for Equipment objects', 1, 'allentities', 1),
+			6 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template for Sample and Test Report', 1, 'allentities', 1), //copied from Crabe. Original used for invoices.
+			7 => array('LIMS_SUBPERMCATEGORY_FOR_DOCUMENTS', 'chaine', 'report', 'Used to access reports.', 1, 'allentities', 1),
+        );
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
 			'en_US:ParentCompany'=>'Parent company or reseller',
@@ -247,34 +251,86 @@ class modLIMS extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Samples of LIMS'; // Permission label
-		$this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][1] = 'View Samples of LIMS'; // Permission label
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Samples of LIMS'; // Permission label
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Validate and Delete and Samples of LIMS'; // Permission label
+        $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'View Results of LIMS'; // Permission label
+        $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Results of LIMS'; // Permission label
+        $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Validate and Delete Results (Sample-Lines) of LIMS'; // Permission label
+        $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'View Methods of LIMS'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Methods of LIMS'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Validate and Delete Methods of LIMS'; // Permission label
+        $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'View Limits of LIMS'; // Permission label
+        $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Create/Update Limits of LIMS'; // Permission label
+        $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+        $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+        $this->rights[$r][1] = 'Validate and Delete Limits of LIMS'; // Permission label
+        $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+        $r++;
+		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
+		$this->rights[$r][1] = 'View Equipment'; // Permission label
+		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Samples of LIMS'; // Permission label
-		$this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+		$this->rights[$r][1] = 'Create/Update Equipment'; // Permission label
+		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Validate and Delete and Samples of LIMS'; // Permission label
-		$this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+		$this->rights[$r][1] = 'Validate and Delete Equipment'; // Permission label
+		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Results of LIMS'; // Permission label
-		$this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
+		$this->rights[$r][1] = 'View Reports of LIMS'; // Permission label
+		$this->rights[$r][4] = 'report'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Results of LIMS'; // Permission label
-		$this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Validate and Delete Results (Sample-Lines) of LIMS'; // Permission label
-		$r++;
-
+		/* END MODULEBUILDER PERMISSIONS */
 		// Main menu entries to add
 		$this->menu = array();
 		$r = 0;
@@ -295,38 +351,7 @@ class modLIMS extends DolibarrModules
 			'user'=>2, // 0=Menu for internal users, 1=external users, 2=both
 		);
 		/* END MODULEBUILDER TOPMENU */
-		/* BEGIN LEFTMENU METHODS */
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Limits of LIMS'; // Permission label
-		$this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Validate and Delete Limits of LIMS'; // Permission label
-		$this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Reports of LIMS'; // Permission label
-		$this->rights[$r][4] = 'report'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Equipment'; // Permission label
-		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Equipment'; // Permission label
-		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Validate and Delete Equipment'; // Permission label
-		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
-		$r++;
-		/* END MODULEBUILDER PERMISSIONS */
+
 		/* BEGIN MODULEBUILDER LEFTMENU SAMPLES */
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -388,6 +413,8 @@ class modLIMS extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
+		/* END MODULEBUILDER LEFTMENU SAMPLES */
+		/* BEGIN MODULEBUILDER LEFTMENU RESULTS PART OF SAMPLES */
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
@@ -428,6 +455,8 @@ class modLIMS extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
 		);*/
+		/* BEGIN MODULEBUILDER LEFTMENU RESULTS PART OF SAMPLES*/
+		/* BEGIN LEFTMENU METHODS */
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'fk_menu'=>'fk_mainmenu=lims',
@@ -488,6 +517,8 @@ class modLIMS extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
+		/* END LEFTMENU METHODS */
+		/* BEGIN LEFTMENU LIMITS */
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'fk_menu'=>'fk_mainmenu=lims',
@@ -548,71 +579,21 @@ class modLIMS extends DolibarrModules
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2,
 		);
-		/* END MODULEBUILDER LEFTMENU SAMPLES */
-	/* BEGIN MODULEBUILDER LEFTMENU EQUIPMENT
+		/* BEGIN LEFTMENU LIMITS */
+		/* BEGIN LEFTMENU EQUIPMENT */
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Top menu entry
 			'titre'=>'Equipment',
 			'mainmenu'=>'lims',
-			'leftmenu'=>'equipment',
-			'url'=>'/lims/limsindex.php',
+			'leftmenu'=>'lims_equipment',
+			'url'=>'/lims/equipment_list.php',
 			'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
+			'position'=>1100+$r,
 			'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled.
 			'perms'=>'$user->rights->lims->equipment->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
 			'target'=>'',
 			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=equipment',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'List_Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment_list',
-			'url'=>'/lims/equipment_list.php',
-			'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->lims->equipment->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=equipment',	    // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',			                // This is a Left menu entry
-			'titre'=>'New_Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment_new',
-			'url'=>'/lims/equipment_card.php?action=create',
-			'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1000+$r,
-			'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'perms'=>'$user->rights->lims->equipment->write',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		*/
-
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=lims',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'List Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment',
-			'url'=>'/lims/equipment_list.php',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'lims@lims',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->lims->enabled',
-			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
 		);
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -621,7 +602,7 @@ class modLIMS extends DolibarrModules
 			'type'=>'left',
 			'titre'=>'New Equipment',
 			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment',
+			'leftmenu'=>'lims_equipment_new',
 			'url'=>'/lims/equipment_card.php?action=create',
 			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
 			'langs'=>'lims@lims',
@@ -629,10 +610,30 @@ class modLIMS extends DolibarrModules
 			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
 			'enabled'=>'$conf->lims->enabled',
 			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'perms'=>'1',
+			'perms'=>'$user->rights->lims->equipment->write',
 			'target'=>'',
 			// 0=Menu for internal users, 1=external users, 2=both
 			'user'=>2
+		);
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'List Equipment',
+			'mainmenu'=>'lims',
+			'leftmenu'=>'lims_equipment_list',
+			'url'=>'/lims/equipment_list.php',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'lims@lims',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->lims->enabled',
+			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->lims->equipment->read',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2,
 		);
 		/* END MODULEBUILDER LEFTMENU EQUIPMENT */
 

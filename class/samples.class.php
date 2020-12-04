@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2020  David Bensel <david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,11 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commoninvoice.class.php';
+dol_include_once('/lims/class/results.class.php', 'Results');
+dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/limits.class.php', 'Limits');
+require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
 
 /**
  * Class for Samples
@@ -172,7 +177,7 @@ class Samples extends CommonObject
 	/**
 	 * @var SamplesLine[]     Array of subtable lines
 	 */
-	//public $lines = array();
+	public $lines = array();
 
 
 
@@ -1027,6 +1032,136 @@ class Samples extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	// COPIED from facture.class.php
+	public function addline(
+		$fk_product,
+		$fk_method,
+		$abnormalities,
+		$testresult,
+		$fk_user,
+		$date_start = '',
+		$date_end = '',
+		$rang = -1,
+		$origin = '',
+		$origin_id = 0,
+		$fk_parent_line = 0) {
+
+		global $langs, $user;
+		
+		$error=0;
+		
+		dol_syslog(__METHOD__." with sample id=".$this->id, LOG_DEBUG);
+
+		if ($this->state == self::STATUS_DRAFT)
+		{
+			// Clean parameters
+			if (empty($rang)) $rang = 0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
+			if (empty($fk_prev_id)) $fk_prev_id = 'null';
+			
+			// Check parameters
+			if ($date_start > $date_end) {
+				$langs->load("errors");
+				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+			}
+
+			$this->db->begin();
+
+			if (!empty($fk_product))
+			{
+				$product = new Product($this->db);
+				$result = $product->fetch($fk_product);
+			}
+
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$ranktouse = $rangmax + 1;
+			}
+
+			// Insert line necessary??
+			//$sampleline = new SamplesLine($this->db);
+
+			// ToDo: variable defined where?
+			//$this->line->context = $this->context;
+			
+			$obj = new Results($this->db);
+
+			/*
+			$this->line->fk_parent_line	 = $fk_parent_line;
+			$this->line->origin			 = $origin;
+			$this->line->origin_id		 = $origin_id;
+			*/
+			$obj->fk_samples = $this->id;
+			$obj->fk_user = $fk_user;
+			$obj->fk_method = $fk_method;
+			$obj->result = $testresult;
+			$obj->start = $date_start;
+			$obj->end = $date_end;
+			$obj->abnormalities = $abnormalities;
+			$obj->rang = $ranktouse;
+			$obj->status = self::STATUS_DRAFT;
+
+			dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			
+			$res = $obj->create($user); //<0 if KO, Id of created object if OK
+			if ($res<0) $error++;
+			
+			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+			
+			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			//if ($res >0) $error++;
+			
+			//	$result = $this->line->insert();
+			if ($error < 1)
+			{
+				// Reorder if child line
+				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				$this->db->commit();
+			}
+			else
+			{
+				$this->error = $this->line->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
+	}
+
+	public function PrintReport()
+	{
+		global $langs, $conf;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		
+		// Define output language and generate document
+		if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+		{
+			$outputlangs = $langs;
+			$newlang = '';
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+			if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $this->thirdparty->default_lang;
+			if (!empty($newlang)) {
+				$outputlangs = new Translate("", $conf);
+				$outputlangs->setDefaultLang($newlang);
+				$outputlangs->load('products');
+			}
+			$model = $this->modelpdf;
+			$ret = $this->fetch($id); // Reload to get new records
+
+			$result = $this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+			if ($result < 0) setEventMessages($this->error, $this->errors, 'errors');
+		}
 	}
 }
 

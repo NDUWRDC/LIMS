@@ -214,7 +214,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Results|FR:Module_Results_FR|ES:Módulo_Results";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Resultss"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Results"));
 
 
 // Build and execute select

@@ -413,7 +413,7 @@ class pdf_standard_equipmentlist extends ModelePDFStock
 				// TODO: Sum could be generalized, maybe using tblposx[][sumdetail] 
 				//$this->tablesum($pdf, $curY, $outputlangs, $nblines, $totalunit);
 			}else {
-				dol_print_error($this->db);
+				//nothing to print
 			}
 				// Displays notes
 				$notetoshow = empty($object->note_public) ? '' : $object->note_public;

@@ -60,23 +60,31 @@ if (!$res) die("Include of main fails");
 
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formcompany.class.php';
 require_once DOL_DOCUMENT_ROOT.'/core/class/html.formfile.class.php';
-require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
 dol_include_once('/lims/class/samples.class.php');
 dol_include_once('/lims/lib/lims_samples.lib.php');
+
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
 
 // Load translation files required by the page
 $langs->loadLangs(array("lims@lims", "other"));
 
 // Get parameters
-$id = GETPOST('id', 'int');
+$id 		= GETPOST('id', 'int');
 $ref        = GETPOST('ref', 'alpha');
-$action = GETPOST('action', 'aZ09');
+$socid		= GETPOST('socid', 'int');
+$action 	= GETPOST('action', 'aZ09');
+$userid		= GETPOST('userid', 'int');
 $confirm    = GETPOST('confirm', 'alpha');
 $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'samplescard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+$lineid		 = GETPOST('lineid', 'int');
+$origin 	 = GETPOST('origin', 'alpha');
+$originid	 = GETPOST('originid', 'int');
 
 // Initialize technical objects
 $object = new Samples($db);
@@ -102,9 +110,11 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+$usercancreate = $user->rights->lims->samples->write;
 
 $permissiontoread = $user->rights->lims->samples->read;
 $permissiontoadd = $user->rights->lims->samples->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
+$permissiontovalidate = $user->rights->lims->samples->delete;
 $permissiontodelete = $user->rights->lims->samples->delete || ($permissiontoadd && isset($object->status) && $object->status == $object::STATUS_DRAFT);
 $permissionnote = $user->rights->lims->samples->write; // Used by the include of actions_setnotes.inc.php
 $permissiondellink = $user->rights->lims->samples->write; // Used by the include of actions_dellink.inc.php
@@ -142,6 +152,26 @@ if (empty($reshook))
 
 	$triggermodname = 'LIMS_SAMPLES_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	// Do this before the report gets printed
+	// In addition also validate all the lines -> Results
+	if ($action == 'confirm_validate' && $confirm == 'yes' && $permissiontoadd)
+	{
+		dol_syslog('Samples object with ref='.$object->ref.' ... validate lines', LOG_DEBUG);
+		$result = new Results($object->db);
+			
+		foreach ($object->lines as $line){
+			$result->fetch($line->fk_result);
+			
+			if ($line->status == $result::STATUS_DRAFT){
+				$line->validate($user);
+				dol_syslog('Result with ref='.$result->ref.' validated', LOG_DEBUG);
+			}
+		}
+		// save person who validated
+		$object->fk_user_approval = $user->id;
+		$object->update($user);
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -152,7 +182,7 @@ if (empty($reshook))
 	include DOL_DOCUMENT_ROOT.'/core/actions_printing.inc.php';
 
 	// Action to move up and down lines of object
-	//include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
+	include DOL_DOCUMENT_ROOT.'/core/actions_lineupdown.inc.php';
 
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
@@ -164,6 +194,117 @@ if (empty($reshook))
 	if ($action == 'classin' && $permissiontoadd)
 	{
 		$object->setProject(GETPOST('projectid', 'int'));
+	}
+
+	// actions_addupdatedelete.inc.php does not print with confirm_setdraft
+	if ($action == 'confirm_setdraft' && $confirm == 'yes' && $permissiontoadd)
+	{
+		// reset person who validated to null
+		$object->fk_user_approval = NULL;
+		$object->update($user);
+		
+		//force report to be printed again
+		// Generate Document
+		$object->PrintReport();
+	}
+	
+	// Add a new line
+	if ($action == 'addline' && $usercancreate)
+	{
+		$langs->load('errors');
+		$error = 0;
+		
+		$predef=''; // Not used so far (invoice: free entry or predefined product)
+		// result.class.php: Class SampleLine  
+		// Store: rowid-ref-rang-fk_samples-fk_user-fk_method-result-start-end-abnormalities-?status
+
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$idprod = GETPOST('ProdID', 'int'); 
+		$rang = GETPOST('rang', 'int');
+		$fk_user = GETPOST('userid', 'int');
+		$fk_method = GETPOST('MethodID', 'int');
+		$testresult = GETPOST('result', 'int');
+		$abnormalities = GETPOST('abnormalities');
+		$status = GETPOST('status');
+		
+		// In case fk_user is not set, set it to current user->id
+		$fk_user = is_numeric($fk_user) ? $fk_user : $user->id;
+		/*
+		dol_syslog('Samples_card action=addline: ---------', LOG_DEBUG);
+		dol_syslog('idprod= '.$idprod, LOG_DEBUG);
+		dol_syslog('rang= '.$rang, LOG_DEBUG);
+		dol_syslog('fkuser= '.$fk_user, LOG_DEBUG);
+		dol_syslog('fkmethod= '.$fk_method, LOG_DEBUG);
+		dol_syslog('result= '.$testresult, LOG_DEBUG);
+		dol_syslog('abnormalities= '.$abnormalities, LOG_DEBUG);
+		dol_syslog('status= '.$status, LOG_DEBUG);
+		*/
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// ERROR HANDLING
+		if ($result == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
+			$error++;
+		}
+		
+		// No Errors -> Add line
+		if (!$error && ($result >= 0) && !empty($idprod)) {
+			$ret = $object->fetch($id);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error);
+				exit();
+			}
+
+			// Clean parameters $date_start and $date_end
+			$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
+			// Insert line
+			$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user,$date_start, $date_end, $rang, '', 0, GETPOST('fk_parent_line'));
+			dol_syslog(__METHOD__." addline idprod=".$idprod." idmethod=".$fk_method."  result=".$result, LOG_DEBUG);
+
+			
+			if ($result > 0){
+				// Generate Document
+				$object->PrintReport();
+
+				unset($_POST['rang']);
+				unset($_POST['userid']);
+				unset($_POST['result']);
+
+				unset($_POST['abnormalities']);
+				unset($_POST['status']);
+				unset($_POST['MethodID']);
+				unset($_POST['ProdID']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
+
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+
+			$action = '';
+		}
 	}
 
 	// Actions to send emails
@@ -184,7 +325,7 @@ if (empty($reshook))
 
 $form = new Form($db);
 $formfile = new FormFile($db);
-$formproject = new FormProjets($db);
+if (!empty($conf->projet->enabled)) { $formproject = new FormProjets($db); }
 
 $title = $langs->trans("Samples");
 $help_url = '';
@@ -209,6 +350,65 @@ jQuery(document).ready(function() {
 // Part to create
 if ($action == 'create')
 {
+	if (!empty($origin) && !empty($originid) && !empty($socid)){
+		
+		// COPIED FROM htdocs/commande/card.php
+		$element = $subelement = $origin;
+		$regs = array();
+		if (preg_match('/^([^_]+)_([^_]+)/i', $origin, $regs)) {
+			$element = $regs[1];
+			$subelement = $regs[2];
+		}
+		dol_syslog('Sample create from '.$element.' id='.$originid.' socid='.$socid, LOG_DEBUG);
+
+		if ($element == 'project') {
+			$projectid = $originid;
+		} 
+		else {
+			// For compatibility
+			if ($element == 'order' || $element == 'commande') {
+				$element = $subelement = 'commande';
+			} elseif ($element == 'propal') {
+				$element = 'comm/propal';
+				$subelement = 'propal';
+			} elseif ($element == 'contract') {
+				$element = $subelement = 'contrat';
+			}
+
+			dol_include_once('/'.$element.'/class/'.$subelement.'.class.php');
+			
+			$classname = ucfirst($subelement);
+			$objectsrc = new $classname($db);
+			$objectsrc->fetch($originid);
+			if (empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+				$objectsrc->fetch_lines();
+			
+			$object->fk_soc = $socid;
+			$object->fk_project = (!empty($objectsrc->fk_project) ? $objectsrc->fk_project : '');
+			
+			$object->fk_facture = $objectsrc->id;
+			
+			$object->note_public = (!empty($objectsrc->ref_client) ? ('Ref client: '.$objectsrc->ref_client) : '');
+
+			$object->note_private = $object->getDefaultCreateValueFor('note_private', (!empty($objectsrc->note_private) ? $objectsrc->note_private : null));
+			$object->note_public .= $object->getDefaultCreateValueFor('note_public', (!empty($objectsrc->note_public) ? $objectsrc->note_public : null));
+			
+			// Processed at /core/tpl/commonfields_add.tpl.php
+			$_POST['fk_facture'] = $object->fk_facture;
+			$_POST['fk_soc'] = $object->fk_soc;
+			$_POST['fk_project'] = $object->fk_project;
+			$_POST['note_public'] = $object->note_public;
+			$_POST['note_private'] = $object->note_private;
+			// Processed after object is created
+			$_POST['socid'] = $object->fk_soc;
+			$_POST['origin'] = $element;
+			$_POST['originid'] = $originid;
+	
+			session_start();
+			$_SESSION['importsample_post'] = $_POST;
+		}
+	}
+
 	print load_fiche_titre($langs->trans("NewObject", $langs->transnoentitiesnoconv("Samples")), '', 'object_'.$object->picto);
 
 	print '<form method="POST" action="'.$_SERVER["PHP_SELF"].'">';
@@ -303,6 +503,113 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
+	// Update line
+	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
+	{
+		$langs->load('errors');
+		$error = 0;
+		
+		$predef=''; // Not used so far (invoice: free entry or predefined product)
+		// result.class.php: Class SampleLine  
+		// update: fk_user-result-start-end-abnormalities
+		
+		$date_start = '';
+		$date_end = '';
+
+		// Clean parameters $date_start and $date_end
+		$date_start = dol_mktime(GETPOST('date_start'.$predef.'hour'), GETPOST('date_start'.$predef.'min'), GETPOST('date_start'.$predef.'sec'), GETPOST('date_start'.$predef.'month'), GETPOST('date_start'.$predef.'day'), GETPOST('date_start'.$predef.'year'));
+		$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
+
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$fk_user = GETPOST('userid', 'int');
+		$testresult = GETPOST('result', 'int');
+		$abnormalities = GETPOST('abnormalities');
+		
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// Check parameters
+		if ($date_start > $date_end) {
+				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
+				return -1;
+		}
+
+		// ERROR HANDLING
+		/*
+		if ($result == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
+			$error++;
+		}*/
+		$obj = new Results($object->db);
+		$obj->fetch(GETPOST('lineid', 'int'));
+		
+		if (is_null($obj->ref))
+			$error++;
+		
+		// No Errors -> Update line
+		if (!$error) 
+		{
+			// Update line
+			dol_syslog('action=updateline: ref='.$obj->ref.' lineid='.GETPOST('lineid', 'int'), LOG_DEBUG);
+			
+			// Those are not changed:
+			//$obj->fk_samples = $this->id;
+			//$obj->fk_method = $fk_method;
+			//$obj->rang = $ranktouse;
+			$obj->status = Results::STATUS_DRAFT; // Line (Result) set to STATUS_DRAFT -> ID is unchanged => no use of it for now
+			
+			$obj->fk_user		 = $fk_user;
+			$obj->result		 = $testresult;
+			$obj->start			 = $date_start;
+			$obj->end			 = $date_end;
+			$obj->abnormalities	 = $abnormalities;
+			
+			$result = $obj->updateCommon($user);
+			// method not defined:
+			//$object->updateline($abnormalities, $testresult, $fk_user, $date_start, $date_end,);
+		
+			if ($result > 0)
+			{
+				// Generate Document
+				$object->PrintReport();
+
+				unset($_POST['rang']);
+				unset($_POST['userid']);
+				unset($_POST['result']);
+
+				unset($_POST['abnormalities']);
+				unset($_POST['status']);
+				unset($_POST['MethodID']);
+				unset($_POST['ProdID']);
+
+				unset($_POST['date_starthour']);
+				unset($_POST['date_startmin']);
+				unset($_POST['date_startsec']);
+				unset($_POST['date_startday']);
+				unset($_POST['date_startmonth']);
+				unset($_POST['date_startyear']);
+				unset($_POST['date_endhour']);
+				unset($_POST['date_endmin']);
+				unset($_POST['date_endsec']);
+				unset($_POST['date_endday']);
+				unset($_POST['date_endmonth']);
+				unset($_POST['date_endyear']);
+
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$action = '';
+		}
+	}
+
 	// Confirmation of action xxxx
 	if ($action == 'xxx')
 	{
@@ -371,8 +678,47 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }
 	 }*/
-	$morehtmlref .= '</div>';
+	
+	 // Description
+	$morehtmlref.=$form->editfieldkey("Description", 'description', $object->description, $object, $user->rights->lims->samples->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("Description", 'description', $object->description, $object, $user->rights->lims->samples->write, 'string', '', null, null, '', 1);
+	// Thirdparty -> Needs to be changed to 'Customer'
+	dol_syslog('object->thirdparty->getNomUrl', LOG_DEBUG);
+	$morehtmlref.='<br>'.$langs->trans('ThirdParty') . ' : ' . (is_object($object->thirdparty) ? 
+	$object->thirdparty->getNomUrl(1) : '');
+	
+	// Project
+	if (!empty($conf->projet->enabled))
+	{
+		$langs->load("projects");
+		$morehtmlref.='<br>'.$langs->trans('Project') . ' ';
+		if ($permissiontoadd)
+		{
+			if ($action != 'classify')
+				$morehtmlref.='<a class="editfielda" href="' . $_SERVER['PHP_SELF'] . '?action=classify&amp;id=' . $object->id . '">' . img_edit($langs->transnoentitiesnoconv('SetProject')) . '</a> : ';
+			if ($action == 'classify') {
+				//$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'projectid', 0, 0, 1, 1);
+				$morehtmlref .= '<form method="post" action="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'">';
+				$morehtmlref .= '<input type="hidden" name="action" value="classin">';
+				$morehtmlref .= '<input type="hidden" name="token" value="'.newToken().'">';
+				$morehtmlref .= $formproject->select_projects($object->socid, $object->fk_project, 'projectid', $maxlength, 0, 1, 0, 1, 0, 0, '', 1);
+				$morehtmlref .= '<input type="submit" class="button valignmiddle" value="'.$langs->trans("Modify").'">';
+				$morehtmlref .= '</form>';
+			} else {
+				$morehtmlref.=$form->form_project($_SERVER['PHP_SELF'] . '?id=' . $object->id, $object->socid, $object->fk_project, 'none', 0, 0, 0, 1);
+			}
+		} else {
+			if (! empty($object->fk_project)) {
+				$proj = new Project($db);
+				$proj->fetch($object->fk_project);
+				$morehtmlref.=$proj->getNomUrl();
+			} else {
+				$morehtmlref.='';
+			}
+		}
+	}
 
+	$morehtmlref .= '</div>';
 
 	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
 
@@ -383,9 +729,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	print '<table class="border centpercent tableforfield">'."\n";
 
 	// Common attributes
-	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
-	//unset($object->fields['fk_project']);				// Hide field already shown in banner
-	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	$keyforbreak='date';						// We change column with this field
+	unset($object->fields['fk_project']);		// Hide field already shown in banner
+	unset($object->fields['fk_soc']);			// Hide field already shown in banner
+	unset($object->fields['description']);		// Hide field already shown in banner
+	unset($object->fields['note_private']);		// Hide field 
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.
@@ -437,7 +786,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($action != 'editline')
 			{
 				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
+				// Hook is used, formAddObjectLine would be displayed twice
+				//$object->formAddObjectLine(1, $mysoc, $soc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -465,9 +815,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if (empty($reshook))
 		{
 			// Send
-			if (empty($user->socid)) {
+			//if (empty($user->socid)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=presend&mode=init#formmailbeforetitle">'.$langs->trans('SendMail').'</a>'."\n";
-			}
+			//}
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
@@ -485,7 +835,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Validate
 			if ($object->status == $object::STATUS_DRAFT) {
-				if ($permissiontoadd) {
+				if ($permissiontovalidate) {
 					if (empty($object->table_element_line) || (is_array($object->lines) && count($object->lines) > 0))
 					{
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_validate&confirm=yes">'.$langs->trans("Validate").'</a>';
@@ -552,6 +902,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->lims->samples->read; // If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->lims->samples->write; // If you can create/edit, you can remove a file on card
+			if (is_null($object->modelpdf))
+				$object->modelpdf = 'lims_testreport';
 			print $formfile->showdocuments('lims:Samples', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

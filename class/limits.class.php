@@ -68,7 +68,7 @@ class Limits extends CommonObject
 	const STATUS_VALIDATED = 1;
 	const STATUS_CANCELED = 9;
 
-
+	
 	/**
 	 *  'type' if the field format ('integer', 'integer:ObjectClass:PathToClass[:AddCreateButtonOrNot[:Filter]]', 'varchar(x)', 'double(24,8)', 'real', 'price', 'text', 'text:none', 'html', 'date', 'datetime', 'timestamp', 'duration', 'mail', 'phone', 'url', 'password')
 	 *         Note: Filter can be a string like "(t.ref:like:'SO-%') or (t.date_creation:<:'20160101') or (t.nature:is:NULL)"
@@ -88,10 +88,11 @@ class Limits extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
+	 */
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
-	public $fields=array(
+	 public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
@@ -102,31 +103,14 @@ class Limits extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1005, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),	
 	);
 	public $rowid;
 	public $ref;
 	public $label;
-	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
-	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $import_key;
-	public $status;
-	// END MODULEBUILDER PROPERTIES
-<<<<<<< .mine
-	);
-	public $rowid;
-	public $ref;
-	public $label;
-	public $amount;
-	public $qty;
-	public $fk_soc;
-	public $fk_project;
 	public $description;
 	public $note_public;
 	public $note_private;
@@ -139,30 +123,6 @@ class Limits extends CommonObject
 	public $model_pdf;
 	public $status;
 	// END MODULEBUILDER PROPERTIES
-
-=======
-
-
-	// If this object has a subtable with lines
-
-	/**
-	 * @var int    Name of subtable line
-	 */
-	public $table_element_line = 'lims_limits_entries';
-
-	/**
-	 * @var int    Field with ID of parent key if this field has a parent
-	 */
-	public $fk_element = 'fk_limits';
-
-	/**
-	 * @var int    Name of subtable class that manage subtable lines
-	 */
-	public $class_element_line = 'Limitsline';
-
-	/**
-	 * @var array	List of child tables. To test if we can delete object.
->>>>>>> .theirs
 
 	// If this object has a subtable with lines
 
@@ -1214,458 +1174,7 @@ class Limits extends CommonObject
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
 
 /**
- * Class LimitsLine. You can also remove this and generate a CRUD class for lines objects.
- */
-class LimitsLine extends CommonObjectLine
-{
-	// To complete with content of an object LimitsLine
-	// We should have a field rowid, fk_limits and position
-
-	/**
-	 * @var int  Does object support extrafields ? 0=No, 1=Yes
-	 */
-	public $isextrafieldmanaged = 0;
-
-	/**
-	 * Constructor
-	 *
-	 * @param DoliDb $db Database handler
-	 */
-	public function __construct(DoliDB $db)
-	{
-		$this->db = $db;
-	}
-}
-<<<<<<< .mine
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
-			$obj = new LimitsLine($this->db);
-
-			/*
-			$this->line->fk_parent_line	 = $fk_parent_line;
-			$this->line->origin			 = $origin;
-			$this->line->origin_id		 = $origin_id;
-			*/
-			$obj->fk_limits = $this->id;
-			$obj->fk_method = $fk_method;
-			$obj->minimum = $minimum;
-			$obj->maximum = $maximum;
-			$obj->rang = $ranktouse;
-			$obj->status = self::STATUS_DRAFT;
-
-			//dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
-			
-			$res = $obj->create($user); //<0 if KO, Id of created object if OK
-			if ($res<0) $error++;
-			
-			dol_syslog(__METHOD__." LimitsLine->create()=".$res, LOG_DEBUG);
-			
-			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
-			//if ($res >0) $error++;
-			
-			if ($error < 1)
-			{
-				// Reorder if child line
-				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
-				$this->db->commit();
-			}
-			else
-			{
-				$this->error = $this->line->error;
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
-			return -3;
-		}
-	}
-	
-	public function CheckLimitsEntryValidity(&$minimum,$maximum,$idmethod='')
-	{
-		global $langs;
-		
-		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum.' idmethod='.$idmethod, LOG_DEBUG);
-		
-		
-		$langs->load("errors");
-		
-		// Check if method already used -> ONLY WITH NEW ENTRY
-		if (isset($idmethod))
-		{
-			//$sql = 'SELECT CASE WHEN EXISTS (SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod.') THEN 1 ELSE 0 END';
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod;
-			$resql = $this->db->query($sql);
-			
-			if ($this->db->num_rows($resql) > 0) // Method already used
-			{	dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
-				$this->error = $langs->trans('ErrorMultipleLimitEntries');
-				setEventMessages($langs->trans('ErrorMultipleLimitEntries', $langs->transnoentitiesnoconv('MethodMethod')), null, 'errors');
-				
-				return -1;
-			}
-		}
-		
-		// check if max and min are numbers and if min<max
-		if (is_numeric($minimum) && is_numeric($maximum)){
-			if ($minimum > $maximum){
-				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
-				setEventMessages($langs->trans('ErrorMinimumGreaterMaximum', $langs->transnoentitiesnoconv('Minimum')), null, 'errors');
-				
-				return -1;
-			}
-			if ($minimum == $maximum){
-				$this->error = $langs->trans('ErrorMinimumEqualsMaximum');
-				setEventMessages($langs->trans('ErrorMinimumEqualsMaximum', $langs->transnoentitiesnoconv('Upper')), null, 'errors');
-				return -1;
-			}
-		}
-		else
-		{	// check if max is number
-			if (!is_numeric($maximum)){
-				$this->error = $langs->trans('ErrorNumberNotValue');
-				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardUpperLimit')), null, 'errors');
-				return -1;
-			}
-			// check if min is number
-			if (!is_numeric($minimum)){
-				// check if min is empty
-				if ($minimum == ''){
-					$minimum = NULL;
-				}
-				else{
-				$this->error = $langs->trans('ErrorNumberNotValue');
-				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardLowerLimit')), null, 'errors');
-				return -1;
-				}
-			}
-		}
-
-		return 1;
-	}
-}
-
-/**
- * Class LimitsLine. You can also remove this and generate a CRUD class for lines objects.
+ * Class LimitsLine
  */
 class LimitsLine extends CommonObjectLine 
 {
@@ -1745,54 +1254,6 @@ class LimitsLine extends CommonObjectLine
 		$result = $this->fetchCommon($rowid);
 		
 		return $result;
-		/*
-		$sql = 'SELECT fd.rowid, fd.ref, fd.label, fd.rang, fd.fk_limits, fd.fk_method,';
-		$sql .= ' fd.minimum, fd.maximum,';
-		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
-		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
-		//$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution, m.accuracy as methods_accuracy,';
-		$sql .= ' m.unit as methods_unit';
-		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_limits_entries as fd';
-		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
-		$sql .= ' WHERE fd.rowid = '.$rowid;
-
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			$objp = $this->db->fetch_object($result);
-
-			$this->rowid				 = $objp->rowid;
-			$this->id					 = $objp->rowid;
-			$this->ref					 = $objp->ref;
-			$this->label				 = $objp->label;
-			$this->rang					 = $objp->rang;
-			$this->fk_limits			 = $objp->fk_limits;
-			$this->fk_method			 = $objp->fk_method;
-			//$this->fk_parent_line		 = $objp->fk_parent_line;
-			$this->minimum				 = $objp->limit_min;
-			$this->maximum				 = $objp->limit_max;
-
-			$this->fk_user_modif		 = $objp->fk_user_modif;
-			$this->fk_user_creat		 = $objp->fk_user_creat;
-
-			$this->methods_ref			 = $objp->methods_ref;
-			$this->methods_label		 = $objp->methods_label;
-			$this->methods_standard		 = $objp->methods_standard;
-			$this->methods_unit			 = $objp->methods_unit;
-			//$this->methods_accuracy		 = $objp->methods_accuracy;
-			//$this->methods_lower_range	 = $objp->methods_lower_range;
-			//$this->methods_upper_range	 = $objp->methods_upper_range;
-			//$this->methods_resolution	 = $objp->methods_resolution;
-
-			$this->db->free($result);
-
-			return 1;
-		}
-		else
-		{
-			$this->error = $this->db->lasterror();
-			return -1;
-		}*/
 	}
 	
 	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
@@ -1874,4 +1335,3 @@ class LimitsLine extends CommonObjectLine
 		return $this->createCommon($user, $notrigger);
 	}
 }
->>>>>>> .theirs

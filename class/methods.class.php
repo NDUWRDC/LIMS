@@ -90,11 +90,13 @@ class Methods extends CommonObject
 	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
 	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
 	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
+	 **/
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>20, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'External Laboratory', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
+		'standard' => array('type'=>'varchar(128)', 'label'=>'Standard', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'help'=>"Reference to standard, e.g. 'ISO 9308-1:2014'",),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Parameter', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
 		'unit' => array('type'=>'varchar(14)', 'label'=>'Unit', 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'visible'=>1, 'help'=>"Unit in which parameter is quantitized, if possible in SI units, e.g. 'CFU per 100 ml'",),
 		'accuracy' => array('type'=>'varchar(14)', 'label'=>'Accuracy', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'help'=>"The closeness of agreement between a test result and the accepted reference value, e.g. '0.2' or '1.5%'",),
@@ -108,10 +110,10 @@ class Methods extends CommonObject
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'position'=>600, 'notnull'=>0, 'visible'=>0,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1001, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
-		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'standard' => array('type'=>'varchar(128)', 'label'=>'Standard', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'help'=>"Reference to standard, e.g. 'ISO 9308-1:2014'",),
+		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),	
 	);
 	public $rowid;
 	public $ref;
@@ -131,9 +133,9 @@ class Methods extends CommonObject
 	public $fk_user_creat;
 	public $fk_user_modif;
 	public $import_key;
-	public $status;
+	public $last_main_doc;
 	public $model_pdf;
-	public $standard;
+	public $status;
 	// END MODULEBUILDER PROPERTIES
 
 
@@ -972,7 +974,7 @@ class Methods extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 1;
+		$includedocgeneration = 0;
 
 		$langs->load("lims@lims");
 
