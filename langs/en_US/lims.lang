@@ -30,18 +30,100 @@ ModuleLIMSkeywords = LIMS, ISO-17025, Laboratory, Management
 LIMSSetup = LIMS setup
 Settings = Settings
 LIMSSetupPage = LIMS setup page
-LIMS_MYPARAM1 = My param 1
-LIMS_MYPARAM1Tooltip = My param 1 tooltip
-LIMS_MYPARAM2=My param 2
-LIMS_MYPARAM2Tooltip=My param 2 tooltip
-
-
+LIMS_PREFIX_SAMPLES = Pre-fix for samples references
+LIMS_PREFIX_SAMPLESTooltip = Set to 'SA' to get: SA-2004-0001
+LIMS_PREFIX_METHODS = Pre-fix for methods references
+LIMS_PREFIX_METHODSTooltip = Set to 'ME' to get: ME-2004-0001
+LIMS_PREFIX_RESULTS = Pre-fix for results references
+LIMS_PREFIX_RESULTSTooltip = Set to 'RE' to get: RE-2004-0001
+LIMS_PREFIX_LIMITS = Pre-fix for limits references
+LIMS_PREFIX_LIMITSTooltip = Set to 'LI' to get: LI-2004-0001
+LIMS_PREFIX_EQUIPMENT = Pre-fix for equipment references
+LIMS_PREFIX_EQUIPMENTTooltip = Set to 'EQ' to get: EQ-2004-0001
 #
 # About page
 #
 About = About
 LIMSAbout = About LIMS
 LIMSAboutPage = LIMS about page
+
+#
+# Sample page
+#
+MyPageName = My page name
+
+#
+# Sample widget
+#
+MyWidget = My widget
+MyWidgetDescription = My widget description
+
+#
+# Samples
+#
+
+MethodMethod = Standard
+MethodAccuracy = Accuracy
+MethodRangeTitle = Range
+MethodLowerLimit = Lower
+MethodUpperLimit = Upper
+ResultAbnormality = Abnormalities
+StandardLimitTitle = Limits
+StandardLowerLimit = Minimum
+StandardUpperLimit = Maximum
+Result = Result
+ResultID = Test-ID
+MethodUnit = Unit
+AddLineTitleSamples = Product - Method
+TestDuration = Test performed in this period:
+TestingTechnician = Test perfomed by:
+ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
+#
+# Report
+#
+PdfSampleTitle = Test Report
+PDFlims_testreportDescription = PDF to show test results for a sample
+DateReport = Report issued on
+DateSampling = Sampling done on
+DateSamplingUnknown = Not known
+DateSampleReceived = Sample received on
+DateSampleReceivedUnknown = Not known
+HeaderSampleDescription = Sample description
+HeaderSampleDescriptionUnknown = Not known
+HeaderSampleNote = Remark
+HeaderSamplePlace = Sampling place
+HeaderSamplePlaceUnknown = Not known
+HeaderSamplePerson = Sampling person
+HeaderSamplePersonUnknown = Not known
+ReportTitleNum = No.
+ReportTitleDescription = Test Parameter
+ReportTitleAbnormalities = Abnormalities
+ReportTitleDate = Date
+ReportTitleMinimum = Min.
+ReportTitleMaximum = Max.
+ReportTitleAccuracy = Accuracy
+ReportLimitsApplied = The limits displayed correspond to: 
+ReportStatementA = The results relate only to the items tested.
+ReportStatementB = If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
+ReportTestsWithAbnormalities = The tests with the following line number experienced abnormalities: 
+ReportResponsible = Responsible: 
+ReportAuthorizing = Authorized by:
+DigitalSigned = Digital signed on 
+#
+# Limits
+#
+AddLineTitleLimits = Method
+ErrorMinimumGreaterMaximum = Limit for minimum greater than maximum
+ErrorMaximumNotSet = Limit for maximum not a number or not set
+ErrorMinimumEqualsMaximum = Limit for maximum and minimum are the same
+ErrorNumberNotValue = Limit must be a number
+ErrorLowerLimit = Limit for minimum must be empty or a number
+ErrorMultipleLimitEntries = Method already has limits
+
+#
+# Invoice - facture_card
+#
+createsample = CREATE SAMPLE
 
 #
 # Equipment page
@@ -77,13 +159,3 @@ EquipmentListReportTblHeadIntervall = Interval
 EquipmentListReportTblHeadLastDate = Last on
 EquipmentListReportTblHeadLastUser = By user
 EquipmentListReportTblHeadStatus = Status
-#
-# Sample page
-#
-MyPageName = My page name
-
-#
-# Sample widget
-#
-MyWidget = My widget
-MyWidgetDescription = My widget description

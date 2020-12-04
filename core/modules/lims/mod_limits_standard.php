@@ -23,7 +23,8 @@
  *  \brief      File of class to manage Limits numbering rules standard
  */
 dol_include_once('/lims/core/modules/lims/modules_limits.php');
-
+dol_include_once('/lims/class/limits.class.php');
+dol_include_once('/lims/lib/lims_limits.lib.php');
 
 /**
  *	Class to manage customer order numbering rules standard
@@ -36,7 +37,7 @@ class mod_limits_standard extends ModeleNumRefLimits
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'LIMITS';
+	public $prefix;
 
 	/**
 	 * @var string Error code (or message)
@@ -120,6 +121,9 @@ class mod_limits_standard extends ModeleNumRefLimits
 	public function getNextValue($object)
 	{
 		global $db, $conf;
+
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_LIMITS == '' ? 'LI' : $conf->global->LIMS_PREFIX_LIMITS);
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;

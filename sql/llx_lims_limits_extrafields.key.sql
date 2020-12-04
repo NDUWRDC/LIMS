@@ -17,3 +17,4 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_lims_limits_extrafields ADD INDEX idx_limits_fk_object(fk_object);
 -- END MODULEBUILDER INDEXES
+ALTER TABLE llx_lims_limits_entries_extrafields ADD INDEX idx_fk_object(fk_object);

@@ -36,7 +36,7 @@ class mod_methods_standard extends ModeleNumRefMethods
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'METHODS';
+	public $prefix = 'ME';
 
 	/**
 	 * @var string Error code (or message)
@@ -120,6 +120,9 @@ class mod_methods_standard extends ModeleNumRefMethods
 	public function getNextValue($object)
 	{
 		global $db, $conf;
+
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_METHODS == '' ? 'ME' : $conf->global->LIMS_PREFIX_METHODS);
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;

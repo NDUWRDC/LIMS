@@ -24,8 +24,8 @@
 
 // Put here all includes required by your class file
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
-//require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+require_once DOL_DOCUMENT_ROOT.'/core/class/commonobjectline.class.php';
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
 
 /**
  * Class for Samples
@@ -96,48 +96,48 @@ class Samples extends CommonObject
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
-	/**
-	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
-	 */
 	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
-		'amount' => array('type'=>'price', 'label'=>'Amount', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount",),
-		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Customer', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
+		'fk_propal' => array('type'=>'integer:Propal:comm/propal/class/propal.class.php', 'label'=>'Customer Proposal', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Link to Proposal",),
+		'fk_facture' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Customer Invoice', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Customer Invoice",),
+		'fk_socpeople' => array('type'=>'integer:Contact:Contact/class/contact.class.php:1:statut=1 AND t.fk_soc=fk_soc', 'label'=>'Client sample taker', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"If client did the sampling",),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Laboratory Sample taker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Own lab techician",),
+		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>0, 'default'=>null, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'volume' => array('type'=>'real', 'label'=>'Volume [liter]', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"Total volume in liters of all containers and bottles",),
+		'qty' => array('type'=>'integer', 'label'=>'Qty', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"Amount of containers or bottles",),
+		'date' => array('type'=>'datetime', 'label'=>'Sampling date and time', 'enabled'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'help'=>"When was the sample taken",),
+		'place' => array('type'=>'varchar(128)', 'label'=>'Sampling place', 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'visible'=>3, 'help'=>"Location of water source",),
+		'place_lon' => array('type'=>'real', 'label'=>'Sampling place GPS longitude', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"X-coordinate (WGS84), e.g. '0.5959513'",),
+		'place_lat' => array('type'=>'real', 'label'=>'Sampling place GPS latitude', 'enabled'=>1, 'position'=>130, 'notnull'=>-1, 'visible'=>3, 'help'=>"Y-coordinate (WGS84), e.g. '32.4569526'",),
+		'date_arrival' => array('type'=>'datetime', 'label'=>'Arrival date and time', 'enabled'=>1, 'position'=>140, 'notnull'=>0, 'visible'=>1, 'help'=>"Date when the sample was received",),
+		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>1, 'position'=>150, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"If many samples belong to the same project",),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'position'=>160, 'notnull'=>0, 'visible'=>3,),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'position'=>170, 'notnull'=>0, 'visible'=>-1,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'position'=>180, 'notnull'=>0, 'visible'=>-1,),
+		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit Set', 'enabled'=>1, 'position'=>200, 'notnull'=>0, 'visible'=>3, 'help'=>"Limit set applied for judging results",),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>1, 'position'=>600, 'notnull'=>0, 'visible'=>0,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
+		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>1, 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>4, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
-	public $label;
-	public $amount;
-	public $qty;
 	public $fk_soc;
-	public $fk_project;
-	public $description;
-	public $note_public;
-	public $note_private;
-	public $date_creation;
-	public $tms;
-	public $fk_user_creat;
-	public $fk_user_modif;
-	public $last_main_doc;
-	public $import_key;
-	public $model_pdf;
-	public $status;
-	// END MODULEBUILDER PROPERTIES
+	public $fk_propal;
+	public $fk_facture;
+	public $fk_socpeople;
+	public $fk_user;
+	public $fk_user_approval;
+	public $label;
+	public $volume;
+	public $qty;
 
 
 	// If this object has a subtable with lines
@@ -1046,6 +1046,66 @@ class SamplesLine extends CommonObjectLine
 	 */
 	public $isextrafieldmanaged = 0;
 
+	/////
+	// @var string ID to identify managed object
+	///
+	public $element = 'results';
+	
+	/////
+	 // @var string Name of table without prefix where object is stored
+	 ///
+	public $table_element = 'lims_results';
+	
+	public $oldline;
+
+	//! From llx_lims_results
+	//! Id sample @var integer NOT NULL
+	public $fk_samples;
+	//! Id user who did the test @var integer NOT NULL
+	public $fk_user;
+	//! Id method applied to get test result @var integer NOT NULL
+	public $fk_method;
+	//! Id product - to be linked with lims_methods
+	public $fk_product;
+	// public $product_type = 0;	// @var int		Type of the product. 0 for product 1 for service
+	//! Result of test @var real NOT NULL
+	public $result;
+	//! Start time of test @var datetime NOT NULL
+	public $date_start;
+	//! End time of test @var datetime NOT NULL
+	public $date_end;
+	//! Abnormalities with this test @var text
+	public $abnormalities;
+	//! ToDo: Check on possible status
+	public $status;
+	//! Id parent line  -- NOT USED FOR NOW
+	// public $fk_parent_line; 
+	
+	public $rang = 0;
+
+
+	public $origin;		// Should be used with templates or copying 
+	public $origin_id;
+
+	// From llx_lims_methods
+	/////
+	public $methods_ref;			// Method ref
+	public $methods_label;			// Method label				@ var varchar(255)
+	public $methods_standard;		// Method standard			@ var varchar(128)
+	public $methods_fk_product;		// Pointer to sales item	@ var int
+	public $methods_unit;			// Unit						@ var varchar(14)
+	public $methods_accuracy;		// Accuracy					@ var varchar(14)
+	public $methods_lower_range;	// Lower range				@ var real
+	public $methods_upper_range;	// Upper range				@ var real
+	public $methods_resolution;		// Resolution				@ var integer
+	
+	
+	// From llx_product
+	/////
+	//public $product_ref;	// Product ref
+	//public $product_label;	// Product label
+	//public $product_desc;	// Description product
+
 	/**
 	 * Constructor
 	 *
@@ -1054,5 +1114,332 @@ class SamplesLine extends CommonObjectLine
 	public function __construct(DoliDB $db)
 	{
 		$this->db = $db;
+	}
+
+	/////
+	 //	Load results line from database
+	 //
+	 //	@param	int			$rowid      id of results line to get
+	 //	@return	int			<0 if KO, >0 if OK
+	 ///
+    public function fetch($rowid)
+	{
+		$sql = 'SELECT fd.rowid, fd.fk_samples, fd.fk_method, fd.fk_user, fd.abnormalities, fd.result,';
+		$sql .= ' fd.start as date_start, fd.end as date_end,';
+		$sql .= ' fd.rang,';
+		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
+		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
+		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
+		$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
+		$sql .= ' WHERE fd.rowid = '.$rowid;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+
+			$this->rowid				 = $objp->rowid;
+			$this->id					 = $objp->rowid;
+			$this->fk_samples			 = $objp->fk_samples;
+			$this->fk_method			 = $objp->fk_method;
+			$this->fk_user				 = $objp->fk_user;
+			//$this->fk_parent_line		 = $objp->fk_parent_line;
+			$this->abnormalities		 = $objp->abnormalities;
+			$this->result				 = $objp->result;
+
+			$this->date_start			 = $this->db->jdate($objp->date_start);
+			$this->date_end				 = $this->db->jdate($objp->date_end);
+			$this->rang					 = $objp->rang;
+			
+			$this->methods_ref			 = $objp->methods_ref;
+			$this->methods_label		 = $objp->methods_label;
+			$this->methods_standard		 = $objp->methods_standard;
+			$this->methods_unit			 = $objp->methods_unit;
+			$this->methods_accuracy		 = $objp->methods_accuracy;
+			$this->methods_lower_range	 = $objp->methods_lower_range;
+			$this->methods_upper_range	 = $objp->methods_upper_range;
+			$this->methods_resolution	 = $objp->methods_resolution;
+
+			//$this->product_type			 = $objp->product_type;
+			//$this->methods_fk_product	 = $objp->methods_fk_product;		// Pointer to sales item	@ var int
+			//$this->product_ref 		 = $objp->product_ref;
+			//$this->product_label		 = $objp->product_libelle;
+			//$this->product_desc		 = $objp->product_desc;
+			
+			$this->fk_user_modif		 = $objp->fk_user_modif;
+			$this->fk_user_creat		 = $objp->fk_user_creat;
+
+			$this->db->free($result);
+
+			return 1;
+		}
+		else
+		{
+		    $this->error = $this->db->lasterror();
+			return -1;
+		}
+	}
+	
+	
+	/*   COPIED class FactureLigne extends CommonInvoiceLine
+	**************************************************************************
+
+	/////
+	 //	Insert line into database
+	 //
+	 //	@param      int		$notrigger		                 1 no triggers
+	 
+	 //	@return		int						                 <0 if KO, >0 if OK
+	 */
+    public function insert($notrigger = 0)
+	{
+		global $langs, $user, $conf;
+
+		$error = 0;
+
+        dol_syslog(__METHOD__." rang=".$this->rang, LOG_DEBUG);
+
+		// Clean parameters
+		if (empty($this->line->rang)) $this->line->rang = 0;
+		if (empty($this->line->fk_parent_line)) $this->line->fk_parent_line = 0;
+		if (empty($this->line->$abnormalities)) $this->line->$abnormalities =0;
+		
+		// Check parameters
+		if (!empty($this->line->fk_product))
+		{
+			// Check product exists
+			$result = Product::isExistingObject('product', $this->line->fk_product);
+			if ($result <= 0)
+			{
+				$this->error = 'ErrorProductIdDoesNotExists';
+				dol_syslog(get_class($this)."::insert Error ".$this->error, LOG_ERR);
+				return -1;
+			}
+		}
+
+		//$this->db->begin();
+
+		// Use Results class to store new line to database
+		$results = new Results($this->db);
+		$res = $results->create($user, true); //disables triggers
+		
+		dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+		
+		$results->$fk_samples = $this->line->fk_samples;
+		$results->fk_user = $this->line->fk_user;
+		$results->fk_method = $this->line->fk_method;
+		$results->result = $this->line->result;
+		$results->start = $this->line->start;
+		$results->end = $this->line->start;
+		$results->abnormalities = $this->line->abnormalities;
+		$results->rang = $this->line->rang;
+		
+		$res = $results->update($user, true); //disables triggers
+		
+		dol_syslog(__METHOD__." results->update()=".$res, LOG_DEBUG);
+		/*
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facturedet');
+			$this->rowid = $this->id; // For backward compatibility
+
+            if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // For avoid conflicts if trigger used
+            {
+            	$result = $this->insertExtraFields();
+            	if ($result < 0)
+            	{
+            		$error++;
+            	}
+            }
+
+			// Triggers not handled yet
+			
+			if (!$notrigger)
+			{
+                // Call trigger
+                $result = $this->call_trigger('LINEBILL_INSERT', $user);
+                if ($result < 0)
+                {
+					$this->db->rollback();
+					return -2;
+				}
+                // End call triggers
+			}
+			
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			$this->db->rollback();
+			return -2;
+		}*/
+	}
+
+	 /*
+	 //	Update line into database
+	 //
+	 //	@param		User	$user		User object
+	 //	@param		int		$notrigger	Disable triggers
+	 //	@return		int					<0 if KO, >0 if OK
+	 */
+
+	 public function update($user = '', $notrigger = 0)
+	{
+		global $user, $conf;
+
+		$error = 0;
+
+		// Clean parameters		
+		if (empty($this->fk_parent_line))	$this->fk_parent_line	 = 0;
+
+		dol_syslog(__METHOD__
+		.' fkuser='.$this->fk_user 
+		.' result='.$this->testresult 
+		.' abnormalities='.$this->abnormalities, LOG_DEBUG);
+			
+		$resql = $this->db->query($sql);
+		
+		if ($resql)
+		{
+        	if (empty($conf->global->MAIN_EXTRAFIELDS_DISABLED)) // avoid conflicts if trigger used
+        	{
+        		$this->id = $this->rowid;
+        		$result = $this->insertExtraFields();
+        		if ($result < 0)
+        		{
+        			$error++;
+        		}
+        	}
+
+			if (!$error && !$notrigger)
+			{
+                // Call trigger
+                $result = $this->call_trigger('LINEBILL_UPDATE', $user);
+                if ($result < 0)
+ 				{
+					$this->db->rollback();
+					return -2;
+				}
+                // End call triggers
+			}
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->error();
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+	/*  Function not used, instead ::deleteLineCommon is called
+	// 	Delete line in database
+	//  TODO Add param User $user and notrigger (see skeleton)
+	//
+	//	@return	    int		           <0 if KO, >0 if OK
+	*/
+/*    public function delete()
+	{
+		global $user;
+
+		$this->db->begin();
+
+		// Call trigger
+		$result = $this->call_trigger('LINEBILL_DELETE', $user);
+		if ($result < 0)
+		{
+			$this->db->rollback();
+			return -1;
+		}
+		// End call triggers
+
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$this->rowid;
+		dol_syslog(get_class($this)."::delete", LOG_DEBUG);
+		if ($this->db->query($sql))
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;
+		}
+	}*/
+	// COPIED from class Samples
+//   $result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+		
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_'.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid') {
+					$sqlwhere[] = $key.'='.$value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+		if (!empty($sortfield)) {
+		//	$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+            $i = 0;
+			while ($i < min($limit, $num))
+			{
+			    $obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
 	}
 }

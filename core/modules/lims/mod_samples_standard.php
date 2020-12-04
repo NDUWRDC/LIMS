@@ -23,7 +23,8 @@
  *  \brief      File of class to manage Samples numbering rules standard
  */
 dol_include_once('/lims/core/modules/lims/modules_samples.php');
-
+dol_include_once('/lims/class/samples.class.php');
+dol_include_once('/lims/lib/lims_samples.lib.php');
 
 /**
  *	Class to manage customer order numbering rules standard
@@ -36,7 +37,7 @@ class mod_samples_standard extends ModeleNumRefSamples
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'SAMPLES';
+	public $prefix = 'SA';
 
 	/**
 	 * @var string Error code (or message)
@@ -120,6 +121,9 @@ class mod_samples_standard extends ModeleNumRefSamples
 	public function getNextValue($object)
 	{
 		global $db, $conf;
+
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_SAMPLES == '' ? 'SA' : $conf->global->LIMS_PREFIX_SAMPLES);
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;

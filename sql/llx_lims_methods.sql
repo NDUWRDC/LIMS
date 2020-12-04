@@ -19,10 +19,14 @@ CREATE TABLE llx_lims_methods(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	label varchar(255), 
-	amount double DEFAULT NULL, 
-	qty real, 
 	fk_soc integer, 
-	fk_project integer, 
+	fk_product integer NOT NULL,
+	standard varchar(128),	
+	unit varchar(14) NOT NULL,
+	accuracy varchar(14) NOT NULL, 
+	range_lower real NOT NULL, 
+	range_upper real NOT NULL, 
+	resolution integer NOT NULL, 
 	description text, 
 	note_public text, 
 	note_private text, 
@@ -30,9 +34,8 @@ CREATE TABLE llx_lims_methods(
 	tms timestamp, 
 	fk_user_creat integer NOT NULL, 
 	fk_user_modif integer, 
-	last_main_doc varchar(255), 
 	import_key varchar(14), 
-	model_pdf varchar(255), 
-	status smallint NOT NULL
+	model_pdf varchar(255),
+	status integer NOT NULL 
 	-- END MODULEBUILDER FIELDS
 ) ENGINE=innodb;

@@ -18,12 +18,12 @@
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_rowid (rowid);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_ref (ref);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_soc (fk_soc);
-ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_project (fk_project);
-ALTER TABLE llx_lims_methods ADD CONSTRAINT llx_lims_methods_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
+ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_user_creat (fk_user_creat);
+ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_user_modif (fk_user_modif);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_status (status);
+ALTER TABLE llx_lims_methods ADD CONSTRAINT idx_lims_methods_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_lims_methods ADD UNIQUE INDEX uk_lims_methods_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_lims_methods ADD CONSTRAINT llx_lims_methods_fk_field FOREIGN KEY (fk_field) REFERENCES llx_lims_myotherobject(rowid);
-

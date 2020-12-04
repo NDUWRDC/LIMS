@@ -76,7 +76,10 @@ $cancel     = GETPOST('cancel', 'aZ09');
 $contextpage = GETPOST('contextpage', 'aZ') ?GETPOST('contextpage', 'aZ') : 'limitscard'; // To manage different context of search
 $backtopage = GETPOST('backtopage', 'alpha');
 $backtopageforcancel = GETPOST('backtopageforcancel', 'alpha');
-//$lineid   = GETPOST('lineid', 'int');
+
+$lineid   = GETPOST('lineid', 'int');
+$minimum   = GETPOST('MethodLower', 'int');
+$maximum   = GETPOST('MethodUpper', 'int');
 
 // Initialize technical objects
 $object = new Limits($db);
@@ -101,7 +104,7 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
-
+$usercancreate = $user->rights->lims->limits->write;
 
 $permissiontoread = $user->rights->lims->limits->read;
 $permissiontoadd = $user->rights->lims->limits->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
@@ -156,6 +159,90 @@ if (empty($reshook))
 
 	// Action to build doc
 	include DOL_DOCUMENT_ROOT.'/core/actions_builddoc.inc.php';
+
+	// Add a new line
+	if ($action == 'addline' && $usercancreate)
+	{
+		$langs->load('errors');
+		$error = 0;
+		$checkresult = 0;
+		
+		// Store: rowid-ref-rang-fk_samples-fk_user-fk_method-result-start-end-abnormalities-?status
+
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$rang = GETPOST('rang', 'int');
+		$idmethod = GETPOST('MethodID', 'int');
+		$minimum = GETPOST('MethodLower', 'int');
+		$maximum = GETPOST('MethodUpper', 'int');
+		
+		dol_syslog('Limits_card action=addline: ---------', LOG_DEBUG);
+		dol_syslog('fkmethod= '.$idmethod, LOG_DEBUG);
+		dol_syslog('rang= '.$rang, LOG_DEBUG);
+		dol_syslog('minimum= '.$minimum, LOG_DEBUG);
+		dol_syslog('maximum= '.$maximum, LOG_DEBUG);
+		
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// ERROR HANDLING
+		$checkresult = $object->CheckLimitsEntryValidity($minimum,$maximum,$idmethod);
+		if ($checkresult == -1)
+			$error++;
+		
+		// No Errors -> Add line
+		if (!$error && ($result >= 0) && !empty($idmethod)) {
+			$ret = $object->fetch($id);
+			if ($ret < 0) {
+				dol_print_error($db, $object->error);
+				exit();
+			}
+
+			// Insert line
+			dol_syslog(__METHOD__." addline idmethod=".$idmethod." minimum=".$minimum." maximum=".$maximum, LOG_DEBUG);
+			$result = $object->addline($idmethod, $minimum, $maximum, $rang, '', 0, GETPOST('fk_parent_line'));
+			
+
+			if ($result > 0){
+				// Define output language and generate document
+				
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
+					}
+					$model = $object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+				}
+
+				unset($_POST['rang']);
+				unset($_POST['MethodLower']);
+				unset($_POST['MethodUpper']);
+				unset($_POST['MethodID']);
+
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+
+			$action = '';
+		}
+	}
 
 	if ($action == 'set_thirdparty' && $permissiontoadd)
 	{
@@ -301,6 +388,110 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		// Create an array for form
 		$formquestion = array();
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
+	}
+
+	// Update line
+	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
+	{
+		$langs->load('errors');
+		$error = 0;
+		$checkresult = 0;
+		
+		$predef=''; // Not used so far (invoice: free entry or predefined product)
+		// result.class.php: Class SampleLine  
+		// update: fk_user-result-start-end-abnormalities
+		
+		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
+		$minimum = GETPOST('MethodLower', 'int');
+		$maximum = GETPOST('MethodUpper', 'int');
+		
+		// Extrafields
+		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
+		$array_options = $extrafields->getOptionalsFromPost($object->table_element_line, $predef);
+		// Unset extrafield
+		if (is_array($extralabelsline)) {
+			// Get extra fields
+			foreach ($extralabelsline as $key => $value) {
+				unset($_POST["options_".$key.$predef]);
+			}
+		}
+
+		// Check parameters
+		$checkresult = $object->CheckLimitsEntryValidity($minimum,$maximum);
+		if ($checkresult == -1)
+			$error++;
+				
+		// ERROR HANDLING
+		/*
+		if ($result == '') {
+			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
+			$error++;
+		}*/
+		
+		$obj = new LimitsLine($object->db);
+		$obj->fetch(GETPOST('lineid', 'int'));
+		
+		if (is_null($obj->ref))
+			$error++;
+		
+		// No Errors -> Update line
+		if (!$error) 
+		{
+			// Update line
+			dol_syslog('action=updateline: ref='.$obj->ref.' lineid='.GETPOST('lineid', 'int'), LOG_DEBUG);
+			
+			// Those are not changed:
+			//$obj->fk_limits = $this->id;
+			//$obj->fk_method = $fk_method;
+			//$obj->rang = $ranktouse;
+			//$obj->status = self::STATUS_DRAFT;
+			
+			dol_syslog('Minimum ... old='.$obj->minimum.' new='.$minimum, LOG_DEBUG);
+			dol_syslog('Maximum ... old='.$obj->maximum.' new='.$maximum, LOG_DEBUG);
+			
+			$obj->minimum = (is_numeric($minimum) ? $minimum : '');
+			$obj->maximum = $maximum;
+			
+			$result = $obj->updateCommon($user);
+			
+			// method not defined:
+			//$object->updateline($abnormalities, $testresult, $fk_user, $date_start, $date_end,);
+		
+			if ($result > 0)
+			{
+				// Define output language and generate document
+				if (empty($conf->global->MAIN_DISABLE_PDF_AUTOUPDATE))
+				{
+					$outputlangs = $langs;
+					$newlang = '';
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang) && GETPOST('lang_id', 'aZ09')) $newlang = GETPOST('lang_id', 'aZ09');
+					if ($conf->global->MAIN_MULTILANGS && empty($newlang))	$newlang = $object->thirdparty->default_lang;
+					if (!empty($newlang)) {
+						$outputlangs = new Translate("", $conf);
+						$outputlangs->setDefaultLang($newlang);
+						$outputlangs->load('products');
+					}
+					$model = $object->modelpdf;
+					$ret = $object->fetch($id); // Reload to get new records
+
+					$result = $object->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);
+					if ($result < 0) setEventMessages($object->error, $object->errors, 'errors');
+				}
+
+				unset($_POST['rang']);
+				unset($_POST['MethodStandard']);
+				unset($_POST['MethodAccuracy']);
+				unset($_POST['MethodUnit']);
+
+				unset($_POST['MethodLower']);
+				unset($_POST['Methodupper']);
+				unset($_POST['MethodID']);
+				
+			} else {
+				setEventMessages($object->error, $object->errors, 'errors');
+			}
+			$action = '';
+		}
 	}
 
 	// Confirmation of action xxxx

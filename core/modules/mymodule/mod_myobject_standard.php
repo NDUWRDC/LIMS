@@ -18,17 +18,17 @@
  */
 
 /**
- *  \file       htdocs/core/modules/lims/mod_results_standard.php
+ *  \file       htdocs/core/modules/lims/mod_myobject_standard.php
  *  \ingroup    lims
- *  \brief      File of class to manage Results numbering rules standard
+ *  \brief      File of class to manage MyObject numbering rules standard
  */
-dol_include_once('/lims/core/modules/lims/modules_results.php');
+dol_include_once('/lims/core/modules/lims/modules_myobject.php');
 
 
 /**
  *	Class to manage customer order numbering rules standard
  */
-class mod_results_standard extends ModeleNumRefResults
+class mod_myobject_standard extends ModeleNumRefMyObject
 {
 	/**
 	 * Dolibarr version of the loaded document
@@ -36,7 +36,7 @@ class mod_results_standard extends ModeleNumRefResults
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'RE';
+	public $prefix = 'MYOBJECT';
 
 	/**
 	 * @var string Error code (or message)
@@ -57,7 +57,7 @@ class mod_results_standard extends ModeleNumRefResults
 	public function info()
 	{
 		global $langs;
-		return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
+	  	return $langs->trans("SimpleNumRefModelDesc", $this->prefix);
 	}
 
 
@@ -85,13 +85,14 @@ class mod_results_standard extends ModeleNumRefResults
 
 		$coyymm = ''; $max = '';
 
-		$posindice = strlen($this->prefix) + 6;
+		$posindice = 8;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."lims_results";
+		$sql .= " FROM ".MAIN_DB_PREFIX."lims_myobject";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+			$sql.= " AND entity = ".$conf->entity;
+		}
+		elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -121,17 +122,15 @@ class mod_results_standard extends ModeleNumRefResults
 	{
 		global $db, $conf;
 
-		//Set prefix
-		$this->prefix = ($conf->global->LIMS_PREFIX_RESULTS == '' ? 'RE' : $conf->global->LIMS_PREFIX_RESULTS);
-
-		// first we get the max value
-		$posindice = strlen($this->prefix) + 6;
+		// D'abord on recupere la valeur max
+		$posindice = 9;
 		$sql = "SELECT MAX(CAST(SUBSTRING(ref FROM ".$posindice.") AS SIGNED)) as max";
-		$sql .= " FROM ".MAIN_DB_PREFIX."lims_results";
+		$sql .= " FROM ".MAIN_DB_PREFIX."lims_myobject";
 		$sql .= " WHERE ref LIKE '".$db->escape($this->prefix)."____-%'";
 		if ($object->ismultientitymanaged == 1) {
-			$sql .= " AND entity = ".$conf->entity;
-		} elseif ($object->ismultientitymanaged == 2) {
+			$sql.= " AND entity = ".$conf->entity;
+		}
+		elseif ($object->ismultientitymanaged == 2) {
 			// TODO
 		}
 
@@ -141,8 +140,10 @@ class mod_results_standard extends ModeleNumRefResults
 			$obj = $db->fetch_object($resql);
 			if ($obj) $max = intval($obj->max);
 			else $max = 0;
-		} else {
-			dol_syslog("mod_results_standard::getNextValue", LOG_DEBUG);
+		}
+		else
+		{
+			dol_syslog("mod_myobject_standard::getNextValue", LOG_DEBUG);
 			return -1;
 		}
 
@@ -153,7 +154,7 @@ class mod_results_standard extends ModeleNumRefResults
 		if ($max >= (pow(10, 4) - 1)) $num = $max + 1; // If counter > 9999, we do not format on 4 chars, we take number as it is
 		else $num = sprintf("%04s", $max + 1);
 
-		dol_syslog("mod_results_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
+		dol_syslog("mod_myobject_standard::getNextValue return ".$this->prefix.$yymm."-".$num);
 		return $this->prefix.$yymm."-".$num;
 	}
 }

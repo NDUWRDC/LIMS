@@ -17,13 +17,11 @@
 -- BEGIN MODULEBUILDER INDEXES
 ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_rowid (rowid);
 ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_ref (ref);
-ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_fk_soc (fk_soc);
-ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_fk_project (fk_project);
-ALTER TABLE llx_lims_limits ADD CONSTRAINT llx_lims_limits_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
-ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_status (status);
+ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_fk_user_creat (fk_user_creat);
+ALTER TABLE llx_lims_limits ADD INDEX idx_lims_limits_fk_user_modif (fk_user_modif);
+ALTER TABLE llx_lims_limits ADD CONSTRAINT idx_lims_limits_fk_user_creat FOREIGN KEY (fk_user_creat) REFERENCES llx_user(rowid);
 -- END MODULEBUILDER INDEXES
 
 --ALTER TABLE llx_lims_limits ADD UNIQUE INDEX uk_lims_limits_fieldxy(fieldx, fieldy);
 
 --ALTER TABLE llx_lims_limits ADD CONSTRAINT llx_lims_limits_fk_field FOREIGN KEY (fk_field) REFERENCES llx_lims_myotherobject(rowid);
-

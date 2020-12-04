@@ -1,4 +1,4 @@
--- Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
+-- Copyright (C) --- 2020 david@bensel.cc ---
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -13,6 +13,21 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipment', '1', 'lims', NULL, NULL);
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipmentlist', '1', 'lims', NULL, NULL);
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('lims_testreport', '1', 'lims', NULL, NULL);
+CREATE TABLE llx_lims_limits_entries(
+	-- BEGIN MODULEBUILDER FIELDS
+	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
+	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	label varchar(255),
+	fk_limits integer NOT NULL,
+	fk_method integer NOT NULL,
+	rang integer,
+	minimum real default NULL,
+	maximum real NOT NULL,
+	date_creation datetime NOT NULL, 
+	tms timestamp, 
+	fk_user_creat integer NOT NULL, 
+	fk_user_modif integer, 
+	import_key varchar(14), 
+	status smallint NOT NULL
+	-- END MODULEBUILDER FIELDS
+) ENGINE=innodb;

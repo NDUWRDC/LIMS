@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017  Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) ---Put here your own copyright and developer email---
+ * Copyright (C) 2020  David Bensel <david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,36 +88,37 @@ class Limits extends CommonObject
 	 *  'help' is a string visible as a tooltip on field
 	 *  'showoncombobox' if value of the field must be visible into the label of the combobox that list record
 	 *  'disabled' is 1 if we want to have the field locked by a 'disabled' attribute. In most cases, this is never set into the definition of $fields into class, but is set dynamically by some part of code.
-	 *  'arraykeyval' to set list of value if type is a list of predefined values. For example: array("0"=>"Draft","1"=>"Active","-1"=>"Cancel")
-	 *  'autofocusoncreate' to have field having the focus on a create form. Only 1 field should have this property set to 1.
-	 *  'comment' is not used. You can store here any text of your choice. It is not used by application.
-	 *
-	 *  Note: To have value dynamic, you can set value to 0 in definition and edit the value on the fly into the constructor.
-	 */
-
-	// BEGIN MODULEBUILDER PROPERTIES
 	/**
 	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
 	 */
 	public $fields=array(
-		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>'1', 'position'=>30, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth300', 'help'=>"Help text", 'showoncombobox'=>'1',),
-		'amount' => array('type'=>'price', 'label'=>'Amount', 'enabled'=>'1', 'position'=>40, 'notnull'=>0, 'visible'=>1, 'default'=>'null', 'isameasure'=>'1', 'help'=>"Help text for amount",),
-		'qty' => array('type'=>'real', 'label'=>'Qty', 'enabled'=>'1', 'position'=>45, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'isameasure'=>'1', 'css'=>'maxwidth75imp', 'help'=>"Help text for quantity",),
-		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'ThirdParty', 'enabled'=>'1', 'position'=>50, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"LinkToThirparty",),
-		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'Project', 'enabled'=>'1', 'position'=>52, 'notnull'=>-1, 'visible'=>-1, 'index'=>1,),
-		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>'1', 'position'=>60, 'notnull'=>0, 'visible'=>3,),
-		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>'1', 'position'=>61, 'notnull'=>0, 'visible'=>0,),
-		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>'1', 'position'=>62, 'notnull'=>0, 'visible'=>0,),
-		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>'1', 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
-		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>'1', 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
-		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>'1', 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
-		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>'1', 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
-		'last_main_doc' => array('type'=>'varchar(255)', 'label'=>'LastMainDoc', 'enabled'=>'1', 'position'=>600, 'notnull'=>0, 'visible'=>0,),
-		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>'1', 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
-		'model_pdf' => array('type'=>'varchar(255)', 'label'=>'Model pdf', 'enabled'=>'1', 'position'=>1010, 'notnull'=>-1, 'visible'=>0,),
-		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>'1', 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
+		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'position'=>60, 'notnull'=>0, 'visible'=>3,),
+		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'position'=>61, 'notnull'=>0, 'visible'=>0,),
+		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'position'=>62, 'notnull'=>0, 'visible'=>0,),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1000, 'notnull'=>1, 'visible'=>1, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+	);
+	public $rowid;
+	public $ref;
+	public $label;
+	public $description;
+	public $note_public;
+	public $note_private;
+	public $date_creation;
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $import_key;
+	public $status;
+	// END MODULEBUILDER PROPERTIES
+<<<<<<< .mine
 	);
 	public $rowid;
 	public $ref;
@@ -139,6 +140,29 @@ class Limits extends CommonObject
 	public $status;
 	// END MODULEBUILDER PROPERTIES
 
+=======
+
+
+	// If this object has a subtable with lines
+
+	/**
+	 * @var int    Name of subtable line
+	 */
+	public $table_element_line = 'lims_limits_entries';
+
+	/**
+	 * @var int    Field with ID of parent key if this field has a parent
+	 */
+	public $fk_element = 'fk_limits';
+
+	/**
+	 * @var int    Name of subtable class that manage subtable lines
+	 */
+	public $class_element_line = 'Limitsline';
+
+	/**
+	 * @var array	List of child tables. To test if we can delete object.
+>>>>>>> .theirs
 
 	// If this object has a subtable with lines
 
@@ -1028,6 +1052,162 @@ class Limits extends CommonObject
 
 		return $error;
 	}
+
+
+
+	public function addline(
+		$fk_method,
+		$minimum,
+		$maximum,
+		$rang = -1,
+		$origin = '',
+		$origin_id = 0,
+		$fk_parent_line = 0) {
+
+		global $langs, $user;
+		
+		$error=0;
+		
+		dol_syslog(__METHOD__." with limit set id=".$this->id, LOG_DEBUG);
+
+		if ($this->state == self::STATUS_DRAFT)
+		{
+			// Clean parameters
+			if (empty($rang)) $rang = 0;
+			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
+			if (empty($fk_prev_id)) $fk_prev_id = 'null';
+			
+			// Check parameters
+			$langs->load("lims@lims");
+			
+			$this->db->begin();
+
+			if (!empty($fk_method))
+			{
+				$method = new Methods($this->db);
+				$result = $method->fetch($fk_method);
+			}
+
+			// Rank to use
+			$ranktouse = $rang;
+			if ($ranktouse == -1)
+			{
+				$rangmax = $this->line_max($fk_parent_line);
+				$ranktouse = $rangmax + 1;
+			}
+
+			// Insert line necessary??
+			//$sampleline = new SamplesLine($this->db);
+
+			// ToDo: variable defined where?
+			//$this->line->context = $this->context;
+			
+			$obj = new LimitsLine($this->db);
+
+			/*
+			$this->line->fk_parent_line	 = $fk_parent_line;
+			$this->line->origin			 = $origin;
+			$this->line->origin_id		 = $origin_id;
+			*/
+			$obj->fk_limits = $this->id;
+			$obj->fk_method = $fk_method;
+			$obj->minimum = $minimum;
+			$obj->maximum = $maximum;
+			$obj->rang = $ranktouse;
+			$obj->status = self::STATUS_DRAFT;
+
+			//dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			
+			$res = $obj->create($user); //<0 if KO, Id of created object if OK
+			if ($res<0) $error++;
+			
+			dol_syslog(__METHOD__." LimitsLine->create()=".$res, LOG_DEBUG);
+			
+			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			//if ($res >0) $error++;
+			
+			if ($error < 1)
+			{
+				// Reorder if child line
+				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				$this->db->commit();
+			}
+			else
+			{
+				$this->error = $this->line->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
+	}
+	
+	public function CheckLimitsEntryValidity(&$minimum,$maximum,$idmethod='')
+	{
+		global $langs;
+		
+		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum.' idmethod='.$idmethod, LOG_DEBUG);
+		
+		
+		$langs->load("errors");
+		
+		// Check if method already used -> ONLY WITH NEW ENTRY
+		if (isset($idmethod))
+		{
+			//$sql = 'SELECT CASE WHEN EXISTS (SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod.') THEN 1 ELSE 0 END';
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod;
+			$resql = $this->db->query($sql);
+			
+			if ($this->db->num_rows($resql) > 0) // Method already used
+			{	dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
+				$this->error = $langs->trans('ErrorMultipleLimitEntries');
+				setEventMessages($langs->trans('ErrorMultipleLimitEntries', $langs->transnoentitiesnoconv('MethodMethod')), null, 'errors');
+				
+				return -1;
+			}
+		}
+		
+		// check if max and min are numbers and if min<max
+		if (is_numeric($minimum) && is_numeric($maximum)){
+			if ($minimum > $maximum){
+				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
+				setEventMessages($langs->trans('ErrorMinimumGreaterMaximum', $langs->transnoentitiesnoconv('Minimum')), null, 'errors');
+				
+				return -1;
+			}
+			if ($minimum == $maximum){
+				$this->error = $langs->trans('ErrorMinimumEqualsMaximum');
+				setEventMessages($langs->trans('ErrorMinimumEqualsMaximum', $langs->transnoentitiesnoconv('Upper')), null, 'errors');
+				return -1;
+			}
+		}
+		else
+		{	// check if max is number
+			if (!is_numeric($maximum)){
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardUpperLimit')), null, 'errors');
+				return -1;
+			}
+			// check if min is number
+			if (!is_numeric($minimum)){
+				// check if min is empty
+				if ($minimum == ''){
+					$minimum = NULL;
+				}
+				else{
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardLowerLimit')), null, 'errors');
+				return -1;
+				}
+			}
+		}
+
+		return 1;
+	}
 }
 
 
@@ -1056,3 +1236,642 @@ class LimitsLine extends CommonObjectLine
 		$this->db = $db;
 	}
 }
+<<<<<<< .mine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+=======
+			$obj = new LimitsLine($this->db);
+
+			/*
+			$this->line->fk_parent_line	 = $fk_parent_line;
+			$this->line->origin			 = $origin;
+			$this->line->origin_id		 = $origin_id;
+			*/
+			$obj->fk_limits = $this->id;
+			$obj->fk_method = $fk_method;
+			$obj->minimum = $minimum;
+			$obj->maximum = $maximum;
+			$obj->rang = $ranktouse;
+			$obj->status = self::STATUS_DRAFT;
+
+			//dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			
+			$res = $obj->create($user); //<0 if KO, Id of created object if OK
+			if ($res<0) $error++;
+			
+			dol_syslog(__METHOD__." LimitsLine->create()=".$res, LOG_DEBUG);
+			
+			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
+			//if ($res >0) $error++;
+			
+			if ($error < 1)
+			{
+				// Reorder if child line
+				if (!empty($fk_parent_line)) $this->line_order(true, 'DESC');
+				$this->db->commit();
+			}
+			else
+			{
+				$this->error = $this->line->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			dol_syslog(__METHOD__." status of sample must be Draft to allow use of ->addline()", LOG_ERR);
+			return -3;
+		}
+	}
+	
+	public function CheckLimitsEntryValidity(&$minimum,$maximum,$idmethod='')
+	{
+		global $langs;
+		
+		dol_syslog(__METHOD__.' min='.$minimum.' max='.$maximum.' idmethod='.$idmethod, LOG_DEBUG);
+		
+		
+		$langs->load("errors");
+		
+		// Check if method already used -> ONLY WITH NEW ENTRY
+		if (isset($idmethod))
+		{
+			//$sql = 'SELECT CASE WHEN EXISTS (SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod.') THEN 1 ELSE 0 END';
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod;
+			$resql = $this->db->query($sql);
+			
+			if ($this->db->num_rows($resql) > 0) // Method already used
+			{	dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
+				$this->error = $langs->trans('ErrorMultipleLimitEntries');
+				setEventMessages($langs->trans('ErrorMultipleLimitEntries', $langs->transnoentitiesnoconv('MethodMethod')), null, 'errors');
+				
+				return -1;
+			}
+		}
+		
+		// check if max and min are numbers and if min<max
+		if (is_numeric($minimum) && is_numeric($maximum)){
+			if ($minimum > $maximum){
+				$this->error = $langs->trans('ErrorMinimumGreaterMaximum');
+				setEventMessages($langs->trans('ErrorMinimumGreaterMaximum', $langs->transnoentitiesnoconv('Minimum')), null, 'errors');
+				
+				return -1;
+			}
+			if ($minimum == $maximum){
+				$this->error = $langs->trans('ErrorMinimumEqualsMaximum');
+				setEventMessages($langs->trans('ErrorMinimumEqualsMaximum', $langs->transnoentitiesnoconv('Upper')), null, 'errors');
+				return -1;
+			}
+		}
+		else
+		{	// check if max is number
+			if (!is_numeric($maximum)){
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardUpperLimit')), null, 'errors');
+				return -1;
+			}
+			// check if min is number
+			if (!is_numeric($minimum)){
+				// check if min is empty
+				if ($minimum == ''){
+					$minimum = NULL;
+				}
+				else{
+				$this->error = $langs->trans('ErrorNumberNotValue');
+				setEventMessages($langs->trans('ErrorNumberNotValue', $langs->transnoentitiesnoconv('StandardLowerLimit')), null, 'errors');
+				return -1;
+				}
+			}
+		}
+
+		return 1;
+	}
+}
+
+/**
+ * Class LimitsLine. You can also remove this and generate a CRUD class for lines objects.
+ */
+class LimitsLine extends CommonObjectLine 
+{
+	// To complete with content of an object LimitsLine
+	// We should have a field rowid, fk_limits and position
+	/////
+	// @var string ID to identify managed object
+	///
+	public $element = 'limitentry';
+	
+	/////
+	 // @var string Name of table without prefix where object is stored
+	 ///
+	public $table_element = 'lims_limits_entries'; // table -> lims_limits_entries
+	
+	public $fields=array(
+		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit set', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
+		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
+		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
+		'minimum' => array('type'=>'real', 'label'=>'Minimum', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"Lower limit",),
+		'maximum' => array('type'=>'real', 'label'=>'Maximum', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>3, 'help'=>"Upper limit",),
+		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
+		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
+		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),
+		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
+		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
+		'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+	);
+
+	
+	public $oldline;
+	public $origin;		// Should be used with templates or copying 
+	public $origin_id;
+
+	public $rowid;
+	public $ref;		// ?required?
+	public $label;
+	public $rang = 0;
+	public $fk_limits;
+	public $fk_method;
+	
+	public $minimum;
+	public $maximum;
+	
+	public $methods_ref;
+	public $methods_label;
+	public $methods_standard;
+	public $methods_unit;
+			
+	
+	public $status;
+	
+	public $fk_user_modif;
+	public $fk_user_creat;
+	
+	/**
+	 *  Constructor
+	 *
+	 *  @param	DoliDB		$db		Database handler
+	 */
+	public function __construct(DoliDB $db)
+	{
+		$this->db = $db;
+	}
+
+	/////
+	 //	Load results line from database
+	 //
+	 //	@param	int			$rowid      id of results line to get
+	 //	@return	int			<0 if KO, >0 if OK
+	 ///
+	public function fetch($rowid)
+	{
+		$result = $this->fetchCommon($rowid);
+		
+		return $result;
+		/*
+		$sql = 'SELECT fd.rowid, fd.ref, fd.label, fd.rang, fd.fk_limits, fd.fk_method,';
+		$sql .= ' fd.minimum, fd.maximum,';
+		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
+		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
+		//$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution, m.accuracy as methods_accuracy,';
+		$sql .= ' m.unit as methods_unit';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_limits_entries as fd';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
+		$sql .= ' WHERE fd.rowid = '.$rowid;
+
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+
+			$this->rowid				 = $objp->rowid;
+			$this->id					 = $objp->rowid;
+			$this->ref					 = $objp->ref;
+			$this->label				 = $objp->label;
+			$this->rang					 = $objp->rang;
+			$this->fk_limits			 = $objp->fk_limits;
+			$this->fk_method			 = $objp->fk_method;
+			//$this->fk_parent_line		 = $objp->fk_parent_line;
+			$this->minimum				 = $objp->limit_min;
+			$this->maximum				 = $objp->limit_max;
+
+			$this->fk_user_modif		 = $objp->fk_user_modif;
+			$this->fk_user_creat		 = $objp->fk_user_creat;
+
+			$this->methods_ref			 = $objp->methods_ref;
+			$this->methods_label		 = $objp->methods_label;
+			$this->methods_standard		 = $objp->methods_standard;
+			$this->methods_unit			 = $objp->methods_unit;
+			//$this->methods_accuracy		 = $objp->methods_accuracy;
+			//$this->methods_lower_range	 = $objp->methods_lower_range;
+			//$this->methods_upper_range	 = $objp->methods_upper_range;
+			//$this->methods_resolution	 = $objp->methods_resolution;
+
+			$this->db->free($result);
+
+			return 1;
+		}
+		else
+		{
+			$this->error = $this->db->lasterror();
+			return -1;
+		}*/
+	}
+	
+	public function fetchAll($sortorder = '', $sortfield = '', $limit = 0, $offset = 0, array $filter = array(), $filtermode = 'AND')
+	{
+		global $conf;
+		
+		dol_syslog(__METHOD__, LOG_DEBUG);
+
+		$records = array();
+		
+		$sql = 'SELECT ';
+		$sql .= $this->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$this->table_element.' as t';
+		if (isset($this->ismultientitymanaged) && $this->ismultientitymanaged == 1) $sql .= ' WHERE t.entity IN ('.getEntity($this->table_element).')';
+		else $sql .= ' WHERE 1 = 1';
+		// Manage filter
+		$sqlwhere = array();
+		if (count($filter) > 0) {
+			foreach ($filter as $key => $value) {
+				if ($key == 't.rowid') {
+					$sqlwhere[] = $key.'='.$value;
+				}
+				elseif (strpos($key, 'date') !== false) {
+					$sqlwhere[] = $key.' = \''.$this->db->idate($value).'\'';
+				}
+				elseif ($key == 'customsql') {
+					$sqlwhere[] = $value;
+				}
+				else {
+					$sqlwhere[] = $key.' LIKE \'%'.$this->db->escape($value).'%\'';
+				}
+			}
+		}
+		if (count($sqlwhere) > 0) {
+			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
+		}
+		if (!empty($sortfield)) {
+		//	$sql .= $this->db->order($sortfield, $sortorder);
+		}
+		if (!empty($limit)) {
+			$sql .= ' '.$this->db->plimit($limit, $offset);
+		}
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$num = $this->db->num_rows($resql);
+            $i = 0;
+			while ($i < min($limit, $num))
+			{
+			    $obj = $this->db->fetch_object($resql);
+
+				$record = new self($this->db);
+				$record->setVarsFromFetchObj($obj);
+
+				$records[$record->id] = $record;
+
+				$i++;
+			}
+			$this->db->free($resql);
+			
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
+	
+	/**
+	 * Create object into database
+	 *
+	 * @param  User $user      User that creates
+	 * @param  bool $notrigger false=launch triggers after, true=disable triggers
+	 * @return int             <0 if KO, Id of created object if OK
+	 */
+	public function create(User $user, $notrigger = false)
+	{
+		return $this->createCommon($user, $notrigger);
+	}
+}
+>>>>>>> .theirs
