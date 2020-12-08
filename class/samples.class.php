@@ -101,6 +101,9 @@ class Samples extends CommonObject
 	 */
 
 	// BEGIN MODULEBUILDER PROPERTIES
+	/**
+	 * @var array  Array with all fields and their property. Do not use it as a static var. It may be modified by constructor.
+	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
@@ -143,36 +146,54 @@ class Samples extends CommonObject
 	public $label;
 	public $volume;
 	public $qty;
-
+	public $date;
+	public $place;
+	public $place_lon;
+	public $place_lat;
+	public $date_arrival;
+	public $fk_project;
+	public $description;
+	public $note_public;
+	public $note_private;
+	public $fk_limits;
+	public $date_creation;
+	public $tms;
+	public $fk_user_creat;
+	public $fk_user_modif;
+	public $last_main_doc;
+	public $import_key;
+	public $model_pdf;
+	public $status;
+	// END MODULEBUILDER PROPERTIES
 
 	// If this object has a subtable with lines
 
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'lims_samplesline';
+	public $table_element_line = 'lims_results';
 
 	/**
 	 * @var int    Field with ID of parent key if this object has a parent
 	 */
-	//public $fk_element = 'fk_samples';
+	public $fk_element = 'fk_samples';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Samplesline';
+	public $class_element_line = 'Results';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables = array();
+	protected $childtables = array();
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	//protected $childtablesoncascade = array('lims_samplesdet');
+	protected $childtablesoncascade = array('Results');
 
 	/**
 	 * @var SamplesLine[]     Array of subtable lines
@@ -191,6 +212,10 @@ class Samples extends CommonObject
 		global $conf, $langs;
 
 		$this->db = $db;
+
+		// TODO: must be handled via constants?
+		$this->model_pdf = 'lims_testreport';
+		$this->status = self::STATUS_DRAFT;
 
 		if (empty($conf->global->MAIN_SHOW_TECHNICAL_ID) && isset($this->fields['rowid'])) $this->fields['rowid']['visible'] = 0;
 		if (empty($conf->multicompany->enabled) && isset($this->fields['entity'])) $this->fields['entity']['enabled'] = 0;
@@ -263,6 +288,18 @@ class Samples extends CommonObject
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
 		//	$line->fetch_optionals();
+		$ResultObj = new Results($db);
+	    $i = 0;
+	    foreach($this->lines as $line){
+	    	$line->fetch_optionals();
+			$object->lines[$i]->ref = empty($ResultObj->fields['ref']['default']) ? "copy_of_".$line->ref : $ResultObj->fields['ref']['default'];
+			$object->lines[$i]->setDraft($user);
+			$object->lines[$i]->label = empty($ResultObj->fields['label']['default']) ? $langs->trans("CopyOf")." ".$line->label : $ResultObj->fields['label']['default'];
+			unset($object->lines[$i]->id);
+			unset($object->lines[$i]->ref);
+			
+			$i++;
+		}
 
 		// Reset some properties
 		unset($object->id);
@@ -351,10 +388,75 @@ class Samples extends CommonObject
 	 * @return int         <0 if KO, 0 if not found, >0 if OK
 	 */
 	public function fetchLines()
-	{
+	{	/*
+		// Module Builder START
 		$this->lines = array();
 
 		$result = $this->fetchLinesCommon();
+		return $result;
+		// Module Builder END
+		*/
+		$morewhere = '';
+		$objectlineclassname = 'Results';
+		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
+		$objectline = new $objectlineclassname($this->db);
+		$sql = 'SELECT '.$objectline->getFieldList();
+		$sql .= ' FROM '.MAIN_DB_PREFIX.$objectline->table_element;
+		$sql .= ' WHERE fk_'.$this->element.' = '.$this->id;
+		if ($morewhere)  $sql .= $morewhere;
+		//dol_syslog(__METHOD__.' $sql='.$sql, LOG_DEBUG);
+		$resqlRESULTS = $this->db->query($sql);
+		
+		$limits = new Limits ($this->db);
+		$limits->fetch($this->fk_limits);
+		$rows_limits = count($limits->lines);
+		//$filter = array('customsql' => 'fk_limits = '.$this->fk_limits);
+		//$limitlines->fetchLines();
+		//$limitlines->fetchAll('', '', '', '', $filter);
+		/*
+		$sql = 'SELECT minimum, maximum, fk_method';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_limits_entries';
+		$sql .= ' WHERE fk_limits = '.$this->fk_limits;
+		$resqlLIMITS = $this->db->query($sql);
+		*/
+		if ($resqlRESULTS)
+		{
+			$num_rows = $this->db->num_rows($resqlRESULTS);
+			//dol_syslog(__METHOD__.' num_rows='.$num_rows, LOG_DEBUG);
+			$i = 0;
+			while ($i < $num_rows){	
+				$obj = $this->db->fetch_object($resqlRESULTS);
+				if ($obj){
+					$newline = new $objectlineclassname($this->db);
+					$newline->setVarsFromFetchObj($obj);
+
+					$this->lines[$i] = $newline;
+					
+					$l = 0;
+					while ($l < $rows_limits ){
+						if ($this->lines[$i]->fk_method == $limits->lines[$l]->fk_method){
+							$this->lines[$i]->minimum = $limits->lines[$l]->minimum;
+							$this->lines[$i]->maximum = $limits->lines[$l]->maximum;
+							
+							// DEFINE LABEL HERE??$this->lines[$i]->label = ...
+							//dol_syslog(" line->maximum=".var_export($this->lines[$i]->maximum, true), LOG_DEBUG);
+							//dol_syslog(" limits->maximum=".var_export($limits->lines[$i]->maximum, true), LOG_DEBUG);
+							break;
+						}
+						$l++;
+					}
+				}
+				//dol_syslog(__METHOD__." $this->lines[i]=".var_export($this->lines[$i], true), LOG_DEBUG);
+				$i++;
+			}
+			return 1;
+		}
+		else{
+			$this->error = $this->db->lasterror();
+			$this->errors[] = $this->error;
+			return -1;
+		}
+		
 		return $result;
 	}
 
@@ -890,7 +992,8 @@ class Samples extends CommonObject
 	 */
 	public function getLinesArray()
 	{
-		$this->lines = array();
+		// Module Builder START
+		/*$this->lines = array();
 
 		$objectline = new SamplesLine($this->db);
 		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_samples = '.$this->id));
@@ -903,7 +1006,9 @@ class Samples extends CommonObject
 		} else {
 			$this->lines = $result;
 			return $this->lines;
-		}
+		}*/
+		// Module Builder END
+		return $this->fetchLines();
 	}
 
 	/**
@@ -1189,7 +1294,7 @@ class SamplesLine extends CommonObjectLine
 	/////
 	 // @var string Name of table without prefix where object is stored
 	 ///
-	public $table_element = 'lims_results';
+	public $table_element = 'lim_results';
 	
 	public $oldline;
 

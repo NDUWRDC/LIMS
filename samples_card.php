@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2017 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2020 David Bensek  <david.bensel@gmail.com>
+ * Copyright (C) 2020 David Bensel  <david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -481,6 +481,82 @@ if (($id || $ref) && $action == 'edit')
 // Part to show record
 if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
 {
+	dol_syslog('Part to show record', LOG_DEBUG);
+	
+	session_start();
+	if (empty($_POST) && isset($_SESSION['importsample_post'])) {
+		$post = $_SESSION['importsample_post'];
+		unset($_SESSION['importsample_post']);
+		dol_syslog('Restore session importsample_post', LOG_DEBUG);
+	}
+	else $post = $_POST;
+	
+	if (isset($post['origin']) && isset($post['originid']))
+	{
+		$origin = $post['origin'];
+		$originid = $post['originid'];
+		$classname = ucfirst($post['origin']);
+		$objectsrc = new $classname($db);
+		$objectsrc->fetch($post['originid']);
+		
+		dol_syslog('Import lines from '.$classname.' with id='.$originid, LOG_DEBUG);
+		
+		if (!empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
+		{
+			$objectsrc->fetch_lines();
+			$i = 0;
+			$products_source = array();
+			foreach ($objectsrc->lines as $line)
+			{
+				$product_import = $line->fk_product;
+				if (is_numeric($product_import))
+					$products_source[$i] = $product_import;
+				$i++;
+			}
+			dol_syslog('Found products_source ...'.var_export($products_source,true), LOG_DEBUG);
+			
+			$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
+			$sql .= ' WHERE fk_product IN ('.implode(',',$products_source).')';
+
+			// Insert line
+			$resql = $object->db->query($sql);
+			if (!$resql)
+			{
+				$object->error = $object->db->lasterror();
+			}
+			else
+			{
+				$num = $object->db->num_rows($resql);
+				//dol_syslog("query num=".$num, LOG_DEBUG);
+				
+				if ($num > 0) 
+				{
+					while ($obj = $object->db->fetch_object($resql))
+					{
+						//dol_syslog(" addline obj".var_export($obj, true), LOG_DEBUG);
+						
+						$idprod = $obj->fk_product;
+						$fk_method = $obj->rowid;
+						$abnormalities = false;
+						$testresult = -1; 			// result NOT NULL
+						$fk_user = $user->id;
+						$date_start = ''; 
+						$date_end = '';
+						$rang = -1;
+						$origin = $origin;			// not handeled by method/class
+						$origin_id = $origin_id;	// not handeled by method/class
+						$fk_parent_line = 0;		// not handeled by method/class
+						$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user, $date_start, $date_end, $rang, $origin, $origin_id, $fk_parent_line);
+						dol_syslog(" addline idprod=".$idprod." idmethod=".$fk_method."  result=".$result, LOG_DEBUG);
+					}
+				}
+			}
+		}
+		else{
+			dol_syslog('No lines or method fetch_lines not existent', LOG_DEBUG);
+		}
+	}
 	$res = $object->fetch_optionals();
 
 	$head = samplesPrepareHead($object);
@@ -821,7 +897,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Back to draft
 			if ($object->status == $object::STATUS_VALIDATED) {
-				if ($permissiontoadd) {
+				if ($permissiontovalidate) {
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?id='.$object->id.'&action=confirm_setdraft&confirm=yes">'.$langs->trans("SetToDraft").'</a>';
 				}
 			}
@@ -904,7 +980,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$delallowed = $user->rights->lims->samples->write; // If you can create/edit, you can remove a file on card
 			if (is_null($object->modelpdf))
 				$object->modelpdf = 'lims_testreport';
-			print $formfile->showdocuments('lims:Samples', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
+			print $formfile->showdocuments('lims:Samples', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
+			//print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 		}
 
 		// Show links to link elements

@@ -129,34 +129,34 @@ class Limits extends CommonObject
 	/**
 	 * @var int    Name of subtable line
 	 */
-	//public $table_element_line = 'lims_limitsline';
+	public $table_element_line = 'lims_limitsline';
 
 	/**
 	 * @var int    Field with ID of parent key if this object has a parent
 	 */
-	//public $fk_element = 'fk_limits';
+	public $fk_element = 'fk_limits';
 
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	//public $class_element_line = 'Limitsline';
+	public $class_element_line = 'Limitsline';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
 	 */
-	//protected $childtables = array();
+	protected $childtables = array();
 
 	/**
 	 * @var array    List of child tables. To know object to delete on cascade.
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	//protected $childtablesoncascade = array('lims_limitsdet');
+	protected $childtablesoncascade = array('lims_limitsdet');
 
 	/**
 	 * @var LimitsLine[]     Array of subtable lines
 	 */
-	//public $lines = array();
+	public $lines = array();
 
 
 

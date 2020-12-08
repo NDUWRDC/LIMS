@@ -23,6 +23,14 @@
  * Put detailed description here.
  */
 
+ // DoTo: Move to place where required
+dol_include_once('/lims/class/samples.class.php', 'Samples');
+dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/results.class.php', 'Results');
+dol_include_once('/lims/class/limits.class.php', 'Limits');
+dol_include_once('/lims/class/lims_functions.class.php', 'lims_functions');
+require_once DOL_DOCUMENT_ROOT.'/compta/facture/class/facture.class.php';
+
 /**
  * Class ActionsLIMS
  */
