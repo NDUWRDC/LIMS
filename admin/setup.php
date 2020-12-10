@@ -57,8 +57,10 @@ $value = GETPOST('value', 'alpha');
 
 $arrayofparameters = array(
 	'LIMS_PREFIX_SAMPLES'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'LIMS_PREFIX_RESULTS'=>array('css'=>'minwidth200', 'enabled'=>1),
 	'LIMS_PREFIX_METHODS'=>array('css'=>'minwidth200', 'enabled'=>1),
-	'LIMS_PREFIX_RESULTS'=>array('css'=>'minwidth200', 'enabled'=>1)
+	'LIMS_PREFIX_EQUIPMENT'=>array('css'=>'minwidth200', 'enabled'=>1),
+	'LIMS_PREFIX_LIMITS'=>array('css'=>'minwidth200', 'enabled'=>1)
 );
 
 $error = 0;
