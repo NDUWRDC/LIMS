@@ -540,16 +540,17 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 1;
-
+		$includedocgeneration = 0; // Set to 1 to show GENERATE doc button in Linked files section
+		
 		// Documents
 		if ($includedocgeneration) {
 			$objref = dol_sanitizeFileName($object->ref);
-			$relativepath = $objref . '/' . $objref . '.pdf';
+			$relativepath = $objref.'/'.$objref.'.pdf';
 			$filedir = $conf->lims->dir_output.'/'.$object->element.'/'.$objref;
-			$urlsource = $_SERVER["PHP_SELF"] . "?id=" . $object->id;
+			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->lims->methods->read;	// If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->lims->methods->write;	// If you can create/edit, you can remove a file on card
+			
 			print $formfile->showdocuments('lims:Methods', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang);
 		}
 

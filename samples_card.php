@@ -962,7 +962,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	if (GETPOST('modelselected')) {
 		$action = 'presend';
 	}
-
+		
 	if ($action != 'presend')
 	{
 		print '<div class="fichecenter"><div class="fichehalfleft">';
@@ -978,8 +978,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			$urlsource = $_SERVER["PHP_SELF"]."?id=".$object->id;
 			$genallowed = $user->rights->lims->samples->read; // If you can read, you can build the PDF to read content
 			$delallowed = $user->rights->lims->samples->write; // If you can create/edit, you can remove a file on card
-			if (is_null($object->modelpdf))
-				$object->modelpdf = 'lims_testreport';
+			if (is_null($object->model_pdf))
+				$object->model_pdf = 'lims_testreport';
+			
+				dol_syslog('action='.$action.' filedir='.$filedir, LOG_DEBUG);
+	
 			print $formfile->showdocuments('lims:Samples', $object->element.'/'.$objref, $filedir, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 			//print $formfile->showdocuments('lims', $objref, $filedir, $urlsource, $genallowed, $delallowed, $object->modelpdf, 1, 0, 0, 28, 0, '', '', '', $langs->defaultlang, '', $object, 0, 'remove_file_comfirm');
 		}

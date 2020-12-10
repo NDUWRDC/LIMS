@@ -151,7 +151,7 @@ class Limits extends CommonObject
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	protected $childtablesoncascade = array('lims_limitsdet');
+	protected $childtablesoncascade = array('lims_limits');
 
 	/**
 	 * @var LimitsLine[]     Array of subtable lines
@@ -1183,12 +1183,12 @@ class LimitsLine extends CommonObjectLine
 	/////
 	// @var string ID to identify managed object
 	///
-	public $element = 'limitentry';
+	public $element = 'limitsline';
 	
 	/////
 	 // @var string Name of table without prefix where object is stored
 	 ///
-	public $table_element = 'lims_limits_entries'; // table -> lims_limits_entries
+	public $table_element = 'lims_limitsline'; // table -> llx_lims_limitsline
 	
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),

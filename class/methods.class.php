@@ -974,7 +974,7 @@ class Methods extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 0;
+		$includedocgeneration = 1;
 
 		$langs->load("lims@lims");
 

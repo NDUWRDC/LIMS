@@ -518,6 +518,62 @@ class modLIMS extends DolibarrModules
 			'user'=>2,
 		);
 		/* END LEFTMENU METHODS */
+		/* BEGIN LEFTMENU EQUIPMENT */
+		$this->menu[$r++]=array(
+			'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'type'=>'left',                          // This is a Top menu entry
+			'titre'=>'Equipment',
+			'mainmenu'=>'lims',
+			'leftmenu'=>'lims_equipment',
+			'url'=>'/lims/equipment_list.php',
+			'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'position'=>1100+$r,
+			'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled.
+			'perms'=>'$user->rights->lims->equipment->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+			'target'=>'',
+			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
+		);
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'New Equipment',
+			'mainmenu'=>'lims',
+			'leftmenu'=>'lims_equipment_new',
+			'url'=>'/lims/equipment_card.php?action=create',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'lims@lims',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->lims->enabled',
+			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->lims->equipment->write',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2
+		);
+		$this->menu[$r++]=array(
+			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
+			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
+			// This is a Left menu entry
+			'type'=>'left',
+			'titre'=>'List Equipment',
+			'mainmenu'=>'lims',
+			'leftmenu'=>'lims_equipment_list',
+			'url'=>'/lims/equipment_list.php',
+			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
+			'langs'=>'lims@lims',
+			'position'=>1100+$r,
+			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
+			'enabled'=>'$conf->lims->enabled',
+			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
+			'perms'=>'$user->rights->lims->equipment->read',
+			'target'=>'',
+			// 0=Menu for internal users, 1=external users, 2=both
+			'user'=>2,
+		);
+		/* END MODULEBUILDER LEFTMENU EQUIPMENT */
 		/* BEGIN LEFTMENU LIMITS */
 		$this->menu[$r++]=array(
 			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
@@ -580,62 +636,6 @@ class modLIMS extends DolibarrModules
 			'user'=>2,
 		);
 		/* BEGIN LEFTMENU LIMITS */
-		/* BEGIN LEFTMENU EQUIPMENT */
-		$this->menu[$r++]=array(
-			'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment',
-			'url'=>'/lims/equipment_list.php',
-			'langs'=>'lims@lims',	        // Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'position'=>1100+$r,
-			'enabled'=>'$conf->lims->enabled',  // Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled.
-			'perms'=>'$user->rights->lims->equipment->read',			                // Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'target'=>'',
-			'user'=>2,				                // 0=Menu for internal users, 1=external users, 2=both
-		);
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'New Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment_new',
-			'url'=>'/lims/equipment_card.php?action=create',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'lims@lims',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->lims->enabled',
-			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->lims->equipment->write',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2
-		);
-		$this->menu[$r++]=array(
-			// '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
-			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
-			// This is a Left menu entry
-			'type'=>'left',
-			'titre'=>'List Equipment',
-			'mainmenu'=>'lims',
-			'leftmenu'=>'lims_equipment_list',
-			'url'=>'/lims/equipment_list.php',
-			// Lang file to use (without .lang) by module. File must be in langs/code_CODE/ directory.
-			'langs'=>'lims@lims',
-			'position'=>1100+$r,
-			// Define condition to show or hide menu entry. Use '$conf->lims->enabled' if entry must be visible if module is enabled. Use '$leftmenu==\'system\'' to show if leftmenu system is selected.
-			'enabled'=>'$conf->lims->enabled',
-			// Use 'perms'=>'$user->rights->lims->level1->level2' if you want your menu with a permission rules
-			'perms'=>'$user->rights->lims->equipment->read',
-			'target'=>'',
-			// 0=Menu for internal users, 1=external users, 2=both
-			'user'=>2,
-		);
-		/* END MODULEBUILDER LEFTMENU EQUIPMENT */
 
 		// Exports profiles provided by this module
 		$r = 1;

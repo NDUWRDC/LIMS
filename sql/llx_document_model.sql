@@ -13,6 +13,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see https://www.gnu.org/licenses/.
 
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipment', '1', 'lims', NULL, NULL);
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipmentlist', '1', 'lims', NULL, NULL);
-INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('lims_testreport', '1', 'lims', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipment', '1', 'equipment', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_equipmentlist', '1', 'equipment', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('lims_testreport', '1', 'samples', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_methods', '1', 'methods', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_limits', '1', 'limits', NULL, NULL);
+INSERT INTO llx_document_model (nom, entity, type, libelle, description) VALUES ('standard_results', '1', 'results', NULL, NULL);

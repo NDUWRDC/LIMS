@@ -996,9 +996,9 @@ class Equipment extends CommonObject
 
 			if ($this->model_pdf) {
 				$modele = $this->model_pdf;
-			} elseif (!empty($conf->global->EQUIPMENT_PDF)) {
+			} elseif (!empty($conf->global->EQUIPMENT_ADDON_PDF)) {
 				// Report for one (1) device
-				$modele = $conf->global->EQUIPMENT_PDF;
+				$modele = $conf->global->EQUIPMENT_ADDON_PDF;
 
 				// Report for List of all devices
 				// => Hook doActions with context=builddoc will select model

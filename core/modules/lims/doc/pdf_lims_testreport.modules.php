@@ -285,8 +285,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 			else
 			{
+				// ToDo: file-name needs version. Don't simply overwrite.
 				$objectref = dol_sanitizeFileName($object->ref);
-				$dir = $conf->lims->dir_output."/".$objectref;
+				$dir = $conf->lims->dir_output."/".$object->element."/".$objectref;
 				$file = $dir."/".$objectref.".pdf";
 			}
 			if (!file_exists($dir))

@@ -193,7 +193,7 @@ class Samples extends CommonObject
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	protected $childtablesoncascade = array('Results');
+	protected $childtablesoncascade = array('lims_results');
 
 	/**
 	 * @var SamplesLine[]     Array of subtable lines
@@ -1261,7 +1261,7 @@ class Samples extends CommonObject
 				$outputlangs->setDefaultLang($newlang);
 				$outputlangs->load('products');
 			}
-			$model = $this->modelpdf;
+			$model = $this->model_pdf;
 			$ret = $this->fetch($id); // Reload to get new records
 
 			$result = $this->generateDocument($model, $outputlangs, $hidedetails, $hidedesc, $hideref);

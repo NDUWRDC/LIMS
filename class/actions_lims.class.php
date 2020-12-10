@@ -106,14 +106,14 @@ class ActionsLIMS
 		global $conf, $user, $langs;
 
 		$error = 0; // Error counter
-		dol_syslog(get_class($this).'::doActions action='.$action, LOG_DEBUG);
+		dol_syslog(get_class($this).'::doActions action='.$action.' element='.$object->element, LOG_DEBUG);
 
 		/* print_r($parameters); print_r($object); echo "action: " . $action; */
 		{
 			// /lims/equipment_list.php => GENERATE button clicked
 			// No Equipment-object is selected (list view) -> we select first in list
 			// to make sure Equipment::setDocModel is successful-
-			if ($action=='builddoc')
+			if ($action=='builddoc' && $object->element=='equipment')
 			{
 				$records = array();
 				$records = $object->fetchAll();

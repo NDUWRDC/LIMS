@@ -37,7 +37,7 @@ class mod_limits_standard extends ModeleNumRefLimits
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix;
+	public $prefix = 'LI';
 
 	/**
 	 * @var string Error code (or message)

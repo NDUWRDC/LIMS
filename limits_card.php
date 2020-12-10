@@ -628,7 +628,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			if ($action != 'editline')
 			{
 				// Add products/services form
-				$object->formAddObjectLine(1, $mysoc, $soc);
+				// Hook is used, formAddObjectLine would be displayed twice
+				//$object->formAddObjectLine(1, $mysoc, $soc);
 
 				$parameters = array();
 				$reshook = $hookmanager->executeHooks('formAddObjectLine', $parameters, $object, $action); // Note that $action and $object may have been modified by hook
@@ -733,7 +734,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 
-		$includedocgeneration = 1;
+		$includedocgeneration = 0; // Set to 1 to show GENERATE doc button in Linked files section
 
 		// Documents
 		if ($includedocgeneration) {

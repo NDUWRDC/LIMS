@@ -36,7 +36,7 @@ class mod_equipment_standard extends ModeleNumRefEquipment
 	 */
 	public $version = 'dolibarr'; // 'development', 'experimental', 'dolibarr'
 
-	public $prefix = 'EQUIPMENT';
+	public $prefix = 'EQ';
 
 	/**
 	 * @var string Error code (or message)
@@ -120,6 +120,9 @@ class mod_equipment_standard extends ModeleNumRefEquipment
 	public function getNextValue($object)
 	{
 		global $db, $conf;
+
+		//Set prefix
+		$this->prefix = ($conf->global->LIMS_PREFIX_EQUIPMENT == '' ? 'EQ' : $conf->global->LIMS_PREFIX_EQUIPMENT);
 
 		// first we get the max value
 		$posindice = strlen($this->prefix) + 6;
