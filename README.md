@@ -1,10 +1,17 @@
 # LABORATORY INFORMATION MANAGEMENT SYSTEM FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
-## Features v0.1.0
+## Features v0.2.0
 
 Manage your samples and generate test reports following ISO 17025:2017: 
+* Manage Equipment, where each equipment has
+  * A link to an existing product (Module PRODUCTS required) or service (Module SERVICES required)
+  * A category such as 'Equipment', 'Consumable', 'Facility', 'Sales Item'
+  * Options 'No calibration, or maintainance', 'maintainance', 'calibration'
+  * A maintainance/calibration intervall
+  * Events  logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
+  * A Calibration and Maintenance Report (Doc template 'standard_equipmentlist')
 * Manage Test Methods, where each method has
-  * A linked product or service
+  * A link to an equipment
   * A unit, e.g. mS/cm
   * Accuracy
   * Measurement Range
@@ -13,7 +20,7 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * Linked to one method
   * Minimum and Maximum, where one value may be NULL
 * Manage Samples, where each sample has
-  * A linked to a customer
+  * A link to a customer (Module THIRD PARTIES required)
   * Details on the sample, such as sampling place and time, sampling person, volume, etc.
   * Muliple tests, where each test is linked to one method; each test is linked to the responsible person
   * Nonconformities
@@ -22,7 +29,7 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * Sample details
   * Results with indication if result is out of the limit range or out of the method's measurement range
   * Names of person(s) responsible and manager who authorized the sample.
-
+* Samples can be created from a validated invoice (module INVOICES required): Details on customer and products which are part of Equipment will be added to the sample.
 <!--
 ![Screenshot lims](img/screenshot_lims.png?raw=true "LIMS"){imgmd}
 -->
@@ -97,7 +104,7 @@ From your browser:
 
 ### Main code
 
-GPLv3 or (at your option) any later version. See file COPYING for more information.
+GPLv3 or (at your option) any later version. See file [COPYING](COPYING) for more information.
 
 ### Documentation
 

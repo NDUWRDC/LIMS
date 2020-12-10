@@ -13,12 +13,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: Define maintainance/calibration intervall
 - Equipment: Each Event is logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
 - Equipment: List Equipment view
-- Equipment: Calibration and Maintenance Report (Doc template 'standard_equipmentlist')
+- Equipment: Prefix for object reference can be defined via Settings.
+- Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 
 ## [0.1.0](https://github.com/NDUWRDC/LIMS/releases/tag/v0.1) - 2020-09-16
 ### Added
 - Methods: Add Methods which have a link to an existing product or service
-- Methods: Define 'unit', e.g. mS/cm, Accuracy, Measurement Range, Resolution of reading
+- Methods: Define 'unit' (e.g. mS/cm), Accuracy, Measurement Range, Resolution of reading
 - Limits: Add limit sets, with each entry/line linked to one method
 - Limits: Define Minimum and Maximum, where one value may be NULL
 - Samples: Manage Samples, where each sample has linked to a customer
@@ -26,5 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Samples: Muliple tests, where each test is linked to one method; each test is linked to the responsible person
 - Samples: Nonconformities
 - Samples: Apply a limit set to the sample
-- Samples: Test Report on the basis of ISO 17025
 - Results: List view of all results and their correlating samples
+- Reports: User right 'View Reports'
+- Reports: Test Report on the basis of ISO 17025 (Doc template 'lims_testreport') at Samples
+- Settings: Prefixes for object references (Methods, Samples, Results, Limits)
+- User rights: 3 basic rights for all objects => View / Create,Update / Validate,Delete
