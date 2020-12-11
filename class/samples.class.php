@@ -288,7 +288,7 @@ class Samples extends CommonObject
 		// get lines so they will be clone
 		//foreach($this->lines as $line)
 		//	$line->fetch_optionals();
-		$ResultObj = new Results($db);
+		$ResultObj = new Results($this->db);
 	    $i = 0;
 	    foreach($this->lines as $line){
 	    	$line->fetch_optionals();
