@@ -21,7 +21,7 @@ CREATE TABLE llx_lims_samples(
 	fk_soc integer NOT NULL, 
 	fk_propal integer, 
 	fk_facture integer, 
-	fk_socpeople integer, 
+	samplingbyclient integer, 
 	fk_user integer, 
 	fk_user_approval integer DEFAULT NULL,
 	label varchar(255), 

@@ -171,6 +171,14 @@ if (empty($reshook))
 		$object->fk_user_approval = $user->id;
 		$object->update($user);
 	}
+	if ($action == 'update') {
+		if (GETPOST('samplingbyclient', 'int') && GETPOST('fk_user', 'int')) {
+			$langs->load("errors");
+			$object->error = $langs->trans('ErrorSamplingPersonSetTwice');
+			setEventMessages($langs->trans("ErrorSamplingPersonSetTwice"), null, 'errors');
+			$action = 'edit';
+		}
+	}
 
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';

@@ -78,6 +78,7 @@ AddLineTitleSamples = Product - Method
 TestDuration = Test performed in this period:
 TestingTechnician = Test perfomed by:
 ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
+ErrorSamplingPersonSetTwice = If 'Sampling by client' is set to 'Yes' the laboratory sampling person must not be selected
 #
 # Report
 #
@@ -95,6 +96,7 @@ HeaderSamplePlace = Sampling place
 HeaderSamplePlaceUnknown = Not known
 HeaderSamplePerson = Sampling person
 HeaderSamplePersonUnknown = Not known
+HeaderSamplingByClient = Sampling done by client
 ReportTitleNum = No.
 ReportTitleDescription = Test Parameter
 ReportTitleAbnormalities = Abnormalities

@@ -108,9 +108,9 @@ class Samples extends CommonObject
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'Customer', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
-		'fk_propal' => array('type'=>'integer:Propal:comm/propal/class/propal.class.php', 'label'=>'Customer Proposal', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Link to Proposal",),
+		'fk_propal' => array('type'=>'integer:Propal:comm/propal/class/propal.class.php', 'label'=>'Customer Proposal', 'enabled'=>0, 'position'=>30, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Link to Proposal",),
 		'fk_facture' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'Customer Invoice', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Customer Invoice",),
-		'fk_socpeople' => array('type'=>'integer:Contact:Contact/class/contact.class.php:1:statut=1 AND t.fk_soc=fk_soc', 'label'=>'Client sample taker', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"If client did the sampling",),
+		'samplingbyclient' => array('type'=>'integer', 'label'=>'Sampling by client', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'default'=>'1', 'index'=>1, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'), 'help'=>"If client did the sampling",),
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Laboratory Sample taker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"Own lab techician",),
 		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Manager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>0, 'default'=>null, 'index'=>1, 'help'=>"Lab manager legitimate to approve report",),
 		'description' => array('type'=>'text', 'label'=>'Description', 'enabled'=>1, 'position'=>67, 'notnull'=>0, 'visible'=>3,),
@@ -140,7 +140,7 @@ class Samples extends CommonObject
 	public $fk_soc;
 	public $fk_propal;
 	public $fk_facture;
-	public $fk_socpeople;
+	public $samplingbyclient;
 	public $fk_user;
 	public $fk_user_approval;
 	public $label;

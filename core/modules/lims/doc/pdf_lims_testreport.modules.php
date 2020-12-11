@@ -448,17 +448,19 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$nexYsampleline[1] = $nexY;
 				
 				// Print Sampling Person
-				// TODO: fk_socpeople not yet working!!
-				// $sample_person_user = empty($object->fk_user) ? '' : $object->fk_user;
-				if ( empty($object->fk_user) )
-					$sample_person_user = '';
-				else{
-					$userobj = new User($object->db);
-					$userobj->fetch($object->fk_user);
-					$sample_person_user = $userobj->getFullName($outputlangs);
+				if($object->samplingbyclient) {
+					$sample_person_user = $outputlangs->transnoentities("HeaderSamplingByClient");
 				}
-				if (empty($sample_person_user))
-					$sample_person_user = $outputlangs->transnoentities("HeaderSamplePersonUnknown");
+				else {
+					if (empty($object->fk_user)) {
+						$sample_person_user = $outputlangs->transnoentities("HeaderSamplePersonUnknown");
+					} 
+					else {
+						$userobj = new User($object->db);
+						$userobj->fetch($object->fk_user);
+						$sample_person_user = $userobj->getFullName($outputlangs);
+					}
+				}
 				
 				// Always print information on sampling person
 				$pdf->SetFont('', 'B', $default_font_size-1);
