@@ -18,6 +18,7 @@ CREATE TABLE llx_lims_equipment(
 	-- BEGIN MODULEBUILDER FIELDS
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
+	label varchar(128), 
 	fk_product integer NOT NULL, 
 	category smallint NOT NULL, 
 	maintenance smallint, 

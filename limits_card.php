@@ -253,6 +253,14 @@ if (empty($reshook))
 		$object->setProject(GETPOST('projectid', 'int'));
 	}
 
+	if ($action == 'setlabel') {
+		dol_syslog(__METHOD__.' action=setlabel', LOG_DEBUG);
+		$object->id = $id;
+		$object->label = GETPOST('label', 'alpha');
+		$object->update($user); // save value
+		$action = 'view'; // ToDo: Set &id='.$id;'
+	}
+
 	// Actions to send emails
 	$triggersendname = 'LIMS_LIMITS_SENTBYMAIL';
 	$autocopy = 'MAIN_MAIL_AUTOCOPY_LIMITS_TO';
@@ -562,6 +570,9 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }
 	 }*/
+	$morehtmlref.=$form->editfieldkey("RefLIlabel", 'label', $object->label, $object, $user->rights->lims->limits->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefLIlabel", 'label', $object->label, $object, $user->rights->lims->limits->write, 'string', '', null, null, '', 1);
+	
 	$morehtmlref .= '</div>';
 
 
@@ -577,6 +588,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	unset($object->fields['label']);					// Hide field already shown in banner
+	
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.

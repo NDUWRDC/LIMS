@@ -140,6 +140,14 @@ if (empty($reshook))
 	}
 	$triggermodname = 'LIMS_METHODS_MODIFY'; // Name of trigger action code to execute when we modify record
 
+	if ($action == 'setlabel') {
+		dol_syslog(__METHOD__.' action=setlabel', LOG_DEBUG);
+		$object->id = $id;
+		$object->label = GETPOST('label', 'alpha');
+		$object->update($user); // save values, but don't issue trigger
+		$action = 'view';
+	}
+
 	// Actions cancel, add, update, update_extras, confirm_validate, confirm_delete, confirm_deleteline, confirm_clone, confirm_close, confirm_setdraft, confirm_reopen
 	include DOL_DOCUMENT_ROOT.'/core/actions_addupdatedelete.inc.php';
 
@@ -369,6 +377,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }
 	 }*/
+
+	$morehtmlref.=$form->editfieldkey("RefMElabel", 'label', $object->label, $object, $user->rights->lims->methods->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("RefMElabel", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
+	
 	$morehtmlref .= '</div>';
 
 
@@ -384,6 +396,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	//$keyforbreak='fieldkeytoswitchonsecondcolumn';	// We change column just before this field
 	//unset($object->fields['fk_project']);				// Hide field already shown in banner
 	//unset($object->fields['fk_soc']);					// Hide field already shown in banner
+	unset($object->fields['label']);					// Hide field already shown in banner
+
 	include DOL_DOCUMENT_ROOT.'/core/tpl/commonfields_view.tpl.php';
 
 	// Other attributes. Fields from hook formObjectOptions and Extrafields.

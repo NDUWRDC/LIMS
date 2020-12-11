@@ -94,10 +94,10 @@ class Methods extends CommonObject
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>20, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>20, 'notnull'=>0, 'visible'=>4, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text", 'showoncombobox'=>'1',),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'External Laboratory', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
 		'standard' => array('type'=>'varchar(128)', 'label'=>'Standard', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'help'=>"Reference to standard, e.g. 'ISO 9308-1:2014'",),
-		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Parameter', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
+		'fk_product' => array('type'=>'integer:Equipment:lims/class/equipment.class.php:1:category=3', 'foreignkey'=>'lims_equipment.fk_product', 'label'=>'Parameter', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
 		'unit' => array('type'=>'varchar(14)', 'label'=>'Unit', 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'visible'=>1, 'help'=>"Unit in which parameter is quantitized, if possible in SI units, e.g. 'CFU per 100 ml'",),
 		'accuracy' => array('type'=>'varchar(14)', 'label'=>'Accuracy', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'help'=>"The closeness of agreement between a test result and the accepted reference value, e.g. '0.2' or '1.5%'",),
 		'range_lower' => array('type'=>'real', 'label'=>'Range min', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>1, 'help'=>"The lower limit of the test range, e.g. '0.0'",),
