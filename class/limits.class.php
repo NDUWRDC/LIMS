@@ -139,7 +139,7 @@ class Limits extends CommonObject
 	/**
 	 * @var int    Name of subtable class that manage subtable lines
 	 */
-	public $class_element_line = 'Limitsline';
+	public $class_element_line = 'LimitsLine';
 
 	/**
 	 * @var array	List of child tables. To test if we can delete object.
@@ -151,7 +151,7 @@ class Limits extends CommonObject
 	 *               If name matches '@ClassNAme:FilePathClass;ParentFkFieldName' it will
 	 *               call method deleteByParentField(parentId, ParentFkFieldName) to fetch and delete child object
 	 */
-	protected $childtablesoncascade = array('lims_limits');
+	protected $childtablesoncascade = array('lims_limitsline');
 
 	/**
 	 * @var LimitsLine[]     Array of subtable lines
@@ -872,8 +872,8 @@ class Limits extends CommonObject
 		$this->lines = array();
 
 		$objectline = new LimitsLine($this->db);
-		$result = $objectline->fetchAll('ASC', 'position', 0, 0, array('customsql'=>'fk_limits = '.$this->id));
-
+		$result = $objectline->fetchAll('ASC', 'rang', 0, 0, array('customsql'=>'fk_limits = '.$this->id));
+		
 		if (is_numeric($result))
 		{
 			$this->error = $this->error;
@@ -1123,7 +1123,7 @@ class Limits extends CommonObject
 			$resql = $this->db->query($sql);
 			
 			if ($this->db->num_rows($resql) > 0) // Method already used
-			{	dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
+			{	//dol_syslog(__METHOD__.' check for duplicate .... resql='.var_export($resql,true), LOG_DEBUG);
 				$this->error = $langs->trans('ErrorMultipleLimitEntries');
 				setEventMessages($langs->trans('ErrorMultipleLimitEntries', $langs->transnoentitiesnoconv('MethodMethod')), null, 'errors');
 				
@@ -1193,7 +1193,7 @@ class LimitsLine extends CommonObjectLine
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>1, 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'comment'=>"Id"),
 		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>1, 'position'=>10, 'notnull'=>1, 'visible'=>4, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'searchall'=>1, 'showoncombobox'=>'1', 'comment'=>"Reference of object"),
-		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
+		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"Sample label",),
 		'fk_limits' => array('type'=>'integer:Limits:lims/class/limits.class.php', 'label'=>'Limit set', 'enabled'=>1, 'position'=>15, 'notnull'=>1, 'visible'=>1,),
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
 		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
@@ -1291,7 +1291,7 @@ class LimitsLine extends CommonObjectLine
 			$sql .= ' AND ('.implode(' '.$filtermode.' ', $sqlwhere).')';
 		}
 		if (!empty($sortfield)) {
-		//	$sql .= $this->db->order($sortfield, $sortorder);
+			$sql .= $this->db->order($sortfield, $sortorder);
 		}
 		if (!empty($limit)) {
 			$sql .= ' '.$this->db->plimit($limit, $offset);
@@ -1300,8 +1300,8 @@ class LimitsLine extends CommonObjectLine
 		$resql = $this->db->query($sql);
 		if ($resql) {
 			$num = $this->db->num_rows($resql);
-            $i = 0;
-			while ($i < min($limit, $num))
+			$i = 0;
+			while ($i < $num)
 			{
 			    $obj = $this->db->fetch_object($resql);
 
