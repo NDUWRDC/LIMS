@@ -396,7 +396,7 @@ class Samples extends CommonObject
 		return $result;
 		// Module Builder END
 		*/
-		$morewhere = '';
+		$morewhere = ' ORDER BY rang ASC';
 		$objectlineclassname = 'Results';
 		dol_syslog(__METHOD__.' objectlineclassname='.$objectlineclassname, LOG_DEBUG);
 		$objectline = new $objectlineclassname($this->db);
