@@ -945,13 +945,16 @@ class pdf_lims_testreport extends CommonDocGenerator
 		// Print limit set name
 		$limits = new Limits($this->db);
 		$limits->fetch($object->fk_limits);
-
-		if($limits)
-		{
-			$pdf->SetXY($this->margin_left, $posy);
-			$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportLimitsApplied").$limits->label, 0, 'L', 0);
-			$posy = $pdf->GetY() + 1;
+		$limitstext = $outputlangs->transnoentities("ReportLimitsApplied");
+		if(is_null($limits->label)) {
+			$limitstext .= $outputlangs->transnoentities("ReportNoLimits");
 		}
+		else {
+			$limitstext .= $limits->label;
+		}
+		$pdf->SetXY($this->margin_left, $posy);
+		$pdf->MultiCell($this->page_textwidth, 2, $limitstext, 0, 'L', 0);
+		$posy = $pdf->GetY() + 1;
 
 		// Statement: The results relate only to the items tested
 		$pdf->SetXY($this->margin_left, $posy);
@@ -989,7 +992,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 			$i++;
 		}
-		
+
 		$pdf->SetXY($this->margin_left, $posy);
 		if ($abnormalitiesfound) {
 			$pdf->MultiCell($this->page_textwidth, 2, $nonconformNOK, 0, 'L', 0);

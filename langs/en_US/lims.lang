@@ -105,6 +105,7 @@ ReportTitleMinimum = Min.
 ReportTitleMaximum = Max.
 ReportTitleAccuracy = Accuracy
 ReportLimitsApplied = The limits displayed correspond to: 
+ReportNoLimits = No limit set selected.
 ReportStatementResultsRelateOnly = The results relate only to the items tested.
 ReportStatementOnlyOwnLaboratory = If not stated otherwise tests have been conducted at our own laboratory.
 ReportTestsStatementConformity = Statement of conformity:
