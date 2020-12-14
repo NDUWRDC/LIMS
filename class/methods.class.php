@@ -974,7 +974,7 @@ class Methods extends CommonObject
 		global $conf, $langs;
 
 		$result = 0;
-		$includedocgeneration = 1;
+		$includedocgeneration = 0; // Change to 1 to have PDFs generated
 
 		$langs->load("lims@lims");
 
