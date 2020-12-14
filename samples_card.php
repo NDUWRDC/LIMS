@@ -229,7 +229,6 @@ if (empty($reshook))
 
 		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
 		$idprod = GETPOST('ProdID', 'int'); 
-		$rang = GETPOST('rang', 'int');
 		$fk_user = GETPOST('userid', 'int');
 		$fk_method = GETPOST('MethodID', 'int');
 		$testresult = GETPOST('result', 'int');
@@ -283,7 +282,7 @@ if (empty($reshook))
 			$date_end = dol_mktime(GETPOST('date_end'.$predef.'hour'), GETPOST('date_end'.$predef.'min'), GETPOST('date_end'.$predef.'sec'), GETPOST('date_end'.$predef.'month'), GETPOST('date_end'.$predef.'day'), GETPOST('date_end'.$predef.'year'));
 
 			// Insert line
-			$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user,$date_start, $date_end, $rang, '', 0, GETPOST('fk_parent_line'));
+			$result = $object->addline($idprod, $fk_method, $abnormalities, $testresult, $fk_user,$date_start, $date_end, -1, '', 0, GETPOST('fk_parent_line'));
 			dol_syslog(__METHOD__." addline idprod=".$idprod." idmethod=".$fk_method."  result=".$result, LOG_DEBUG);
 
 			

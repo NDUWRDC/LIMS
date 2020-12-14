@@ -1162,7 +1162,6 @@ class Samples extends CommonObject
 		if ($this->state == self::STATUS_DRAFT)
 		{
 			// Clean parameters
-			if (empty($rang)) $rang = 0;
 			if (empty($fk_parent_line) || $fk_parent_line < 0) $fk_parent_line = 0;
 			if (empty($fk_prev_id)) $fk_prev_id = 'null';
 			
@@ -1183,8 +1182,7 @@ class Samples extends CommonObject
 
 			// Rank to use
 			$ranktouse = $rang;
-			if ($ranktouse == -1)
-			{
+			if ($rang == -1) {
 				$rangmax = $this->line_max($fk_parent_line);
 				$ranktouse = $rangmax + 1;
 			}
