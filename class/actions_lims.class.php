@@ -515,7 +515,7 @@ class ActionsLIMS
 		// Range of Method
 		print '<td class="linecolmethodrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
 
-		// Abnormalities
+		// Abnormalities / Nonconformities
 		print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
 
 		/*/ Limit Standard lower (UNBS or other)
@@ -673,7 +673,7 @@ class ActionsLIMS
 		}
 
 		if ($object->ref != ''){
-			// Abnormalities
+			// Abnormalities / Nonconformities
 			print '<td class="linecolresultabnorm center">';
 			print ($line->abnormalities ? 'Yes' : 'None');
 			print '</td>';
@@ -817,7 +817,7 @@ class ActionsLIMS
 				// Lower and Upper Limit of Method (Measurement Range)
 				print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
 
-				// Abnormalities
+				// Abnormalities / Nonconformities
 				print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
 
 				/*/ Limit Standard lower (UNBS or other)
@@ -931,10 +931,10 @@ class ActionsLIMS
 				<input type="text" size="5" name="MethodRangeUpper" id="MethodRangeUpper" class="flat center" value="<?php echo (isset($_POST["MethodRangeUpper"]) ?GETPOST("MethodRangeUpper", 'alpha', 2) : ''); ?>" disabled>
 			</td>
 
-			<!-- Abnormalities -->
+			<!-- Abnormalities  / Nonconformities -->
 			<td class="nobottom linecolabnormalities center"><?php $coldisplay++; ?>
 				<?php 
-				echo $form->selectyesno('abnormalities', $line->abnormalities, 1);
+				echo $form->selectyesno('abnormalities', $line->abnormalities, $option = 1, $disabled = true);
 				?>
 			</td>
 
@@ -1112,7 +1112,7 @@ class ActionsLIMS
 		<td class="linecolresultabnorm center">
 			<?php
 			$coldisplay++;
-			echo $form->selectyesno('abnormalities', $line->abnormalities, 1); // Abnormalities
+			echo $form->selectyesno('abnormalities', $line->abnormalities, $option = 1, $disabled = true); // Abnormalities / Nonconformities
 			?>
 		</td>
 		<!--

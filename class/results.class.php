@@ -101,7 +101,7 @@ class Results extends CommonObject
 		'result' => array('type'=>'real', 'label'=>'Result', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'help'=>"Test result",),
 		'start' => array('type'=>'datetime', 'label'=>'Start time', 'enabled'=>1, 'position'=>35, 'notnull'=>0, 'visible'=>3, 'help'=>"Time procedure started",),
 		'end' => array('type'=>'datetime', 'label'=>'End time', 'enabled'=>1, 'position'=>40, 'notnull'=>0, 'visible'=>-1, 'help'=>"Time procedure fished",),
-		'abnormalities' => array('type'=>'integer', 'label'=>'Abnormalities', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>3,),
+		'abnormalities' => array('type'=>'integer', 'label'=>'Nonconformity', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>5, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'),),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),
 		'fk_user_creat' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserAuthor', 'enabled'=>1, 'position'=>510, 'notnull'=>1, 'visible'=>-2, 'foreignkey'=>'user.rowid',),

@@ -924,7 +924,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 	
 	/* Function shall print a note like:
 		The results relate only to the items tested.
-		If not stated otherwise tests have been conducted at our own laboratory and without any abnormality.
+		If not stated otherwise tests have been conducted at our own laboratory.
+		Statement of conformity: All results are within the respective measurement range of the method.
+		<optional:  apart from results: (Test#1), (Test#2), ...
 		<optional: Test 1,3,5 performed at __other laboratory__.
 		<optional: Test 2 showed abormality.
 	*/
@@ -953,19 +955,21 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 		// Statement: The results relate only to the items tested
 		$pdf->SetXY($this->margin_left, $posy);
-		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementA"), 0, 'L', 0);
+		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementResultsRelateOnly"), 0, 'L', 0);
 		$posy = $pdf->GetY() + 1;
 
 		// Statement: tests conducted at own laboratory without any abnormality
 		$pdf->SetXY($this->margin_left, $posy);
-		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementB"), 0, 'L', 0);
+		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementOnlyOwnLaboratory"), 0, 'L', 0);
 		$posy = $pdf->GetY() + 1;
 		
 		// If tests with 'abnormality' set
 		$nblines = count($object->lines);
 		$i = 0;
 		$abnormalitiesfound = false;
-		$abnormalities = $outputlangs->transnoentities("ReportTestsWithAbnormalities");
+		$nonconformstatement = $outputlangs->transnoentities("ReportTestsStatementConformity");
+		$nonconformOK = $nonconformstatement.' '.$outputlangs->transnoentities("ReportTestsNonconformitiesOK");
+		$nonconformNOK = $nonconformstatement.' '.$outputlangs->transnoentities("ReportTestsNonconformitiesNOK");
 		
 		// Technicians array
 		$technician_arr = array();
@@ -974,7 +978,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		while ($i < $nblines)
 		{
 			if ($object->lines[$i]->abnormalities){
-				$abnormalities .= "(" . ($i+1) . ")";
+				$nonconformNOK .= "(" . ($i+1) . ")";
 				$abnormalitiesfound = true;
 			}
 			
@@ -985,11 +989,15 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 			$i++;
 		}
-		if ($abnormalitiesfound){
-			$pdf->SetXY($this->margin_left, $posy);
-			$pdf->MultiCell($this->page_textwidth, 2, $abnormalities, 0, 'L', 0);
-			$posy = $pdf->GetY() + 1;
+		
+		$pdf->SetXY($this->margin_left, $posy);
+		if ($abnormalitiesfound) {
+			$pdf->MultiCell($this->page_textwidth, 2, $nonconformNOK, 0, 'L', 0);
 		}
+		else {
+			$pdf->MultiCell($this->page_textwidth, 2, $nonconformOK, 0, 'L', 0);
+		}
+		$posy = $pdf->GetY() + 1;
 		
 		$posy_column = $posy + 2;
 		// Show responsible person
