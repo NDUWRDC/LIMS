@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - ChangeLog added
 ### Changed
+- BREAKING: sql files changed, update from 0.1.0 to 0.2.0 not possible, fresh install required
 - Samples: Client sampling person is now one of the options empty-yes-no
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
