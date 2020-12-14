@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: List Equipment view
 - Equipment: Prefix for object reference can be defined via Settings.
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
+- ChangeLog added
+### Changed
+- Samples: Client sampling person is now one of the options empty-yes-no
+### Removed
+- Samples: At creation the option to create a contact for client sample taker 
+### Fixed
+- Samples: Change order of lines (results) wasn't working
+- Limits: Change order of lines (results) wasn't working
+- Samples: Cloning wasn't working
+- Samples: Label at header wasn't ediable with pen-icon
+- Methods: In list view next|previous wasn't working properly
 
 ## [0.1.0](https://github.com/NDUWRDC/LIMS/releases/tag/v0.1) - 2020-09-16
 ### Added
