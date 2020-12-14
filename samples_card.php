@@ -172,7 +172,8 @@ if (empty($reshook))
 		$object->update($user);
 	}
 	if ($action == 'update') {
-		if (GETPOST('samplingbyclient', 'int') && GETPOST('fk_user', 'int')) {
+		dol_syslog('samplingbyclient='.GETPOST('samplingbyclient', 'int').' fk_user='.GETPOST('fk_user', 'int'), LOG_DEBUG);
+		if (GETPOST('samplingbyclient', 'int')==1 && GETPOST('fk_user', 'int')!=-1) {
 			$langs->load("errors");
 			$object->error = $langs->trans('ErrorSamplingPersonSetTwice');
 			setEventMessages($langs->trans("ErrorSamplingPersonSetTwice"), null, 'errors');
