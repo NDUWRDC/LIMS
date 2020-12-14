@@ -1268,6 +1268,38 @@ class Samples extends CommonObject
 			if ($result < 0) setEventMessages($this->error, $this->errors, 'errors');
 		}
 	}
+
+	/**
+	 *  Check whether a result is conform or nonconform to the method applied.
+	 *
+	 *  @param	    float 		$testresult		Test result
+	 *  @param		int 		$fk_method		Method applied to get test result
+	 *  @return     int         				<0 if error, 1 if nonconform, 0 if conform
+	 */
+	public function checkConformity($testresult, $fk_method)
+	{
+		if (!empty($fk_method)) {
+			$method = new Methods($this->db);
+			$result = $method->fetch($fk_method);
+			if ($result<1) {
+				return -1;
+			}
+		}
+		else {
+			return -1;
+		}
+		
+		if ( (!is_null($method->range_lower) && $testresult < $method->range_lower) || (!is_null($method->range_upper) && $testresult > $method->range_upper) ) {
+			$conform = 1;	
+		} 
+		else {
+			$conform = 0;
+		}
+
+		dol_syslog(__METHOD__.' result='.$testresult.' fk_method='.$fk_method.' conformity='.$conform, LOG_DEBUG);
+
+		return $conform;
+	}
 }
 
 

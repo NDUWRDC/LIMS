@@ -664,8 +664,9 @@ class ActionsLIMS
 			// Range
 			print '<td class="linecolrange center"';
 			// add color if result out of measurement range
-			if ( (!is_null($method->range_lower) && $line->result < $method->range_lower) || (!is_null($method->range_upper) && $line->result > $method->range_upper) )
-			print ' style="background-color: rgb(234,228,225)"'; //#butactiondeletebg
+			if ( (!is_null($method->range_lower) && $line->result < $method->range_lower) || (!is_null($method->range_upper) && $line->result > $method->range_upper) ) {
+				print ' style="background-color: rgb(234,228,225)"'; //#butactiondeletebg
+			}
 			print '>';
 			print $method->range_lower.' - '.$method->range_upper;
 			print '</td>';
@@ -675,7 +676,7 @@ class ActionsLIMS
 		if ($object->ref != ''){
 			// Abnormalities / Nonconformities
 			print '<td class="linecolresultabnorm center">';
-			print ($line->abnormalities ? 'Yes' : 'None');
+			print ($line->abnormalities ? $langs->trans('Yes') : $langs->trans('None'));
 			print '</td>';
 		}
 
@@ -1058,6 +1059,7 @@ class ActionsLIMS
 
 			<input type="hidden" name="lineid" value="<?php echo $line->id; ?>">
 			<input type="hidden" id="fk_parent_line" name="fk_parent_line" value="<?php echo $line->fk_parent_line; ?>">
+			<input type="hidden" id="MethodID" name="MethodID" value="<?php echo $line->fk_method; ?>">
 			<?php
 
 			$text = $product->getNomUrl(1);		// PRODUCT->REF 

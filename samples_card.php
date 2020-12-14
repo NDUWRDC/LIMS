@@ -233,7 +233,7 @@ if (empty($reshook))
 		$fk_user = GETPOST('userid', 'int');
 		$fk_method = GETPOST('MethodID', 'int');
 		$testresult = GETPOST('result', 'int');
-		$abnormalities = GETPOST('abnormalities');
+		//$abnormalities = GETPOST('abnormalities');
 		$status = GETPOST('status');
 		
 		// In case fk_user is not set, set it to current user->id
@@ -260,13 +260,18 @@ if (empty($reshook))
 		}
 
 		// ERROR HANDLING
-		if ($result == '') {
+		// check for required fields
+		if ($testresult == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
 			$error++;
 		}
-		
+		// check if result conformity: -1...error, 0...result within method's range, 1 result outside method's range
+		$abnormalities = $object->checkConformity($testresult, $fk_method);
+		if ($abnormalities < 0) {
+			$error++;
+		}
 		// No Errors -> Add line
-		if (!$error && ($result >= 0) && !empty($idprod)) {
+		if (!$error && !empty($idprod)) {
 			$ret = $object->fetch($id);
 			if ($ret < 0) {
 				dol_print_error($db, $object->error);
@@ -599,6 +604,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	// Update line
 	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
 	{
+		dol_syslog('action=updateline ...1',LOG_DEBUG);
 		$langs->load('errors');
 		$error = 0;
 		
@@ -616,7 +622,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		//(0 = get then post(default), 1 = only get, 2 = only post, 3 = post then get)
 		$fk_user = GETPOST('userid', 'int');
 		$testresult = GETPOST('result', 'int');
-		$abnormalities = GETPOST('abnormalities');
+		//$abnormalities = GETPOST('abnormalities');
+		$fk_method = GETPOST('MethodID', 'int');
 		
 		// Extrafields
 		$extralabelsline = $extrafields->fetch_name_optionals_label($object->table_element_line);
@@ -628,24 +635,31 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				unset($_POST["options_".$key.$predef]);
 			}
 		}
-
+		dol_syslog('action=updateline ...2',LOG_DEBUG);
+		
 		// Check parameters
 		if ($date_start > $date_end) {
 				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
-				return -1;
+				$error++;
 		}
-
+		// check if result conformity: -1...error, 1...result within method's range, 0 result outside method's range
+		$abnormalities = $object->checkConformity($testresult, $fk_method);
+		if ($abnormalities < 0) {
+			$error++;
+		}
+		dol_syslog('action=updateline ...3',LOG_DEBUG);
+		
 		// ERROR HANDLING
-		/*
-		if ($result == '') {
+		if ($testresult == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
 			$error++;
-		}*/
+		}
 		$obj = new Results($object->db);
 		$obj->fetch(GETPOST('lineid', 'int'));
 		
 		if (is_null($obj->ref))
 			$error++;
+		dol_syslog('action=updateline ...4',LOG_DEBUG);
 		
 		// No Errors -> Update line
 		if (!$error) 
