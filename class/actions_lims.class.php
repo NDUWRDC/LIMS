@@ -108,27 +108,23 @@ class ActionsLIMS
 		$error = 0; // Error counter
 		dol_syslog(get_class($this).'::doActions action='.$action.' element='.$object->element, LOG_DEBUG);
 
-		/* print_r($parameters); print_r($object); echo "action: " . $action; */
-		{
-			// /lims/equipment_list.php => GENERATE button clicked
-			// No Equipment-object is selected (list view) -> we select first in list
-			// to make sure Equipment::setDocModel is successful-
-			if ($action=='builddoc' && $object->element=='equipment')
-			{
-				$records = array();
-				$records = $object->fetchAll();
-
-				if(count($records) < 1)
-				{
-					$error++;
-					// TODO: Message to screen "No equipment listed."
-				}
-				else
-				{
-					// 1st available object is picked
-					$object->fetch($records['1']->id);
-					if (!$object->model_pdf)
-						$object->model_pdf = $conf->global->EQUIPMENT_LIST_PDF;
+		// /lims/equipment_list.php => GENERATE button clicked
+		// No Equipment-object is selected (list view) -> we select first in list
+		// to make sure Equipment::setDocModel is successful-
+		if ($action=='builddoc' && $object->element=='equipment') {
+			$records = array();
+			$records = $object->fetchAll();
+			$obj_copy = new Equipment($object->db);
+			$obj_copy = reset($records); // set internal pointer to first element
+			if(!$obj_copy) {
+				$error++;
+				// TODO: Message to screen "No equipment listed."
+			}
+			else {
+				// 1st available object is picked
+				$object->fetch($obj_copy->id);
+				if (!$object->model_pdf) {
+					$object->model_pdf = $conf->global->EQUIPMENT_LIST_PDF;
 				}
 			}
 		}
