@@ -142,8 +142,9 @@ class modLIMS extends DolibarrModules
 			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
 			4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Pre-fix for Limit objects', 1, 'allentities', 1),
 			5 => array('LIMS_PREFIX_EQUIPMENT', 'chaine', 'EQ', 'Pre-fix for Equipment objects', 1, 'allentities', 1),
-			6 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template for Sample and Test Report', 1, 'allentities', 1), //copied from Crabe. Original used for invoices.
-			7 => array('LIMS_SUBPERMCATEGORY_FOR_DOCUMENTS', 'chaine', 'report', 'Used to access reports.', 1, 'allentities', 1),
+			//6 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template for Sample and Test Report', 1, 'allentities', 1), //copied from Crabe. Original used for invoices.
+			//7 => array('EQUIPMENT_LIST_PDF', 'chaine', 'standard_equipmentlist', 'PDF template for Calibration Report', 1, 'allentities', 1),
+			//8 => array('LIMS_SUBPERMCATEGORY_FOR_DOCUMENTS', 'chaine', 'report', 'Used to access reports.', 1, 'allentities', 1),
         );
 		// Some keys to add into the overwriting translation tables
 		/*$this->overwrite_translation = array(
