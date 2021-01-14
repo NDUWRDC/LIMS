@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - BREAKING: sql files changed, update from 0.1.0 to 0.2.0 not possible, fresh install required
 - Samples: Client sampling person is now one of the options empty-yes-no
+- Methods: At creation (New Method) 'Status' is not visible
+- Limits: At creation (New Limit Set) 'Status' is not visible
 - Results: 'Abnormality' is relabeld to 'Nonconformity'
 - Test Report: Statement of Conformity based on the information whether all results are within the respective measurement range of the method.
 ### Removed
@@ -28,7 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Samples: Change order of lines (results) wasn't working
 - Limits: Change order of lines (results) wasn't working
 - Samples: Cloning wasn't working
-- Samples: Label at header wasn't ediable with pen-icon
+- Samples: Label at header wasn't editable with pen-icon
 - Methods: In list view next|previous wasn't working properly
 
 ## [0.1.0](https://github.com/NDUWRDC/LIMS/releases/tag/v0.1) - 2020-09-16
