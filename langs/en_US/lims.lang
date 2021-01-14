@@ -30,15 +30,15 @@ ModuleLIMSkeywords = LIMS, ISO-17025, Laboratory, Management
 LIMSSetup = LIMS setup
 Settings = Settings
 LIMSSetupPage = LIMS setup page
-LIMS_PREFIX_SAMPLES = Pre-fix for samples references
+LIMS_PREFIX_SAMPLES = Prefix for samples references
 LIMS_PREFIX_SAMPLESTooltip = Set to 'SA' to get: SA-2004-0001
-LIMS_PREFIX_METHODS = Pre-fix for methods references
+LIMS_PREFIX_METHODS = Prefix for methods references
 LIMS_PREFIX_METHODSTooltip = Set to 'ME' to get: ME-2004-0001
-LIMS_PREFIX_RESULTS = Pre-fix for results references
+LIMS_PREFIX_RESULTS = Prefix for results references
 LIMS_PREFIX_RESULTSTooltip = Set to 'RE' to get: RE-2004-0001
-LIMS_PREFIX_LIMITS = Pre-fix for limits references
+LIMS_PREFIX_LIMITS = Prefix for limits references
 LIMS_PREFIX_LIMITSTooltip = Set to 'LI' to get: LI-2004-0001
-LIMS_PREFIX_EQUIPMENT = Pre-fix for equipment references
+LIMS_PREFIX_EQUIPMENT = Prefix for equipment references
 LIMS_PREFIX_EQUIPMENTTooltip = Set to 'EQ' to get: EQ-2004-0001
 #
 # About page

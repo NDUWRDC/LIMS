@@ -137,11 +137,11 @@ class modLIMS extends DolibarrModules
 		//                             2 => array('LIMS_MYNEWCONST2', 'chaine', 'myvalue', 'This is another constant to add', 0, 'current', 1)
 		// );
 		$this->const = array(
-			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Pre-fix for Sample objects', 1, 'allentities', 1),
-			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Pre-fix for Method objects', 1, 'allentities', 1),
-			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Pre-fix for Result objects', 1, 'allentities', 1),
-			4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Pre-fix for Limit objects', 1, 'allentities', 1),
-			5 => array('LIMS_PREFIX_EQUIPMENT', 'chaine', 'EQ', 'Pre-fix for Equipment objects', 1, 'allentities', 1),
+			1 => array('LIMS_PREFIX_SAMPLES', 'chaine', 'SA', 'Prefix for Sample objects', 1, 'allentities', 1),
+			2 => array('LIMS_PREFIX_METHODS', 'chaine', 'ME', 'Prefix for Method objects', 1, 'allentities', 1),
+			3 => array('LIMS_PREFIX_RESULTS', 'chaine', 'RE', 'Prefix for Result objects', 1, 'allentities', 1),
+			4 => array('LIMS_PREFIX_LIMITS', 'chaine', 'LI', 'Prefix for Limit objects', 1, 'allentities', 1),
+			5 => array('LIMS_PREFIX_EQUIPMENT', 'chaine', 'EQ', 'Prefix for Equipment objects', 1, 'allentities', 1),
 			//6 => array('SAMPLES_ADDON_PDF', 'chaine', 'lims_testreport', 'PDF template for Sample and Test Report', 1, 'allentities', 1), //copied from Crabe. Original used for invoices.
 			//7 => array('EQUIPMENT_LIST_PDF', 'chaine', 'standard_equipmentlist', 'PDF template for Calibration Report', 1, 'allentities', 1),
 			//8 => array('LIMS_SUBPERMCATEGORY_FOR_DOCUMENTS', 'chaine', 'report', 'Used to access reports.', 1, 'allentities', 1),

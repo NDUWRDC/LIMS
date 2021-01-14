@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: Define maintainance/calibration intervall
 - Equipment: Each Event is logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
 - Equipment: List Equipment view
-- Equipment: Prefix for object reference can be defined via Settings.
+- Settings: Prefix for Equipment object references can be changed. Default='EQ'
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - ChangeLog added
 ### Changed

@@ -30,6 +30,12 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * Results with indication if result is out of the limit range or out of the method's measurement range
   * Names of person(s) responsible and manager who authorized the sample.
 * Samples can be created from a validated invoice (module INVOICES required): Details on customer and products which are part of Equipment will be added to the sample.
+* Settings: Prefix for object references can be changed. 
+  * Samples, default='SA' => SA-2104-0001 (YYMM-nnnn)
+  * Results, default='RE' => RE-2104-0001
+  * Methods, default='ME' => ME-2104-0001
+  * Equipment, default='EQ' => EQ-2104-0001
+  * Limits, default='LI' => LI-2104-0001
 <!--
 ![Screenshot lims](img/screenshot_lims.png?raw=true "LIMS"){imgmd}
 -->
