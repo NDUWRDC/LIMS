@@ -164,3 +164,14 @@ EquipmentListReportTblHeadIntervall = Interval
 EquipmentListReportTblHeadLastDate = Last on
 EquipmentListReportTblHeadLastUser = By user
 EquipmentListReportTblHeadStatus = Status
+
+#
+# Dictionary LIMS Units
+#
+CFU = Colony Forming Units / 100ml
+TCU = True Color Units
+PH = pH
+CON = micro Siemens / centimeter
+GL = gramm / liter
+MGL = milli gramm / liter
+NTU = Naphthalometric Turbidity Unit 

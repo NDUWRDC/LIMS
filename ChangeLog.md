@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: List Equipment view
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
+- Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
 - ChangeLog added
 ### Changed
 - BREAKING: sql files changed, update from 0.1.0 to 0.2.0 not possible, fresh install required

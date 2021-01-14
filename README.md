@@ -12,7 +12,7 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * A Calibration and Maintenance Report (Doc template 'standard_equipmentlist')
 * Manage Test Methods, where each method has
   * A link to an equipment
-  * A unit, e.g. mS/cm
+  * A unit, e.g. µS/cm
   * Accuracy
   * Measurement Range
   * Resolution of reading
@@ -36,6 +36,7 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * Methods, default='ME' => ME-2104-0001
   * Equipment, default='EQ' => EQ-2104-0001
   * Limits, default='LI' => LI-2104-0001
+* Dictionary for management of units
 <!--
 ![Screenshot lims](img/screenshot_lims.png?raw=true "LIMS"){imgmd}
 -->
