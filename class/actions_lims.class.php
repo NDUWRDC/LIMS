@@ -1380,6 +1380,14 @@ class ActionsLIMS
 				'json'
 			);
 		});
+		
+		$(function() {
+				
+			console.log("Page is loaded, fields to be updated");
+			
+			$("#MethodID").change();	// Update other elements with new method details
+			$("#MethodID").focus();		// focus on method selection
+		});
 		</script>
 		<!-- END ObjectlineCreate Sample LIMS-->
 		<?php
