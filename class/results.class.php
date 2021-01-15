@@ -26,6 +26,7 @@
 require_once DOL_DOCUMENT_ROOT.'/core/class/commonobject.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/societe/class/societe.class.php';
 //require_once DOL_DOCUMENT_ROOT . '/product/class/product.class.php';
+dol_include_once('/lims/class/methods.class.php', 'Methods');
 
 /**
  * Class for Results
@@ -99,6 +100,7 @@ class Results extends CommonObject
 		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'Technician', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>3, 'index'=>1, 'help'=>"Responsible lab technician",),
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'Test method', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Parameter tested using a specific method",),
 		'result' => array('type'=>'real', 'label'=>'Result', 'enabled'=>1, 'position'=>30, 'notnull'=>1, 'visible'=>1, 'help'=>"Test result",),
+		'unit' => array('type'=>'varchar(10)', 'label'=>'Unit', 'enabled'=>1, 'position'=>33, 'notnull'=>0, 'noteditable'=>1, 'visible'=>2, 'index'=>0, 'help'=>"Unit",),
 		'start' => array('type'=>'datetime', 'label'=>'Start time', 'enabled'=>1, 'position'=>35, 'notnull'=>0, 'visible'=>3, 'help'=>"Time procedure started",),
 		'end' => array('type'=>'datetime', 'label'=>'End time', 'enabled'=>1, 'position'=>40, 'notnull'=>0, 'visible'=>-1, 'help'=>"Time procedure fished",),
 		'abnormalities' => array('type'=>'integer', 'label'=>'Nonconformity', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>5, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'),),
@@ -116,6 +118,7 @@ class Results extends CommonObject
 	public $fk_user;
 	public $fk_method;
 	public $result;
+	public $unit;
 	public $start;
 	public $end;
 	public $abnormalities;
@@ -1019,6 +1022,18 @@ class Results extends CommonObject
 		$this->db->commit();
 
 		return $error;
+	}
+
+	public function getUnit($fk_method='')
+	{
+		$method = new Methods($this->db);
+
+		if(empty($fk_method))
+			$fk_method = $this->fk_method;
+
+		$method->fetch($fk_method);
+		
+		return $method->getUnit();
 	}
 }
 

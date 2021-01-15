@@ -23,6 +23,7 @@ CREATE TABLE llx_lims_results(
 	fk_user integer NOT NULL,
 	fk_method integer NOT NULL, 
 	result real NOT NULL, 
+	unit varchar(10),
 	start datetime, 
 	end datetime, 
 	abnormalities integer NOT NULL, 

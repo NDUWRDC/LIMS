@@ -502,6 +502,9 @@ while ($i < ($limit ? min($num, $limit) : $num))
 	// Store properties in $object
 	$object->setVarsFromFetchObj($obj);
 
+	// Fetch values from other tables		
+	$object->unit = $object->getUnit();
+	
 	// Show here line of result
 	print '<tr class="oddeven">';
 	foreach ($object->fields as $key => $val)
