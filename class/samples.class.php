@@ -1363,7 +1363,7 @@ class SamplesLine extends CommonObjectLine
 	public $methods_label;			// Method label				@ var varchar(255)
 	public $methods_standard;		// Method standard			@ var varchar(128)
 	public $methods_fk_product;		// Pointer to sales item	@ var int
-	public $methods_unit;			// Unit						@ var varchar(14)
+	public $methods_fk_unit;		// Pointer to Unit			@ var int
 	public $methods_accuracy;		// Accuracy					@ var varchar(14)
 	public $methods_lower_range;	// Lower range				@ var real
 	public $methods_upper_range;	// Upper range				@ var real
@@ -1399,7 +1399,7 @@ class SamplesLine extends CommonObjectLine
 		$sql .= ' fd.rang,';
 		$sql .= ' fd.fk_user_creat, fd.fk_user_modif,';
 		$sql .= ' m.ref as methods_ref, m.label as methods_label, m.standard as methods_standard,';
-		$sql .= ' m.unit as methods_unit, m.accuracy as methods_accuracy,';
+		$sql .= ' m.fk_unit as methods_unit, m.accuracy as methods_accuracy,';
 		$sql .= ' m.range_lower as methods_lower_range, m.range_upper as methods_upper_range, m.resolution as methods_resolution';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_results as fd';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_methods as m ON fd.fk_method = m.rowid';
@@ -1426,7 +1426,7 @@ class SamplesLine extends CommonObjectLine
 			$this->methods_ref			 = $objp->methods_ref;
 			$this->methods_label		 = $objp->methods_label;
 			$this->methods_standard		 = $objp->methods_standard;
-			$this->methods_unit			 = $objp->methods_unit;
+			$this->methods_fk_unit		 = $objp->methods_fk_unit;
 			$this->methods_accuracy		 = $objp->methods_accuracy;
 			$this->methods_lower_range	 = $objp->methods_lower_range;
 			$this->methods_upper_range	 = $objp->methods_upper_range;

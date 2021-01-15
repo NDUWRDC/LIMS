@@ -22,7 +22,7 @@ CREATE TABLE llx_lims_methods(
 	fk_soc integer, 
 	fk_product integer NOT NULL,
 	standard varchar(128),	
-	unit varchar(14) NOT NULL,
+	fk_unit integer NOT NULL,
 	accuracy varchar(14) NOT NULL, 
 	range_lower real NOT NULL, 
 	range_upper real NOT NULL, 

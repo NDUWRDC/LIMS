@@ -98,7 +98,7 @@ if (!empty($action) && $action == 'fetch' && !empty($idmethod) && !empty($idsamp
 		$minmax = $method->getLimits($sample->fk_limits);
 		$limitmin = $minmax['min'];
 		$limitmax = $minmax['max'];
-		$unit = $method->unit;
+		$unit = $method->getUnit();
 	}
 	
 	$outjson = array();

@@ -709,7 +709,7 @@ class ActionsLIMS
 		if ($method->ref != ''){
 			// Units
 			print '<td class="linecolmethodunit left">';
-			print $method->unit;
+			print $method->getUnit();
 			print '</td>';
 		}
 		
@@ -1145,7 +1145,7 @@ class ActionsLIMS
 		<td class="linecolmethodunit left">
 			<?php
 			$coldisplay++;
-			print $method->unit;	// Units
+			print $method->getUnit(); // Unit
 			?>
 		</td>
 		<td class="center valignmiddle" colspan="<?php echo $colspan; ?>"><?php $coldisplay += $colspan; ?>
@@ -1474,7 +1474,7 @@ class ActionsLIMS
 
 			// Units
 			print '<td class="linecolmethodunit left">';
-			print $method->unit;
+			print $method->getUnit();
 			print '</td>';
 		}
 			// Lower Limit
@@ -1612,7 +1612,7 @@ class ActionsLIMS
 		<td class="linecolmethodunit left">
 			<?php
 			$coldisplay++;
-			print $method->unit;	// Units
+			print $method->getUnit();	// Units
 			?>
 		</td>
 		

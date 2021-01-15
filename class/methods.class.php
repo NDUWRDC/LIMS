@@ -98,7 +98,7 @@ class Methods extends CommonObject
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'External Laboratory', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
 		'standard' => array('type'=>'varchar(128)', 'label'=>'Standard', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'help'=>"Reference to standard, e.g. 'ISO 9308-1:2014'",),
 		'fk_product' => array('type'=>'integer:Equipment:lims/class/equipment.class.php:1:category=3', 'foreignkey'=>'lims_equipment.fk_product', 'label'=>'Parameter', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
-		'unit' => array('type'=>'varchar(14)', 'label'=>'Unit', 'enabled'=>1, 'position'=>60, 'notnull'=>1, 'visible'=>1, 'help'=>"Unit in which parameter is quantitized, if possible in SI units, e.g. 'CFU per 100 ml'",),
+		'fk_unit' => array('type'=>'sellist:lims_units:short_label', 'label'=>'Unit', 'enabled'=>1, 'position'=>59, 'notnull'=>1, 'visible'=>1, 'help'=>"Unit in which parameter is quantitized, is a value of dictionary LIMS Units",),
 		'accuracy' => array('type'=>'varchar(14)', 'label'=>'Accuracy', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'help'=>"The closeness of agreement between a test result and the accepted reference value, e.g. '0.2' or '1.5%'",),
 		'range_lower' => array('type'=>'real', 'label'=>'Range min', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>1, 'help'=>"The lower limit of the test range, e.g. '0.0'",),
 		'range_upper' => array('type'=>'real', 'label'=>'Range max', 'enabled'=>1, 'position'=>90, 'notnull'=>1, 'visible'=>1, 'help'=>"The upper limit of the test range, e.g. '14.0'",),
@@ -120,7 +120,7 @@ class Methods extends CommonObject
 	public $label;
 	public $fk_soc;
 	public $fk_product;
-	public $unit;
+	public $fk_unit;
 	public $accuracy;
 	public $range_lower;
 	public $range_upper;
@@ -1055,6 +1055,24 @@ class Methods extends CommonObject
 		}
 		else
 			return -1;
+	}
+
+	public function getUnit($fk_unit='')
+	{
+		if (empty($fk_unit))
+			$fk_unit = $this->fk_unit;
+		
+		$sql = 'SELECT short_label FROM ';
+		$sql .= MAIN_DB_PREFIX.'lims_units';
+		$sql .= ' WHERE rowid='.$fk_unit;
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$obj = $this->db->fetch_object($resql);
+			return $obj->short_label;
+		} else {
+			return -1;
+		}
 	}
 }
 
