@@ -682,7 +682,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$pdf->SetFont('', '', $default_font_size - 1); // in any case reset text style
 
 					// Unit
-					$unit = $method->unit;
+					$unit = $method->getUnit();
 					$pdf->SetXY($this->posxunit, $curY);
 					$cellheight = $pdf->getStringHeight($this->width_result,$unit);
 					$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
