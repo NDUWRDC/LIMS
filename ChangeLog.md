@@ -14,11 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: Each Event is logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
 - Equipment: List Equipment view
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
+- Results: List view has 'Units' added
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
 - ChangeLog added
 ### Changed
-- BREAKING: sql files changed, update from 0.1.0 to 0.2.0 not possible, fresh install required
+- __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
 - Samples: Client sampling person is now one of the options empty-yes-no
 - Methods: At creation (New Method) 'Status' is not visible
 - Limits: At creation (New Limit Set) 'Status' is not visible
@@ -53,4 +54,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Reports: Test Report on the basis of ISO 17025 (Doc template 'lims_testreport') at Samples
 - Settings: Prefixes for object references (Methods, Samples, Results, Limits)
 - User rights: 3 basic rights for all objects => View / Create,Update / Validate,Delete
-- User rights: One additional rigth to view reports
+- User rights: One additional right to view reports

@@ -2,14 +2,14 @@
 
 ## Features v0.2.0
 
-Manage your samples and generate test reports following ISO 17025:2017: 
+__Manage your samples and generate test reports following ISO 17025:2017__ 
 * Manage Equipment, where each equipment has
   * A link to an existing product (Module PRODUCTS required) or service (Module SERVICES required)
   * A category such as 'Equipment', 'Consumable', 'Facility', 'Sales Item'
   * Options 'No calibration, or maintainance', 'maintainance', 'calibration'
   * A maintainance/calibration intervall
   * Events  logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
-  * A Calibration and Maintenance Report (Doc template 'standard_equipmentlist')
+* Calibration and Maintenance Report (Doc template 'standard_equipmentlist') listing all equipment available at ```LIMS - Equipment - List Equipment```
 * Manage Test Methods, where each method has
   * A link to an equipment
   * A unit, e.g. µS/cm
@@ -21,15 +21,16 @@ Manage your samples and generate test reports following ISO 17025:2017:
   * Minimum and Maximum, where one value may be NULL
 * Manage Samples, where each sample has
   * A link to a customer (Module THIRD PARTIES required)
+  * A link to a customer invoice (Module INVOICES required)
   * Details on the sample, such as sampling place and time, sampling person, volume, etc.
   * Muliple tests, where each test is linked to one method; each test is linked to the responsible person
   * Nonconformities
   * A limit set applied to the sample results
-* Test Report
+* Test Report (Doc template 'lims_testreport') available at ```LIMS - Samples - Samples List -> Select Sample -> Card Tab```
   * Sample details
   * Results with indication if result is out of the limit range or out of the method's measurement range
   * Names of person(s) responsible and manager who authorized the sample.
-* Samples can be created from a validated invoice (module INVOICES required): Details on customer and products which are part of Equipment will be added to the sample.
+* Samples can be created from a validated invoice (module INVOICES required): Details on customer and products which are part of Equipment will be added to the sample. Products/Services listed on the invoice which are part of LIMS Equipment-Sales Items are added as lines (tests) to the sample.
 * Settings: Prefix for object references can be changed. 
   * Samples, default='SA' => SA-2104-0001 (YYMM-nnnn)
   * Results, default='RE' => RE-2104-0001
