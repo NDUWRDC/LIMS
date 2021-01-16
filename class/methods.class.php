@@ -699,10 +699,13 @@ class Methods extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Methods").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
+		if (isset($this->label)) {
+			$label .= '<br><b>'.$langs->trans('MethodsLabel').':</b> '.$this->label;
+		}
 		if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
-
+		
 		$url = dol_buildpath('/lims/methods_card.php', 1).'?id='.$this->id;
 
 		if ($option != 'nolink')

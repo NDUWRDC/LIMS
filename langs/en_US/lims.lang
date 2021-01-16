@@ -81,6 +81,10 @@ TestingTechnician = Test perfomed by:
 ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
 ErrorSamplingPersonSetTwice = If 'Sampling by client' is set to 'Yes' the laboratory sampling person must not be selected
 #
+# Methods
+#
+MethodsLabel = Label
+#
 # Report
 #
 PdfSampleTitle = Test Report
@@ -134,6 +138,7 @@ createsample = CREATE SAMPLE
 #
 # Equipment page
 #
+EquipmentLabel = Label
 EquipmentEquipment = Equipment
 EquipmentMaintainRevoke = Revoke Readiness
 EquipmentMaintainRenew = Renew Readiness
