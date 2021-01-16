@@ -561,7 +561,7 @@ class ActionsLIMS
 		$method->fetch($line->fk_method);
 		
 		$equipment = new Equipment ($object->db);
-		$equipment->fetch($method->fk_product);
+		$equipment->fetch($method->fk_equipment);
 
 		$product = new Product ($object->db);
 		$product->fetch($equipment->fk_product);
@@ -591,9 +591,9 @@ class ActionsLIMS
 			
 			$text = $product->getNomUrl(1);
 			
-			if ($method->fk_product > 0)
+			if ($method->fk_equipment > 0)
 			{	
-				//dol_syslog('$method->fk_product > 0', LOG_DEBUG);
+				//dol_syslog('$method->fk_equipment > 0', LOG_DEBUG);
 
 				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 			}
@@ -633,11 +633,11 @@ class ActionsLIMS
 			}
 			*/
 			// Add description in form
-			if ($method->fk_product > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
+			if ($method->fk_equipment > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 			{
-				//dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+				//dol_syslog('Add description in form $line->fk_method->fk_equipment='.$method->fk_equipment, LOG_DEBUG);
 				//print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
-				
+
 				print (!empty($method->label)) ? ' - '.$method->getNomUrl(1,'',0,'',-1,$method->label) : '';
 			}
 		//}
@@ -866,13 +866,15 @@ class ActionsLIMS
 				
 				// select
 				//$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, 0, 1, 2, '', 0, array(), $buyer->id, '1', 0, 'maxwidth500', 1, '', GETPOST('combinations', 'array'));
-				
-				$sql = 'SELECT p.rowid, p.ref, p.label, p.description,';
-				$sql .= ' m.rowid as mrowid, m.ref as mref, m.label as mlabel, m.fk_product';
+
+				$sql = 'SELECT e.rowid as rowid, e.ref as eref, e.label as elabel, e.description as edescription, e.fk_product,';
+				$sql .= ' m.rowid as mrowid, m.ref as mref, m.label, m.fk_equipment,';
+				$sql .= ' p.rowid as prowid, p.ref, p.label as plabel, p.description as pdescription';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as m';
-				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON m.fk_product=p.rowid';
-				$sql .= ' GROUP BY p.rowid';  // don't show duplicates
-				
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_equipment as e ON e.rowid=m.fk_equipment'; 
+				$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON p.rowid=e.fk_product';
+				$sql .= ' GROUP BY e.rowid';  // don't show duplicates
+
 				$nameID='ProdID'; 
 				$idprod = lims_functions::DropDownProduct($sql, $nameID, $object, 'ref', '', '');
 				
@@ -880,9 +882,9 @@ class ActionsLIMS
 				
 				if ($idprod > 0){
 					
-					$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
+					$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_equipment';
 					$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
-					$sql .= ' WHERE fk_product='.$idprod;
+					$sql .= ' WHERE fk_equipment='.$idprod;
 					
 					$nameID='MethodID';
 					
@@ -1039,11 +1041,10 @@ class ActionsLIMS
 		
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
-		//dol_syslog(__METHOD__.' line='.var_export($line, true), LOG_DEBUG);
-
+		$equipment = new Equipment ($object->db);
+		$equipment->fetch($method->fk_equipment);
 		$product = new Product ($object->db);
-		$product->fetch($method->fk_product);
-		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		$product->fetch($equipment->fk_product);
 		
 		print "<!-- BEGIN ObjectlineEdit Samples LIMS -->\n";
 		$coldisplay = 0;
@@ -1320,7 +1321,7 @@ class ActionsLIMS
 				// select
 				//$form->select_produits(GETPOST('idprod'), 'idprod', $filtertype, $conf->product->limit_size, 0, 1, 2, '', 0, array(), $buyer->id, '1', 0, 'maxwidth500', 1, '', GETPOST('combinations', 'array'));
 				
-				$sql = 'SELECT rowid , ref, label, fk_product';
+				$sql = 'SELECT rowid , ref, label, fk_equipment';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods';
 				
 				$nameID='MethodID'; 
@@ -1427,9 +1428,9 @@ class ActionsLIMS
 			
 			$text = $method->getNomUrl(1);
 			
-			if ($method->fk_product > 0)
+			if ($method->fk_equipment > 0)
 			{	
-				//dol_syslog('$method->fk_product > 0', LOG_DEBUG);
+				//dol_syslog('$method->fk_equipment > 0', LOG_DEBUG);
 
 				print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 			}
@@ -1455,9 +1456,9 @@ class ActionsLIMS
 			}
 
 			// Add description in form
-			if ($method->fk_product > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
+			if ($method->fk_equipment > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 			{
-				//dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+				//dol_syslog('Add description in form $line->fk_method->fk_equipment='.$method->fk_equipment, LOG_DEBUG);
 				//print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
 				
 				print (!empty($method->label)) ? ' - '.dol_htmlentitiesbr($method->label) : '';
@@ -1573,11 +1574,10 @@ class ActionsLIMS
 		
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
-		//dol_syslog(__METHOD__.' ABC line='.var_export($line, true), LOG_DEBUG);
-
+		$equipment = new Equipment ($object->db);
+		$equipment->fetch($method->fk_equipment);
 		$product = new Product ($object->db);
-		$product->fetch($method->fk_product);
-		//dol_syslog('Fetch $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		$product->fetch($equipment->fk_product);
 		
 		print "<!-- BEGIN ObjectlineEdit Limits LIMS -->\n";
 		$coldisplay = 0;
@@ -1669,8 +1669,10 @@ class ActionsLIMS
 		
 		$method = new Methods($object->db);
 		$method->fetch($object->lines[$i]->fk_method);
-		$product = new Product($object->db);
-		$product->fetch($method->fk_product);
+		$equipment = new Equipment ($object->db);
+		$equipment->fetch($method->fk_equipment);
+		$product = new Product ($object->db);
+		$product->fetch($equipment->fk_product);
 				
 		$labelproductservice = $method->label;
 		

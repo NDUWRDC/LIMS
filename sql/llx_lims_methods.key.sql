@@ -18,6 +18,7 @@
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_rowid (rowid);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_ref (ref);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_soc (fk_soc);
+ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_equipment (fk_equipment);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_unit (fk_unit);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_user_creat (fk_user_creat);
 ALTER TABLE llx_lims_methods ADD INDEX idx_lims_methods_fk_user_modif (fk_user_modif);

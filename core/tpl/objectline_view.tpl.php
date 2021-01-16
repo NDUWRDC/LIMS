@@ -90,9 +90,9 @@ else
 */
 	$format = $conf->global->MAIN_USE_HOURMIN_IN_DATE_RANGE ? 'dayhour' : 'day';
 
-	if ($method->fk_product > 0)
+	if ($method->fk_equipment > 0)
 	{	
-		dol_syslog('$method->fk_product > 0', LOG_DEBUG);
+		dol_syslog('$method->fk_equipment > 0', LOG_DEBUG);
 
 		print $form->textwithtooltip($text, $description, 3, '', '', $i, 0, (!empty($line->fk_parent_line) ?img_picto('', 'rightarrow') : ''));
 	}
@@ -132,9 +132,9 @@ else
 	}
 	*/
 	// Add description in form
-	if ($method->fk_product > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
+	if ($method->fk_equipment > 0 ) // && !empty($conf->global->PRODUIT_DESC_IN_FORM))
 	{
-		dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
+		dol_syslog('Add description in form $line->fk_method->fk_equipment='.$method->fk_equipment, LOG_DEBUG);
 //		print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
 		
 		print (!empty($method->label)) ? ' - '.dol_htmlentitiesbr($method->label) : '';

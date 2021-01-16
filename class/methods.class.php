@@ -97,7 +97,7 @@ class Methods extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'Label', 'enabled'=>1, 'position'=>20, 'notnull'=>0, 'showoncombobox'=>'1','visible'=>4, 'searchall'=>1, 'css'=>'minwidth200', 'help'=>"Help text",),
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'External Laboratory', 'enabled'=>1, 'position'=>30, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"Link to Third-party",),
 		'standard' => array('type'=>'varchar(128)', 'label'=>'Standard', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'help'=>"Reference to standard, e.g. 'ISO 9308-1:2014'",),
-		'fk_product' => array('type'=>'integer:Equipment:lims/class/equipment.class.php:1:category=3', 'foreignkey'=>'lims_equipment.fk_product', 'label'=>'Parameter', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
+		'fk_equipment' => array('type'=>'integer:Equipment:lims/class/equipment.class.php:1:category=3', 'label'=>'Equipment-Sales Item', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Sales Item",),
 		'fk_unit' => array('type'=>'sellist:lims_units:short_label', 'label'=>'Unit', 'enabled'=>1, 'position'=>59, 'notnull'=>1, 'visible'=>1, 'help'=>"Unit in which parameter is quantitized, is a value of dictionary LIMS Units",),
 		'accuracy' => array('type'=>'varchar(14)', 'label'=>'Accuracy', 'enabled'=>1, 'position'=>70, 'notnull'=>1, 'visible'=>1, 'help'=>"The closeness of agreement between a test result and the accepted reference value, e.g. '0.2' or '1.5%'",),
 		'range_lower' => array('type'=>'real', 'label'=>'Range min', 'enabled'=>1, 'position'=>80, 'notnull'=>1, 'visible'=>1, 'help'=>"The lower limit of the test range, e.g. '0.0'",),
@@ -119,7 +119,7 @@ class Methods extends CommonObject
 	public $ref;
 	public $label;
 	public $fk_soc;
-	public $fk_product;
+	public $fk_equipment;
 	public $fk_unit;
 	public $accuracy;
 	public $range_lower;

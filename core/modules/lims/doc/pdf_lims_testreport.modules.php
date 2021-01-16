@@ -249,12 +249,16 @@ class pdf_lims_testreport extends CommonDocGenerator
 			{
 				$method = new Methods($this->db);
 				$method->fetch($object->lines[$i]->fk_method);
-				if (empty($method->fk_product)) continue;
+
+				if (empty($method->fk_equipment)) continue;
+				
+				$equipment = new Equipment ($this->db);
+				$equipment->fetch($method->fk_equipment);
 
 				$objphoto = new Product($this->db);
-				$objphoto->fetch($method->fk_product);
+				$objphoto->fetch($equipment->fk_product);
 
-				$pdir = get_exdir($method->fk_product, 2, 0, 0, $objphoto, 'product').$method->fk_product."/photos/";
+				$pdir = get_exdir($equipment->fk_product, 2, 0, 0, $objphoto, 'product').$equipment->fk_product."/photos/";
 				$dir = $conf->product->dir_output.'/'.$pdir;
 				
 				//dol_syslog(__METHOD__." path=".$dir, LOG_DEBUG);

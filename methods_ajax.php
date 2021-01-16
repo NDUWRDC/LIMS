@@ -4,6 +4,7 @@
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2013 Regis Houssin        <regis.houssin@inodbox.com>
  * Copyright (C) 2007-2011 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2020-2021 David Bensel			<david.bensel@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +60,12 @@ if (!empty($action) && $action == 'fetch' && !empty($idprod))
 
 	dol_include_once('/lims/class/methods.class.php', 'Methods');
 
-	$sql = 'SELECT rowid, ref, label, fk_product';
-	$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods';
-	$sql .= ' WHERE fk_product='.$idprod;
-	
+	$sql = 'SELECT e.rowid as erowid, e.ref as eref, e.label as elabel, e.description as edescription, e.fk_product,';
+	$sql .= ' m.rowid, m.ref, m.label, m.fk_equipment';
+	$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as m';
+	$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_equipment as e ON e.rowid=m.fk_equipment'; 
+	$sql .= ' WHERE m.fk_equipment='.$idprod;
+
 	$result = $db->query($sql);
 	$outjson = array();
 	

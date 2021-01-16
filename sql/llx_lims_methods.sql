@@ -20,7 +20,7 @@ CREATE TABLE llx_lims_methods(
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	label varchar(255), 
 	fk_soc integer, 
-	fk_product integer NOT NULL,
+	fk_equipment integer NOT NULL,
 	standard varchar(128),	
 	fk_unit integer NOT NULL,
 	accuracy varchar(14) NOT NULL, 
