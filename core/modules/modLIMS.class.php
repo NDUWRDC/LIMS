@@ -399,7 +399,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Samples',
+			'titre'=>'New Sample',
             'mainmenu'=>'lims',
             'leftmenu'=>'lims_samples_new',
 			'url'=>'/lims/samples_card.php?action=create',

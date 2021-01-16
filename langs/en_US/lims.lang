@@ -61,7 +61,8 @@ MyWidgetDescription = My widget description
 #
 # Samples
 #
-
+Sample = Sample
+Samples = Samples
 MethodMethod = Standard
 MethodAccuracy = Accuracy
 MethodRangeTitle = Range
@@ -133,7 +134,7 @@ createsample = CREATE SAMPLE
 #
 # Equipment page
 #
-Equipments = Equipments
+EquipmentEquipment = Equipment
 EquipmentMaintainRevoke = Revoke Readiness
 EquipmentMaintainRenew = Renew Readiness
 EquipmentConfirmTitle = Confirmation

@@ -234,7 +234,7 @@ $now = dol_now();
 
 //$help_url="EN:Module_Equipment|FR:Module_Equipment_FR|ES:Módulo_Equipment";
 $help_url = '';
-$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("Equipments"));
+$title = $langs->trans('ListOf', $langs->transnoentitiesnoconv("EquipmentEquipment"));
 
 
 // Build and execute select
