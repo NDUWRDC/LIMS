@@ -22,7 +22,7 @@ CREATE TABLE llx_lims_units(
 	active tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_lims_units ADD UNIQUE uk_c_units_code(code);
+ALTER TABLE llx_lims_units ADD UNIQUE uk_lims_units_code(code);
 
 INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('CFU', 'Colony Forming Units / 100ml', 'CFU/100ml', 1);
 INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('GL', 'gramm / liter', 'g/l', 1);
