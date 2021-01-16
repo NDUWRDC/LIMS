@@ -14,9 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: Each Event is logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
 - Equipment: List Equipment view
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
-- Results: List view has 'Units' added
+- Results: List view has 'Units' added.
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
-- Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
+- Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...), 
+- New sql file: llx_lims_units.sql
 - ChangeLog added
 ### Changed
 - __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Limits: At creation (New Limit Set) 'Status' is not visible
 - Results: 'Abnormality' is relabeld to 'Nonconformity'
 - Test Report: Statement of Conformity based on the information whether all results are within the respective measurement range of the method.
+- lims_results.sql: unit varchar(10) added
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
 - Samples: Proposal selection is now hidden. 
