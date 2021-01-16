@@ -1119,7 +1119,7 @@ class Limits extends CommonObject
 		if (isset($idmethod))
 		{
 			//$sql = 'SELECT CASE WHEN EXISTS (SELECT * FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod.') THEN 1 ELSE 0 END';
-			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE fk_method='.$idmethod;
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.$this->table_element_line.' WHERE (fk_method='.$idmethod.' AND fk_limits='.$this->id.')';
 			$resql = $this->db->query($sql);
 			
 			if ($this->db->num_rows($resql) > 0) // Method already used
