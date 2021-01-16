@@ -103,8 +103,8 @@ class Equipment extends CommonObject
 	 */
 	public $fields=array(
 		'rowid' => array('type'=>'integer', 'label'=>'TechnicalID', 'enabled'=>'1', 'position'=>1, 'notnull'=>1, 'visible'=>0, 'noteditable'=>'1', 'index'=>1, 'css'=>'left', 'comment'=>"Id"),
-		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'comment'=>"Reference of object"),
-		'label' =>  array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>'1', 'position'=>11, 'notnull'=>0, 'visible'=>4, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'comment'=>"Label"),
+		'ref' => array('type'=>'varchar(128)', 'label'=>'Ref', 'enabled'=>'1', 'position'=>10, 'notnull'=>1, 'visible'=>2, 'noteditable'=>'1', 'default'=>'(PROV)', 'index'=>1, 'showoncombobox'=>1, 'comment'=>"Reference of object"),
+		'label' =>  array('type'=>'varchar(128)', 'label'=>'Label', 'enabled'=>'1', 'position'=>11, 'notnull'=>0, 'visible'=>4, 'noteditable'=>'0', 'default'=>'', 'index'=>1, 'showoncombobox'=>1, 'comment'=>"Label"),
 		'fk_product' => array('type'=>'integer:Product:product/class/product.class.php', 'label'=>'Equipment', 'enabled'=>'1', 'position'=>40, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"Product or Service",),
 		'category' => array('type'=>'smallint', 'label'=>'Category', 'enabled'=>'1', 'position'=>50, 'notnull'=>1, 'visible'=>1, 'help'=>"Category ", 'arrayofkeyval'=>array('0'=>'Equipment', '1'=>'Consumable', '2'=>'Facility', '3'=>'Sales Item'),),
 		'maintenance' => array('type'=>'smallint', 'label'=>'Maintenance', 'enabled'=>'1', 'position'=>51, 'notnull'=>0, 'visible'=>1, 'default'=>'0', 'index'=>1, 'help'=>"Set if the item needs regular maintenance or calibration", 'arrayofkeyval'=>array('0'=>'No calibration, no maintenance', '1'=>'Maintenance', '2'=>'Calibration'),),
