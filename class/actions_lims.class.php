@@ -26,6 +26,7 @@
  // DoTo: Move to place where required
 dol_include_once('/lims/class/samples.class.php', 'Samples');
 dol_include_once('/lims/class/methods.class.php', 'Methods');
+dol_include_once('/lims/class/equipment.class.php', 'Equipment');
 dol_include_once('/lims/class/results.class.php', 'Results');
 dol_include_once('/lims/class/limits.class.php', 'Limits');
 dol_include_once('/lims/class/lims_functions.class.php', 'lims_functions');
@@ -559,8 +560,11 @@ class ActionsLIMS
 		$method = new Methods($object->db);
 		$method->fetch($line->fk_method);
 		
+		$equipment = new Equipment ($object->db);
+		$equipment->fetch($method->fk_product);
+
 		$product = new Product ($object->db);
-		$product->fetch($method->fk_product);
+		$product->fetch($equipment->fk_product);
 		
 		$usemargins = 0;
 		if (!empty($conf->margin->enabled) && !empty($object->element) && in_array($object->element, array('samples', 'results', 'methods'))) $usemargins = 1;
@@ -634,7 +638,7 @@ class ActionsLIMS
 				//dol_syslog('Add description in form $line->fk_method->fk_product='.$method->fk_product, LOG_DEBUG);
 				//print (!empty($product->description) && $product->description != $product->product_label) ? ' - '.dol_htmlentitiesbr($product->description) : '';
 				
-				print (!empty($method->label)) ? ' - '.dol_htmlentitiesbr($method->label) : '';
+				print (!empty($method->label)) ? ' - '.$method->getNomUrl(1,'',0,'',-1,$method->label) : '';
 			}
 		//}
 
