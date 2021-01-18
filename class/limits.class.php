@@ -672,9 +672,10 @@ class Limits extends CommonObject
 	 *  @param  int     $notooltip                  1=Disable tooltip
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
-	 *  @return	string                              String with URL
+	 *  @param  string  $alt_label					Alternative label to be used instead of ref
+	 *  @return	string								String with URL
 	 */
-	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1)
+	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $alt_label = '')
 	{
 		global $conf, $langs, $hookmanager;
 
@@ -685,7 +686,10 @@ class Limits extends CommonObject
 		$label = img_picto('', $this->picto).' <u>'.$langs->trans("Limits").'</u>';
 		$label .= '<br>';
 		$label .= '<b>'.$langs->trans('Ref').':</b> '.$this->ref;
-		if (isset($this->status)) {
+		if (isset($this->label)) {
+			$label .= '<br><b>'.$langs->trans('LimitsLabel').':</b> '.$this->label;
+		}
+			if (isset($this->status)) {
 			$label .= '<br><b>'.$langs->trans("Status").":</b> ".$this->getLibStatut(5);
 		}
 
@@ -744,7 +748,12 @@ class Limits extends CommonObject
 			}
 		}
 
-		if ($withpicto != 2) $result .= $this->ref;
+		// Set the text displayed always to LIyymm-nnnn - Label
+		$alt_label = $this->ref.' - '.$this->label; 
+
+		if ($withpicto != 2) { 
+			$result .= empty($alt_label) ? $this->ref : $alt_label;
+		}
 
 		$result .= $linkend;
 		//if ($withpicto != 2) $result.=(($addlabel && $this->label) ? $sep . dol_trunc($this->label, ($addlabel > 1 ? $addlabel : 0)) : '');

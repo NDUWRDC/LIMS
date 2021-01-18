@@ -687,7 +687,7 @@ class Methods extends CommonObject
 	 *  @param  string  $morecss                    Add more css on link
 	 *  @param  int     $save_lastsearch_value      -1=Auto, 0=No save of lastsearch_values when clicking, 1=Save lastsearch_values whenclicking
 	 *  @param  string  $alt_label					Alternative label to be used instead of ref
-	 *  @return	string                              String with URL
+	 *  @return	string								String with URL
 	 */
 	public function getNomUrl($withpicto = 0, $option = '', $notooltip = 0, $morecss = '', $save_lastsearch_value = -1, $alt_label = '')
 	{

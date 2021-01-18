@@ -122,6 +122,7 @@ DigitalSigned = Digital signed on
 #
 # Limits
 #
+LimitsLabel = Label
 AddLineTitleLimits = Method
 ErrorMinimumGreaterMaximum = Limit for minimum greater than maximum
 ErrorMaximumNotSet = Limit for maximum not a number or not set
