@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Equipment: List Equipment view
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
 - Results: List view has 'Units' added.
+- Samples: Selecet Limit Set is now displayed with label
+- Samples: Lines (results) show selected Product - Method with tooltip
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...), 
 - New sql file: llx_lims_units.sql
@@ -33,7 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Samples: Proposal selection is now hidden. 
 ### Fixed
 - Samples: Change order of lines (results) wasn't working
+- Samples: Modify line values 'Test performed by' wasn't working
 - Limits: Change order of lines (results) wasn't working
+- Limits: Check for multiple methods was faulty
 - Samples: Cloning wasn't working
 - Samples: Label at header wasn't editable with pen-icon
 - Methods: In list view next|previous wasn't working properly
