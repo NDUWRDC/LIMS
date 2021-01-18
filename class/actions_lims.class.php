@@ -1078,7 +1078,7 @@ class ActionsLIMS
 			print '&emsp;'.$form->selectDate($line->end, 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
 			print '<br>';						// USER WHO DID TEST 
 			print $langs->trans('TestingTechnician').'<br>';
-			print $form->select_users($line->fk_user, $line->fk_user);
+			print $form->select_dolusers($line->fk_user, 'userid');
 		?>
 		</td>
 		

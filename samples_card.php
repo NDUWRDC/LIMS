@@ -638,7 +638,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		
 		// Check parameters
 		if ($date_start > $date_end) {
-				$this->error = $langs->trans('ErrorStartDateGreaterEnd');
+				$object->error = $langs->trans('ErrorStartDateGreaterEnd');
 				$error++;
 		}
 		// check if result conformity: -1...error, 1...result within method's range, 0 result outside method's range
