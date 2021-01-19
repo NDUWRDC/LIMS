@@ -99,7 +99,7 @@ SAlabelArrivalDateTimeHelp = Date when the sample was received
 SAlabelProject = Project
 SAlabelProjectHelp = If many samples belong to the same project
 # Private and public note use the Dolibarr key
-SAlabelNotePublicHelp = Write comments AFTER testing. Will be printed on the report as Remark 
+SAlabelNotePublicHelp = Comments on test results. Will be printed on the report as Remark 
 SAlabelNotePrivateHelp = Will not be printed, only for internal reference
 SAlabelLimitSet = Limit Set
 SAlabelLimitSetHelp = Limit set applied for judging results
@@ -125,10 +125,36 @@ TestDuration = Test performed in this period:
 TestingTechnician = Test perfomed by:
 ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
 ErrorSamplingPersonSetTwice = If 'Sampling by client' is set to 'Yes' the laboratory sampling person must not be selected
+
 #
-# Methods
+# Methods (Card: Upper part and MODIFY)
 #
-MethodsLabel = Label
+MElabelLabel = Label
+MElabelLabelHelp = Speaking name for the method, e.g. 'E. Coli (filtration method)'
+MElabelExternalLaboratory = External Laboratory
+MElabelExternalLaboratoryHelp = Link to Third-party where this method is carried out
+MElabelStandard = Standard
+MElabelStandardHelp = Reference to standard, e.g. 'ISO 9308-1:2014'
+MElabelEquipmentSalesItem = Equipment / Sales item
+MElabelEquipmentSalesItemHelp = Link to Sales Item listed in Equipment
+MElabelUnit = Unit
+MElabelUnitHelp = Unit in which parameter is quantitized, is a value of dictionary LIMS Units
+MElabelAccuracy = Accuracy
+MElabelAccuracyHelp = The closeness of agreement between a test result and the accepted reference value, e.g. '0.2' or '1.5%'
+MElabelRangeMin = Range min
+MElabelRangeMinHelp = The lower limit of the test range, e.g. '0.0', can be left empty (void)
+MElabelRangeMax = Range max
+MElabelRangeMaxHelp = The upper limit of the test range, e.g. '14.0', can be left empty (void)
+MElabelResolution = Resolution
+MElabelResolutionHelp = Number of digits describing the resolution, e.g. '2' for a value of '2.99'
+MElabelDescription = Description
+MElabelDescriptionHelp = Brief summary of the method
+# Private and public note use the Dolibarr key
+# DateCreation, DateModification use the Dolibarr key
+# UserAuthor, UserModif use the Dolibarr key 
+MElabelNotePublicHelp = Comments on method 
+MElabelNotePrivateHelp = Will not be printed, only for internal reference
+
 #
 # Report
 #

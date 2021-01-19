@@ -378,8 +378,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }*/
 
-	$morehtmlref.=$form->editfieldkey("RefMElabel", 'label', $object->label, $object, $user->rights->lims->methods->write, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefMElabel", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("MElabelLabel", 'label', $object->label, $object, $user->rights->lims->methods->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("MElabelLabel", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 	
 	$morehtmlref .= '</div>';
 
