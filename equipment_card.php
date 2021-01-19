@@ -448,8 +448,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }*/
 	//$morehtmlref.=fieldLabel("RefEQlabel", 'label', 0);
 	//$text, $htmlname, $preselected, $object, $perm,
-	$morehtmlref.=$form->editfieldkey("RefEQlabel", 'label', $object->label, $object, $user->rights->lims->equipment->write, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefEQlabel", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
+	$morehtmlref.=$form->editfieldkey("EQlabelLabel", 'label', $object->label, $object, $user->rights->lims->equipment->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("EQlabelLabel", 'label', $object->label, $object, 0, 'string', '', null, null, '', 1);
 	 
 	$morehtmlref .= '</div>';
 

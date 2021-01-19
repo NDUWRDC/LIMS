@@ -156,6 +156,25 @@ MElabelNotePublicHelp = Comments on method
 MElabelNotePrivateHelp = Will not be printed, only for internal reference
 
 #
+# Equipment (Card: Upper part and MODIFY)
+#
+EQlabelLabel = Label
+EQlabelLabelHelp = Speaking name for the equipment, e.g. 'pH meter portable
+EQlabelEquipment = Equipment
+EQlabelEquipmentHelp = Product or Service
+EQlabelCategory = Category
+EQlabelCategoryHelp = Equipment or Consumable or Facility or Sales Item
+EQlabelMaintenance = Maintenance
+EQlabelMaintenanceHelp = Set if the item needs regular maintenance or calibration
+EQlabelIntervallMaintenance = Maintenance intervall [days]
+EQlabelIntervallMaintenanceHelp = After this amount of days the maintenance or calibration must be re-run
+EQlabelDateLastMaintained = Date last maintained
+EQlabelDateLastMaintainedHelp = Last time item was maintained or calibrated
+EQlabelUserMaintainRenew = User maintained / renewed
+EQlabelUserMaintainRenewHelp = User who last pressed 'RENEW READINESS'
+EQlabelDescription = Description
+EQlabelDescriptionHelp = Details on the maintenance / calibration procedure
+#
 # Report
 #
 PdfSampleTitle = Test Report
