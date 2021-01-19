@@ -272,82 +272,82 @@ class modLIMS extends DolibarrModules
 		// Add here entries to declare new permissions
 		/* BEGIN MODULEBUILDER PERMISSIONS */
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'View Samples of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionViewSamples'; // Permission label
         $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update Samples of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionCreateUpdateSamples'; // Permission label
         $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Validate and Delete and Samples of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionValidateDeleteSamples'; // Permission label
         $this->rights[$r][4] = 'samples'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'View Results of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionViewResults'; // Permission label
         $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update Results of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionCreateUpdateResults'; // Permission label
         $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Validate and Delete Results (Sample-Lines) of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionValidateDeleteResults'; // Permission label
         $this->rights[$r][4] = 'results'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'View Methods of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionViewMethods'; // Permission label
         $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update Methods of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionCreateUpdateMethods'; // Permission label
         $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Validate and Delete Methods of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionValidateDeleteMethods'; // Permission label
         $this->rights[$r][4] = 'methods'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'View Limits of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionViewLimits'; // Permission label
         $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Create/Update Limits of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionCreateUpdateLimits'; // Permission label
         $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
         $this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-        $this->rights[$r][1] = 'Validate and Delete Limits of LIMS'; // Permission label
+        $this->rights[$r][1] = 'PermissionValidateDeleteLimits'; // Permission label
         $this->rights[$r][4] = 'limits'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
         $r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Equipment'; // Permission label
+		$this->rights[$r][1] = 'PermissionViewEquipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Create/Update Equipment'; // Permission label
+		$this->rights[$r][1] = 'PermissionCreateUpdateEquipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'write'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'Validate and Delete Equipment'; // Permission label
+		$this->rights[$r][1] = 'PermissionValidateDeleteEquipment'; // Permission label
 		$this->rights[$r][4] = 'equipment'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'delete'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;
 		$this->rights[$r][0] = $this->numero + $r; // Permission id (must not be already used)
-		$this->rights[$r][1] = 'View Reports of LIMS'; // Permission label
+		$this->rights[$r][1] = 'PermissionViewReports'; // Permission label
 		$this->rights[$r][4] = 'report'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$this->rights[$r][5] = 'read'; // In php code, permission will be checked by test if ($user->rights->lims->level1->level2)
 		$r++;

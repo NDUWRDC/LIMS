@@ -171,3 +171,22 @@ EquipmentListReportTblHeadIntervall = Interval
 EquipmentListReportTblHeadLastDate = Last on
 EquipmentListReportTblHeadLastUser = By user
 EquipmentListReportTblHeadStatus = Status
+#
+# User permissions
+#
+PermissionViewSamples = View Samples of LIMS
+PermissionCreateUpdateSamples = Create/Update Samples of LIMS
+PermissionValidateDeleteSamples = Validate and Delete and Samples of LIMS
+PermissionViewResults = View Results of LIMS
+PermissionCreateUpdateResults = Create/Update Results of LIMS
+PermissionValidateDeleteResults = Validate and Delete Results (Sample-Lines) of LIMS
+PermissionViewMethods = View Methods of LIMS
+PermissionCreateUpdateMethods = Create/Update Methods of LIMS
+PermissionValidateDeleteMethods = Validate and Delete and Methods of LIMS
+PermissionViewLimits = View Limits of LIMS
+PermissionCreateUpdateLimits = Create/Update Limits of LIMS
+PermissionValidateDeleteLimits = Validate and Delete and Limits of LIMS
+PermissionViewEquipment = View Equipment of LIMS
+PermissionCreateUpdateEquipment = Create/Update Equipment of LIMS
+PermissionValidateDeleteEquipment = Validate and Delete and Equipment of LIMS
+PermissionViewReports = View Reports of LIMS
