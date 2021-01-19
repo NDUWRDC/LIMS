@@ -785,12 +785,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	 }
 	 }*/
 	
-	 // label
-	$morehtmlref.=$form->editfieldkey("RefSAlabel", 'label', $object->label, $object, $user->rights->lims->samples->write, 'string', '', 0, 1);
-	$morehtmlref.=$form->editfieldval("RefSAlabel", 'label', $object->label, $object, $user->rights->lims->samples->write, 'string', '', null, null, '', 1);
-	// Thirdparty -> Needs to be changed to 'Customer'
-	dol_syslog('object->thirdparty->getNomUrl', LOG_DEBUG);
-	$morehtmlref.='<br>'.$langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
+	// Label
+	$morehtmlref.=$form->editfieldkey("SAlabelSampleName", 'label', $object->label, $object, $user->rights->lims->samples->write, 'string', '', 0, 1);
+	$morehtmlref.=$form->editfieldval("SAlabelSampleName", 'label', $object->label, $object, $user->rights->lims->samples->write, 'string', '', null, null, '', 1);
+	// Thirdparty
+	$morehtmlref.='<br>'.$langs->trans('SAlabelCustomer').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	
 	// Project
 	if (!empty($conf->projet->enabled))

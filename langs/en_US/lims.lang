@@ -1,4 +1,4 @@
-# Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
+# Copyright (C) 2020-2021 David Bensel <david.bensel@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -48,21 +48,66 @@ LIMSAbout = About LIMS
 LIMSAboutPage = LIMS about page
 
 #
-# Sample page
+# Example page
 #
 MyPageName = My page name
 
 #
-# Sample widget
+# Example widget
 #
 MyWidget = My widget
 MyWidgetDescription = My widget description
 
 #
-# Samples
+# Samples (List of Samples and New Sample)
 #
 Sample = Sample
 Samples = Samples
+#
+# Samples (Card: Upper part and MODIFY)
+#
+SAlabelCustomer = Customer
+SAlabelCustomerHelp = Link to Third-party
+SAlabelCustomerProposal = Customer Proposal
+SAlabelCustomerProposalHelp = Link to Proposal 
+SAlabelCustomerInvoice = Customer Invoice
+SAlabelCustomerInvoiceHelp = Link to Customer Invoice
+SAlabelSamplingByClient = Sampling by client
+SAlabelSamplingByClientHelp = If client did the sampling
+SAlabelSaboratorySampleTaker = Laboratory sample taker
+SAlabelSaboratorySampleTakerHelp = Own lab techician
+SAlabelManager = Manager
+SAlabelManagerHelp = Lab manager legitimate to approve report
+SAlabelDescription = Description
+SAlabelDescriptionHelp = Characterization of sample, e.g. smell, color, turbidity, source
+SAlabelSampleName = Sample name
+SAlabelSampleNameHelp = The container is labeled for identification
+SAlabelVolume = Volume [liter]
+SAlabelVolumeHelp = Total volume in liters of all containers and bottles
+SAlabelNumberOfContainers = Number of containers
+SAlabelNumberOfContainersHelp = Amount of containers or bottles, usually '1'
+SAlabelSamplingDateTime = Sampling date and time
+SAlabelSamplingDateTimeHelp = When was the sample taken
+SAlabelSamplingPlace = Sampling place
+SAlabelSamplingPlaceHelp = Location of water source
+SAlabelGPSlong = Sampling place GPS longitude
+SAlabelGPSlongHelp = X-coordinate (WGS84), e.g. '0.5959513'
+SAlabelGPSlat = Sampling place GPS latitude
+SAlabelGPSlatHelp = Y-coordinate (WGS84), e.g. '32.4569526'
+SAlabelArrivalDateTime = Arrival date and time
+SAlabelArrivalDateTimeHelp = Date when the sample was received
+SAlabelProject = Project
+SAlabelProjectHelp = If many samples belong to the same project
+# Private and public note use the Dolibarr key
+SAlabelNotePublicHelp = Write comments AFTER testing. Will be printed on the report as Remark 
+SAlabelNotePrivateHelp = Will not be printed, only for internal reference
+SAlabelLimitSet = Limit Set
+SAlabelLimitSetHelp = Limit set applied for judging results
+#DateCreation, DateModification use the Dolibarr key
+#UserAuthor, UserModif use the Dolibarr key 
+#
+# Samples (Card: Add line)
+#
 MethodMethod = Standard
 MethodAccuracy = Accuracy
 MethodRangeTitle = Range
