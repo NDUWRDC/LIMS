@@ -190,3 +190,19 @@ PermissionViewEquipment = View Equipment of LIMS
 PermissionCreateUpdateEquipment = Create/Update Equipment of LIMS
 PermissionValidateDeleteEquipment = Validate and Delete and Equipment of LIMS
 PermissionViewReports = View Reports of LIMS
+#
+# Left Menu (top menu name is key ModuleLIMSName)
+# 
+MenuSamples = Samples
+MenuNewSample = New Sample
+MenuListSamples = List Samples
+MenuListResults = List Results
+MenuMethods = Methods
+MenuNewMethod = New Method
+MenuListMethods = List Methods
+MenuEquipment = Equipment
+MenuNewEquipment = New Equipment
+MenuListEquipment = List Equipment
+MenuLimits = Limits
+MenuNewLimitSet = New Limit Set
+MenuListLimits = List Limits

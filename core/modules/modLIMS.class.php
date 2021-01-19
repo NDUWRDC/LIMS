@@ -379,7 +379,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'Samples',
+			'titre'=>'MenuSamples',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_samples',
 			'url'=>'/lims/samples_list.php',  // For now also display list - may be changed later
@@ -399,7 +399,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Sample',
+			'titre'=>'MenuNewSample',
             'mainmenu'=>'lims',
             'leftmenu'=>'lims_samples_new',
 			'url'=>'/lims/samples_card.php?action=create',
@@ -419,7 +419,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Samples',
+			'titre'=>'MenuListSamples',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_samples_list',
 			'url'=>'/lims/samples_list.php',
@@ -441,7 +441,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_samples',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Results',
+			'titre'=>'MenuListResults',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_results_list',
 			'url'=>'/lims/results_list.php',
@@ -483,7 +483,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'Methods',
+			'titre'=>'MenuMethods',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_methods',
 			'url'=>'/lims/methods_list.php',
@@ -503,7 +503,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Method',
+			'titre'=>'MenuNewMethod',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_methods_new',
 			'url'=>'/lims/methods_card.php?action=create',
@@ -523,7 +523,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_methods',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Methods',
+			'titre'=>'MenuListMethods',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_methods_list',
 			'url'=>'/lims/methods_list.php',
@@ -543,7 +543,7 @@ class modLIMS extends DolibarrModules
 		$this->menu[$r++]=array(
 			'fk_menu'=>'fk_mainmenu=lims',      // '' if this is a top menu. For left menu, use 'fk_mainmenu=xxx' or 'fk_mainmenu=xxx,fk_leftmenu=yyy' where xxx is mainmenucode and yyy is a leftmenucode
 			'type'=>'left',                          // This is a Top menu entry
-			'titre'=>'Equipment',
+			'titre'=>'MenuEquipment',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_equipment',
 			'url'=>'/lims/equipment_list.php',
@@ -559,7 +559,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Equipment',
+			'titre'=>'MenuNewEquipment',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_equipment_new',
 			'url'=>'/lims/equipment_card.php?action=create',
@@ -579,7 +579,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_equipment',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Equipment',
+			'titre'=>'MenuListEquipment',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_equipment_list',
 			'url'=>'/lims/equipment_list.php',
@@ -601,7 +601,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'Limits',
+			'titre'=>'MenuLimits',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_limits',
 			'url'=>'/lims/limits_list.php',
@@ -621,7 +621,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_limits',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'New Limit Set',
+			'titre'=>'MenuNewLimitSet',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_limits_new',
 			'url'=>'/lims/limits_card.php?action=create',
@@ -641,7 +641,7 @@ class modLIMS extends DolibarrModules
 			'fk_menu'=>'fk_mainmenu=lims,fk_leftmenu=lims_limits',
 			// This is a Left menu entry
 			'type'=>'left',
-			'titre'=>'List Limits',
+			'titre'=>'MenuListLimits',
 			'mainmenu'=>'lims',
 			'leftmenu'=>'lims_limits_list',
 			'url'=>'/lims/limits_list.php',
