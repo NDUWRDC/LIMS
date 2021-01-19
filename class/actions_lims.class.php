@@ -493,7 +493,7 @@ class ActionsLIMS
 		if (!empty($conf->global->MAIN_VIEW_LINE_NUMBER)) print '<td class="linecolnum center">&nbsp;</td>';
 
 		// Description => $methods->label
-		print '<td class="linecoldescription">'.$langs->trans('Description').'</td>';
+		print '<td class="linecoldescription">'.$langs->trans('MElabelDescription').'</td>';
 		//dol_syslog(__METHOD__.' $this->element='.$this->element, LOG_DEBUG);
 		if ($this->element == 'samples')
 		{
@@ -501,19 +501,19 @@ class ActionsLIMS
 		}
 
 		// Test-ID  => $results->ref
-		print '<td class="linecoltestid left" style="width: 120px">'.$langs->trans('ResultID').'</td>';
+		print '<td class="linecoltestid left" style="width: 120px">'.$langs->trans('RElabelResult').'</td>';
 
 		// Method
-		print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MethodMethod').'</td>';
+		print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MElabelStandard').'</td>';
 
 		// Accuracy
-		print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
+		print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MElabelAccuracy').'</td>';
 		
 		// Range of Method
-		print '<td class="linecolmethodrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
+		print '<td class="linecolmethodrange center" style="width: 80px">'.$langs->trans('SAlinetitleMethodRange').'</td>';
 
 		// Abnormalities / Nonconformities
-		print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
+		print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('RElabelNonconformity').'</td>';
 
 		/*/ Limit Standard lower (UNBS or other)
 		print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
@@ -521,13 +521,13 @@ class ActionsLIMS
 		// Limit Standard upper (UNBS or other)
 		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';*/
 		// Limits combined in one column
-		print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('StandardLimitTitle').'</td>';
+		print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('SAlinetitleLimits').'</td>';
 
 		// Result
 		print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('Result').'</td>';
 
 		// Method Unit
-		print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
+		print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MElabelUnit').'</td>';
 
 		print '<td class="linecoledit"></td>'; // No width to allow autodim
 
@@ -810,31 +810,31 @@ class ActionsLIMS
 				</td>
 				<?php
 				// Method
-				print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MethodMethod').'</td>';
+				print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MElabelStandard').'</td>';
 
 				// Accuracy
-				print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
+				print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MElabelAccuracy').'</td>';
 				
 				// Lower and Upper Limit of Method (Measurement Range)
-				print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('MethodRangeTitle').'</td>';
+				print '<td class="linecolrange center" style="width: 80px">'.$langs->trans('SAlinetitleMethodRange').'</td>';
 
 				// Abnormalities / Nonconformities
-				print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('ResultAbnormality').'</td>';
+				print '<td class="linecolresultabnorm center" style="width: 80px">'.$langs->trans('RElabelNonconformity').'</td>';
 
 				/*/ Limit Standard lower (UNBS or other)
-				print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
+				print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('LIlinetitleMinimum').'</td>';
 
 				// Limit Standard upper (UNBS or other)
-				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';*/
+				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('LIlinetitleMaximum').'</td>';*/
 		
 				// Limits combined in one column
-				print '<td class="linecollimit center" style="width: 80px">'.$langs->trans('StandardLimitTitle').'</td>';
+				print '<td class="linecollimit center" style="width: 80px">'.$langs->trans('SAlinetitleLimits').'</td>';
 
 				// Result
-				print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('Result').'</td>';
+				print '<td class="linecolresult right" style="width: 80px">'.$langs->trans('RElabelResult').'</td>';
 
 				// Method Unit
-				print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
+				print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MElabelUnit').'</td>';
 				?>
 				<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
 			</tr>
@@ -857,7 +857,7 @@ class ActionsLIMS
 				<span class="prod_entry_mode_predef">
 				<label form="prod_entry_mode_predef">
 				<?php 
-				echo $langs->trans('AddLineTitleSamples');
+				echo $langs->trans('SAlinetitleProductMethod');
 				
 				echo '</label>';
 				echo '<br>';
@@ -903,7 +903,7 @@ class ActionsLIMS
 				// User who did the test
 				$disable_edit = $user->rights->lims->samples->delete ? false : true; // Only Manager should be able to change user
 				print '<br>';
-				print $langs->trans('TestingTechnician').'<br>';
+				print $langs->trans('SAlinetitleTestingTechnician').'<br>';
 				//public function select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0');
 				print $fk_user=$form->select_users($user->id, 'userid',0,null,$disable_edit);
 				//print &user=select_users($selected = '', $htmlname = 'userid', $show_empty = 0, $exclude = null, $disabled = 0, $include = '', $enableonly = '', $force_entity = '0');
@@ -1077,7 +1077,7 @@ class ActionsLIMS
 			print ' '.$langs->trans('to').' ';
 			print '&emsp;'.$form->selectDate($line->end, 'date_end',1, 1, 0, "End", 1, 1,0,'','','','',1);
 			print '<br>';						// USER WHO DID TEST 
-			print $langs->trans('TestingTechnician').'<br>';
+			print $langs->trans('SAlinetitleTestingTechnician').'<br>';
 			print $form->select_dolusers($line->fk_user, 'userid');
 		?>
 		</td>
@@ -1193,29 +1193,29 @@ class ActionsLIMS
 		//print '<td class="linecoltestid left" style="width: 120px">'.$langs->trans('ResultID').'</td>';
 
 		// Method
-		print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MethodMethod').'</td>';
+		print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MElabelStandard').'</td>';
 
 		// Accuracy
-		print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
+		print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MElabelAccuracy').'</td>';
 		
 		/*
 		// Lower Limit of Method
-		print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('MethodLowerLimit').'</td>';
+		print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('SAlinetitleMethodLowerLimit').'</td>';
 
 		// Upper Limit of Method
-		print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('MethodUpperLimit').'</td>';
+		print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('SAlinetitleMethodUpperLimit').'</td>';
 		*/
 		
 		// ??ToDo: Title with colspan=2 for Limits Lower and Upper
 
 		// Method Unit
-		print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
+		print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MElabelUnit').'</td>';
 
 		// Limit Standard lower (UNBS or other)
-		print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
+		print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('LIlinetitleMinimum').'</td>';
 
 		// Limit Standard upper (UNBS or other)
-		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';
+		print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('LIlinetitleMaximum').'</td>';
 
 		print '<td class="linecoledit"></td>'; // No width to allow autodim
 
@@ -1269,27 +1269,27 @@ class ActionsLIMS
 				</td>
 				<?php
 				// Method
-				print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('MethodMethod').'</td>';
+				print '<td class="linecolmethod left" style="width: 160px">'.$langs->trans('Method').'</td>';
 
 				// Accuracy
-				print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MethodAccuracy').'</td>';
+				print '<td class="linecolaccuracy center" style="width: 80px">'.$langs->trans('MElabelAccuracy').'</td>';
 				
 				// Method Unit
-				print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MethodUnit').'</td>';
+				print '<td class="linecolmethodunit left" style="width: 160px">'.$langs->trans('MElabelUnit').'</td>';
 
 				/*
 				// Lower Limit of Method
-				print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('MethodLowerLimit').'</td>';
+				print '<td class="linecolmethodlimitlow center" style="width: 80px">'.$langs->trans('SAlinetitleMethodLowerLimit').'</td>';
 
 				// Upper Limit of Method
-				print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('MethodUpperLimit').'</td>';
+				print '<td class="linecolmethodlimitupper center" style="width: 80px">'.$langs->trans('SAlinetitleMethodUpperLimit').'</td>';
 				*/
 
 				// Limit Standard lower (UNBS or other)
-				print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('StandardLowerLimit').'</td>';
+				print '<td class="linecolstandardlow center" style="width: 80px">'.$langs->trans('LIlinetitleMinimum').'</td>';
 
 				// Limit Standard upper (UNBS or other)
-				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('StandardUpperLimit').'</td>';
+				print '<td class="linecolstandardupper center" style="width: 80px">'.$langs->trans('LIlinetitleMaximum').'</td>';
 
 				?>
 				<td class="linecoledit" colspan="<?php echo $colspan; ?>">&nbsp;</td>
@@ -1312,7 +1312,7 @@ class ActionsLIMS
 				<span class="prod_entry_mode_predef">
 				<label form="prod_entry_mode_predef">
 				<?php 
-				echo $langs->trans('AddLineTitleLimits');
+				echo $langs->trans('Method');
 				
 				echo '</label>';
 				$filtertype = '';  // ''=nofilter, 0=product, 1=service

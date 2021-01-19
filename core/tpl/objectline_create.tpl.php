@@ -244,7 +244,7 @@ if (is_object($objectline)) {
 	// Form::selectDate($set_time = '', $prefix = 're', $h = 0, $m = 0, $empty = 0, $form_name = "", $d = 1, $addnowlink = 0, $disabled = 0, $fullday = '', $addplusone = '', $adddateof = '', $openinghours = '', $stepminutes = 1, $labeladddateof = '')
 	print '<tr id="trlinefordates" class="oddeven">'."\n";
 	print '<td colspan=1>';
-	print $langs->trans('TestDuration').'<br>';
+	print $langs->trans('SAlinetitleTestPeriod').'<br>';
 	print ' '.$langs->trans('From').' ';
 	print $date_start=$form->selectDate('', 'Start',1, 1, 0, "Start", 1, 1,0,'','','','',1);
 	print '<br>';

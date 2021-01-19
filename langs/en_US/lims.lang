@@ -59,7 +59,7 @@ MyWidget = My widget
 MyWidgetDescription = My widget description
 
 #
-# Samples (List of Samples and New Sample)
+# Samples (List of Samples, New Sample, List Results)
 #
 Sample = Sample
 Samples = Samples
@@ -108,24 +108,51 @@ SAlabelLimitSetHelp = Limit set applied for judging results
 #
 # Samples (Card: Add line)
 #
-MethodMethod = Standard
-MethodAccuracy = Accuracy
-MethodRangeTitle = Range
-MethodLowerLimit = Lower
-MethodUpperLimit = Upper
-ResultAbnormality = Nonconformities
-StandardLimitTitle = Limits
-StandardLowerLimit = Minimum
-StandardUpperLimit = Maximum
-Result = Result
-ResultID = Test-ID
-MethodUnit = Unit
-AddLineTitleSamples = Product - Method
-TestDuration = Test performed in this period:
-TestingTechnician = Test perfomed by:
+# Description -> MElabelDescription
+# Result -> RElabelResult
+# Standard -> RElabelMethod
+# Accuracy -> MElabelAccuracy
+SAlinetitleMethodRange = Range
+# Nonconformity -> RElabelNonconformity
+SAlinetitleLimits = Limits
+# Result -> RElabelResult
+# Unit -> MElabelUnit
+SAlinetitleMethodLowerLimit = Lower
+SAlinetitleMethodUpperLimit = Upper
+# Minimum -> LIlinetitleMinimum
+# Maximum -> LIlinetitleMaximum
+SAlinetitleProductMethod = Product - Method
+SAlinetitleTestPeriod = Test performed in this period:
+SAlinetitleTestingTechnician = Test perfomed by:
 ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
 ErrorSamplingPersonSetTwice = If 'Sampling by client' is set to 'Yes' the laboratory sampling person must not be selected
 
+#
+# Results (List Results)
+#
+# Sample -> Sample-Section
+RElabelResultHelp = Link to sample
+RElabelTechnician = Technician
+RElabelTechnicianHelp = Responsible lab technician
+# Standard -> MElabelStandard
+RElabelMethod = Test method
+RElabelMethodHelp = Parameter tested using a specific method
+RElabelResult = Result
+RElabelResultHelp = Test result 
+# Unit -> MElabelUnit
+RElabelStartTime = Start time
+RElabelStartTimeHelp = Time procedure started
+RElabelEndTime = End time
+RElabelEndTimeHelp = Time procedure fished
+RElabelNonconformity = Nonconformity
+RElabelNonconformityHelp = Yes or No
+# DateCreation, DateModification use the Dolibarr key
+
+#
+# Methods
+#
+Method = Method
+Methods = Methods
 #
 # Methods (Card: Upper part and MODIFY)
 #
@@ -166,11 +193,11 @@ EQlabelCategory = Category
 EQlabelCategoryHelp = Equipment or Consumable or Facility or Sales Item
 EQlabelMaintenance = Maintenance
 EQlabelMaintenanceHelp = Set if the item needs regular maintenance or calibration
-EQlabelIntervallMaintenance = Maintenance intervall [days]
+EQlabelIntervallMaintenance = Intervall [days]
 EQlabelIntervallMaintenanceHelp = After this amount of days the maintenance or calibration must be re-run
-EQlabelDateLastMaintained = Date last maintained
+EQlabelDateLastMaintained = Date last
 EQlabelDateLastMaintainedHelp = Last time item was maintained or calibrated
-EQlabelUserMaintainRenew = User maintained / renewed
+EQlabelUserMaintainRenew = User last
 EQlabelUserMaintainRenewHelp = User who last pressed 'RENEW READINESS'
 EQlabelDescription = Description
 EQlabelDescriptionHelp = Details on the maintenance / calibration procedure
@@ -192,6 +219,22 @@ LIlabelNotePrivateHelp = Will not be printed, only for internal references
 # Private and public note use the Dolibarr key
 # DateCreation, DateModification use the Dolibarr key
 # UserAuthor, UserModif use the Dolibarr key 
+#
+# Limits (Card: Add line)
+#
+LIlinetitleDescription = Description
+# Standard -> MElabelStandard
+# Accuracy -> MElabelAccuracy
+# Unit -> MElabelUnit
+LIlinetitleMinimum = Minimum
+LIlinetitleMaximum = Maximum
+LIlinecreateMethod = Method
+ErrorMinimumGreaterMaximum = Limit for minimum greater than maximum
+ErrorMaximumNotSet = Limit for maximum not a number or not set
+ErrorMinimumEqualsMaximum = Limit for maximum and minimum are the same
+ErrorNumberNotValue = Limit must be a number
+ErrorLowerLimit = Limit for minimum must be empty or a number
+ErrorMultipleLimitEntries = Method already has limits
 
 #
 # Report
@@ -228,17 +271,6 @@ ReportTestsNonconformitiesNOK = All results are within the respective measuremen
 ReportResponsible = Responsible: 
 ReportAuthorizing = Authorized by:
 DigitalSigned = Digital signed on 
-#
-# Limits
-#
-LimitsLabel = Label
-AddLineTitleLimits = Method
-ErrorMinimumGreaterMaximum = Limit for minimum greater than maximum
-ErrorMaximumNotSet = Limit for maximum not a number or not set
-ErrorMinimumEqualsMaximum = Limit for maximum and minimum are the same
-ErrorNumberNotValue = Limit must be a number
-ErrorLowerLimit = Limit for minimum must be empty or a number
-ErrorMultipleLimitEntries = Method already has limits
 
 #
 # Invoice - facture_card
