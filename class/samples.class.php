@@ -1210,12 +1210,12 @@ class Samples extends CommonObject
 			$obj->rang = $ranktouse;
 			$obj->status = self::STATUS_DRAFT;
 
-			dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
+			//dol_syslog(__METHOD__." obj->create where obj=".var_export($obj, true), LOG_DEBUG);
 			
 			$res = $obj->create($user); //<0 if KO, Id of created object if OK
 			if ($res<0) $error++;
 			
-			dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
+			//dol_syslog(__METHOD__." results->create()=".$res, LOG_DEBUG);
 			
 			//$res = $obj->validate($user); // <=0 if OK, 0=Nothing done, >0 if KO
 			//if ($res >0) $error++;

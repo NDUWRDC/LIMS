@@ -536,8 +536,10 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 			dol_syslog('Found products_source ...'.var_export($products_source,true), LOG_DEBUG);
 			
-			$sql = 'SELECT p.rowid, p.ref, p.label, p.description, p.fk_product';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as p';
+			$sql = 'SELECT m.rowid, m.ref, m.label, m.description, m.fk_equipment,';
+			$sql .= ' e.fk_product';
+			$sql .= ' FROM '.MAIN_DB_PREFIX.'lims_methods as m';
+			$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'lims_equipment as e ON e.rowid=m.fk_equipment';
 			$sql .= ' WHERE fk_product IN ('.implode(',',$products_source).')';
 
 			// Insert line
