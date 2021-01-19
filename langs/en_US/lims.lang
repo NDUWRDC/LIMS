@@ -206,6 +206,26 @@ EQlabelNotePrivateHelp = Will not be printed, only for internal references
 # Private and public note use the Dolibarr key
 # DateCreation, DateModification use the Dolibarr key
 # UserAuthor, UserModif use the Dolibarr key 
+#
+# Equipment page
+#
+EQbuttonMaintainRevoke = Revoke Readiness
+EQbuttonMaintainRenew = Renew Readiness
+EQConfirmTitle = Confirmation
+EQConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
+EQConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
+LIMSMassAction= LIMS Mass Action
+#
+#Trigger event log
+#
+created = added
+validated = validated
+invalidated = invalidated (set to DRAFT)
+modified = modified
+renewed = maintenance renewed or item calibrated (set to READY)
+revoked = maintenance or item calibration status revoked (set to ENABLED)
+PDFcreated = PDF created
+PDFmodified = PDF modified
 
 #
 # Limits (Card: Upper part and MODIFY)
@@ -237,7 +257,7 @@ ErrorLowerLimit = Limit for minimum must be empty or a number
 ErrorMultipleLimitEntries = Method already has limits
 
 #
-# Report
+# Report: Test Report (lims_testreport)
 #
 PdfSampleTitle = Test Report
 PDFlims_testreportDescription = PDF to show test results for a sample
@@ -273,34 +293,7 @@ ReportAuthorizing = Authorized by:
 DigitalSigned = Digital signed on 
 
 #
-# Invoice - facture_card
-#
-createsample = CREATE SAMPLE
-
-#
-# Equipment page
-#
-EquipmentLabel = Label
-EquipmentEquipment = Equipment
-EquipmentMaintainRevoke = Revoke Readiness
-EquipmentMaintainRenew = Renew Readiness
-EquipmentConfirmTitle = Confirmation
-EquipmentConfirmRenew = Please confirm to set the item to status READY (maintained, calibrated).
-EquipmentConfirmRevoke = Please confirm to revoke the  status READY and set the time of last confirm to 0
-EquipmentStatusReady = READY
-LIMSMassAction= LIMS Mass Action
-#Trigger event log
-Equipment = Equipment
-created = added
-validated = validated
-invalidated = invalidated (set to DRAFT)
-modified = modified
-renewed = maintenance renewed or item calibrated (set to READY)
-revoked = maintenance or item calibration status revoked (set to ENABLED)
-PDFcreated = PDF created
-PDFmodified = PDF modified
-#
-# Report List Equipmet
+# Report: Calibration and Maintenance Report (standard_equipmentlist)
 #
 EquipmentListReportTitle = Calibration and Maintenance Report
 EquipmentListReportNumCalibrated = Number of equipment calibrated
@@ -312,6 +305,7 @@ EquipmentListReportTblHeadIntervall = Interval
 EquipmentListReportTblHeadLastDate = Last on
 EquipmentListReportTblHeadLastUser = By user
 EquipmentListReportTblHeadStatus = Status
+
 #
 # User permissions
 #
@@ -331,6 +325,7 @@ PermissionViewEquipment = View Equipment of LIMS
 PermissionCreateUpdateEquipment = Create/Update Equipment of LIMS
 PermissionValidateDeleteEquipment = Validate and Delete and Equipment of LIMS
 PermissionViewReports = View Reports of LIMS
+
 #
 # Left Menu (top menu name is key ModuleLIMSName)
 # 
@@ -347,3 +342,8 @@ MenuListEquipment = List Equipment
 MenuLimits = Limits
 MenuNewLimitSet = New Limit Set
 MenuListLimits = List Limits
+
+#
+# Invoice - facture_card
+#
+createsample = CREATE SAMPLE

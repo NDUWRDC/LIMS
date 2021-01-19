@@ -367,13 +367,13 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			case 'EQUIPMENT_RENEW':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("renewed");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EquipmentMaintainRenew");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EQbuttonMaintainRenew");
 				break;
 
 			case 'EQUIPMENT_REVOKE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("revoked");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EquipmentMaintainRevoke");
+				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EQbuttonMaintainRevoke");
 				break;
 
 			case 'ECMFILES_CREATE':

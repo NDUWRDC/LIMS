@@ -107,7 +107,7 @@ $form = new Form($db);
 
 //$help_url='EN:Customers_Orders|FR:Commandes_Clients|ES:Pedidos de clientes';
 $help_url = '';
-llxHeader('', $langs->trans('Equipment'), $help_url);
+llxHeader('', $langs->trans('EQlabelEquipment'), $help_url);
 
 if ($id > 0 || !empty($ref))
 {
@@ -115,7 +115,7 @@ if ($id > 0 || !empty($ref))
 
 	$head = equipmentPrepareHead($object);
 
-	dol_fiche_head($head, 'note', $langs->trans("Equipment"), -1, $object->picto);
+	dol_fiche_head($head, 'note', $langs->trans("EQlabelEquipment"), -1, $object->picto);
 
 	// Object card
 	// ------------------------------------------------------------

@@ -362,7 +362,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('ToClone'), $langs->trans('ConfirmCloneAsk', $object->ref), 'confirm_clone', $formquestion, 'yes', 1);
 	}
 
-	// Enable confirmation - EquipmentMaintainRenew
+	// Enable confirmation - EQbuttonMaintainRenew
 	if ($action == 'enable')
 	{
 		$formquestion = array();
@@ -370,15 +370,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 		$formquestion = array(
-			'text' => $langs->trans("EquipmentConfirmRenew"),
+			'text' => $langs->trans("EQConfirmRenew"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EquipmentConfirmTitle'), $text, 'confirm_enable', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EQConfirmTitle'), $text, 'confirm_enable', $formquestion, 0, 1, 220);
 	}
 
-	// Disable confirmation - EquipmentMaintainRenew
+	// Disable confirmation - EQbuttonMaintainRenew
 	if ($action == 'disable')
 	{
 		$formquestion = array();
@@ -386,12 +386,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$forcecombo=0;
 		if ($conf->browser->name == 'ie') $forcecombo = 1;	// There is a bug in IE10 that make combo inside popup crazy
 		$formquestion = array(
-			'text' => $langs->trans("EquipmentConfirmRevoke"),
+			'text' => $langs->trans("EQConfirmRevoke"),
 			// array('type' => 'checkbox', 'name' => 'clone_content', 'label' => $langs->trans("CloneMainAttributes"), 'value' => 1),
 			// array('type' => 'checkbox', 'name' => 'update_prices', 'label' => $langs->trans("PuttingPricesUpToDate"), 'value' => 1),
 			// array('type' => 'other',    'name' => 'idwarehouse',   'label' => $langs->trans("SelectWarehouseForStockDecrease"), 'value' => $formproduct->selectWarehouses(GETPOST('idwarehouse')?GETPOST('idwarehouse'):'ifone', 'idwarehouse', '', 1, 0, 0, '', 0, $forcecombo))
 		);
-		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EquipmentConfirmTitle'), $text, 'confirm_disable', $formquestion, 0, 1, 220);
+		$formconfirm = $form->formconfirm($_SERVER["PHP_SELF"].'?id='.$object->id, $langs->trans('EQConfirmTitle'), $text, 'confirm_disable', $formquestion, 0, 1, 220);
 	}
 
 	// Call Hook formConfirm
@@ -583,12 +583,12 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			// Calibrate / Maintain: Show button if object is to maintain
 			if ($permissiontoadd && $object->maintenance)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("EquipmentMaintainRenew").'</a>'."\n";
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=enable">'.$langs->trans("EQbuttonMaintainRenew").'</a>'."\n";
 
 				// Dedicated button for Revoke
 				if ($object->status == $object::STATUS_OPERATIONAL)
 				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("EquipmentMaintainRevoke").'</a>'."\n";
+					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=disable">'.$langs->trans("EQbuttonMaintainRevoke").'</a>'."\n";
 				}
 			}
 
