@@ -876,7 +876,7 @@ class ActionsLIMS
 				$sql .= ' GROUP BY e.rowid';  // don't show duplicates
 
 				$nameID='ProdID'; 
-				$idprod = lims_functions::DropDownProduct($sql, $nameID, $object, 'ref', '', '');
+				$idprod = lims_functions::DropDownProduct($sql, $nameID, $object, 'ref', '', '', 'plabel');
 				
 				GETPOST('ProdID','alpha', 2); // Only POST
 				

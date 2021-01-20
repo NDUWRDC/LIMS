@@ -5,7 +5,7 @@
 	
 class lims_functions
 {
-	public function DropDownProduct($sql, $nameID, $obj, $key='ref', $selected='', $morecss='')
+	public function DropDownProduct($sql, $nameID, $obj, $key='ref', $selected='', $morecss='', $addlabel='')
 	{
 		global $langs, $conf, $user, $db;
 
@@ -36,6 +36,7 @@ class lims_functions
 				}
 				$opt .= '>';
 				$opt .= $objp->{$key};
+				$opt .= empty($addlabel) ? '' : ' - '.$objp->{$addlabel};
 				$opt .= "</option>\n";
 				
 				$out .= $opt;

@@ -18,6 +18,7 @@ __Dolibarr version 13.x required__
 - Results: List view has 'Units' added.
 - Samples: Selecet Limit Set is now displayed with label
 - Samples: Lines (results) show selected Product - Method with tooltip
+- Samples: Add lines (results) shows Product-Method now with product reference and label.
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...), 
 - New sql file: llx_lims_units.sql
@@ -33,7 +34,7 @@ __Dolibarr version 13.x required__
 - Test Report: Statement of Conformity based on the information whether all results are within the respective measurement range of the method.
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
-- Samples: Proposal selection is now hidden. 
+- Samples: Proposal selection is now hidden
 - tpl-files (objectline_create/title/view) since they are not used 
 ### Fixed
 - Samples: Change order of lines (results) wasn't working
@@ -43,7 +44,7 @@ __Dolibarr version 13.x required__
 - Samples: Cloning wasn't working
 - Samples: Label at header wasn't editable with pen-icon
 - Methods: In list view next|previous wasn't working properly
-- Methods: Delete button link now with new token to avoid CSRF protection errors.
+- Methods: Delete button link now with new token to avoid CSRF protection errors
 
 ## [0.1.0](https://github.com/NDUWRDC/LIMS/releases/tag/v0.1) - 2020-09-16
 ### Added
@@ -53,12 +54,12 @@ __Dolibarr version 13.x required__
 - Limits: Define Minimum and Maximum, where one value may be NULL
 - Samples: Manage Samples, where each sample has linked to a customer
 - Samples: Define sampling place and time, sampling person, volume, etc.
-- Samples: Each sample can have multiple results (tests).
+- Samples: Each sample can have multiple results (tests)
 - Samples: Apply a limit set to the sample
 - Samples: Can be generated from a validated invoice (module Invoices required) linking samplet to Third-Party and Invoice
 - Results: List view of all results and their correlating samples
 - Results: Linked to the responsible person
-- Results: Linked to one method.
+- Results: Linked to one method
 - Results: Have a flag 'nonconformities'
 - Reports: User right 'View Reports'
 - Reports: Test Report on the basis of ISO 17025 (Doc template 'lims_testreport') at Samples
