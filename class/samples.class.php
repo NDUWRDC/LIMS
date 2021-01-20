@@ -118,6 +118,7 @@ class Samples extends CommonObject
 		'volume' => array('type'=>'real', 'label'=>'SAlabelVolume', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelVolumeHelp",),
 		'qty' => array('type'=>'integer', 'label'=>'SAlabelNumberOfContainers', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"SAlabelNumberOfContainersHelp",),
 		'fk_location' => array('type'=>'sellist:lims_location:short_label', 'label'=>'SAlabelLocation', 'enabled'=>1, 'position'=>95, 'notnull'=>0, 'visible'=>1, 'foreignkey'=>'lims_location.rowid', 'help'=>"SAlabelLocationHelp",),
+		'version' => array('type'=>'integer', 'label'=>'SAlabelVersion', 'enabled'=>1, 'position'=>97, 'notnull'=>1, 'default'=>'0', 'visible'=>5, 'index'=>1, 'isameasure'=>'0', 'help'=>"SAlabelVersionHelp",),
 		'date' => array('type'=>'datetime', 'label'=>'SAlabelSamplingDateTime', 'enabled'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'help'=>"SAlabelSamplingDateTimeHelp",),
 		'place' => array('type'=>'varchar(128)', 'label'=>'SAlabelSamplingPlace', 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelSamplingPlaceHelp",),
 		'place_lon' => array('type'=>'real', 'label'=>'SAlabelGPSlong', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlongHelp",),
@@ -148,13 +149,14 @@ class Samples extends CommonObject
 	public $label;
 	public $volume;
 	public $qty;
+	public $fk_location;
+	public $version;
 	public $date;
 	public $place;
 	public $place_lon;
 	public $place_lat;
 	public $date_arrival;
 	public $date_approval;
-	public $fk_location;
 	public $fk_project;
 	public $description;
 	public $note_public;
@@ -630,6 +632,7 @@ class Samples extends CommonObject
 			$num = $this->ref;
 		}
 		$this->newref = $num;
+		$this->version++;
 
 		if (!empty($num)) {
 			// Validate
@@ -638,6 +641,7 @@ class Samples extends CommonObject
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."'";
 			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
+			if (!empty($this->fields['version'])) $sql .= ", version = ".$this->version;
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
