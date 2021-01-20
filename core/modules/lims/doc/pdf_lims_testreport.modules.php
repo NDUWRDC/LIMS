@@ -289,10 +289,10 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 			else
 			{
-				// ToDo: file-name needs version. Don't simply overwrite.
+				// Version of Sample is appended to file name
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->lims->dir_output."/".$object->element."/".$objectref;
-				$file = $dir."/".$objectref.".pdf";
+				$file = $dir."/".$objectref.'v'.$object->version.".pdf";
 			}
 			if (!file_exists($dir))
 			{
@@ -1138,6 +1138,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
+		$textref.=empty($object->version) ? '' : 'v'.$object->version;
 		if ($object->status != $object::STATUS_VALIDATED)
 		{
 			$pdf->SetTextColor(128, 0, 0);
