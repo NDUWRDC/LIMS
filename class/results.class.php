@@ -102,7 +102,7 @@ class Results extends CommonObject
 		'start' => array('type'=>'datetime', 'label'=>'RElabelStartTime', 'enabled'=>1, 'position'=>30, 'notnull'=>0, 'visible'=>4, 'help'=>"RElabelStartTimeHelp",),
 		'end' => array('type'=>'datetime', 'label'=>'RElabelEndTime', 'enabled'=>1, 'position'=>35, 'notnull'=>0, 'visible'=>4, 'help'=>"RElabelEndTimeHelp",),
 		'result' => array('type'=>'real', 'label'=>'RElabelResult', 'enabled'=>1, 'position'=>40, 'notnull'=>1, 'visible'=>1, 'help'=>"RElabelResultHelp",),
-		'unit' => array('type'=>'varchar(10)', 'label'=>'MElabelUnit', 'enabled'=>1, 'position'=>45, 'notnull'=>0, 'noteditable'=>1, 'visible'=>2, 'index'=>0, 'help'=>"MElabelUnitHelp",),
+		'unit' => array('type'=>'varchar(10)', 'label'=>'MElabelUnit', 'enabled'=>1, 'position'=>45, 'notnull'=>0, 'noteditable'=>1, 'visible'=>1, 'index'=>0, 'help'=>"MElabelUnitHelp",),
 		'abnormalities' => array('type'=>'integer', 'label'=>'RElabelNonconformity', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>5, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'), 'help'=>'RElabelNonconformityHelp',),
 		'date_creation' => array('type'=>'datetime', 'label'=>'DateCreation', 'enabled'=>1, 'position'=>500, 'notnull'=>1, 'visible'=>-2,),
 		'tms' => array('type'=>'timestamp', 'label'=>'DateModification', 'enabled'=>1, 'position'=>501, 'notnull'=>0, 'visible'=>-2,),

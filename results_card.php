@@ -102,6 +102,8 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
 
+// Fetch values from other tables		
+$object->unit = $object->getUnit();
 
 $permissiontoread = $user->rights->lims->results->read;
 $permissiontoadd = $user->rights->lims->results->write; // Used by the include of actions_addupdatedelete.inc.php and actions_lineupdown.inc.php
