@@ -103,13 +103,17 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		if (!empty($action)) {
 			require_once DOL_DOCUMENT_ROOT.'/product/class/product.class.php';
 			$product = new Product($this->db);
+			dol_include_once('/lims/class/methods.class.php', 'Methods');
+			$methods = new Methods($this->db);
+			dol_include_once('/lims/class/results.class.php', 'Results');
+			$results = new Results($this->db);
 
 			// ECMFILES_trigger will send object of class EcmFiles
-			if ($object->element == 'ecmfiles'){
+			if ($object->element == 'ecmfiles') {
 				$arr = explode('_', $object->src_object_type, 2);
 				$originalmodule = $arr[0];  // should always be 'lims'
 				$originalclass = $arr[1];
-				if ($originalmodule != 'lims'){
+				if ($originalmodule != 'lims') {
 					dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". orignalmodule=".$originalmodule.": Call not from LIMS, exit runTrigger");
 					return 0;
 				}
@@ -120,12 +124,18 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				$product->fetch($original_object->fk_product);
 			}
 			else {
-				$product->fetch($object->fk_product);
+				if (!empty($object->fk_product)) $product->fetch($object->fk_product);
+				if (!empty($object->fk_method)) $method->fetch($object->fk_method);
+				if (!empty($object->fk_result)) $result->fetch($object->fk_result);				
 			}
 
-			if ($object->element == 'equipment' || $originalclass == 'equipment'){
-				$msg_label = $langs->transnoentitiesnoconv("Equipment")." ";
+			if ($object->element == 'equipment' || $originalclass == 'equipment') {
+				$msg_label = $langs->transnoentitiesnoconv("EQlabelEquipment")." ";
 				$msg_text = $msg_label." ($product->label) ";
+			}
+			if ($object->element == 'samples' || $originalclass == 'samples') {
+				$msg_label = $langs->transnoentitiesnoconv("Sample")." ";
+				$msg_text = $msg_label." (".$object->ref."v".$object->version.") ";
 			}
 		}
 		else {
@@ -133,10 +143,11 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			return 0; // exit if action is empty
 		}
 
-		if ($object->module != 'lims' && $originalmodule != 'lims'){ // exit if trigger is called by other module
+		if ($object->module != 'lims' && $originalmodule != 'lims') { // exit if trigger is called by other module
 			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". object->module=".$object->module." originalmodule=".$originalmodule." : Call not from LIMS, exit runTrigger");
 			return 0;
 		}
+
 		switch ($action) {
 			// Users
 			//case 'USER_CREATE':
@@ -339,25 +350,29 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			//case 'SHIPPING_CLOSED':
 			//case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
-
+			
+			case 'SAMPLES_CREATE':
 			case 'EQUIPMENT_CREATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("created"); // (note, long text)
 				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("created"); // (label, short text)
 				break;
-
+			
+			case 'SAMPLES_VALIDATE':
 			case 'EQUIPMENT_VALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("validated"); // (note, long text)
 				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("validated"); // (label, short text)
 				break;
 
+			case 'SAMPLES_UNVALIDATE':
 			case 'EQUIPMENT_INVALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
 				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
 				break;
-
+			
+			case 'SAMPLES_MODIFY':
 			case 'EQUIPMENT_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("modified"); // (note, long text)
@@ -381,6 +396,7 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFcreated");
 				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("PDFcreated");
 				break;
+
 			case 'ECMFILES_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFmodified");
