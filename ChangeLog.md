@@ -34,6 +34,7 @@ __Dolibarr version 13.x required__
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
 - Samples: Proposal selection is now hidden. 
+- tpl-files (objectline_create/title/view) since they are not used 
 ### Fixed
 - Samples: Change order of lines (results) wasn't working
 - Samples: Modify line values 'Test performed by' wasn't working
@@ -42,6 +43,7 @@ __Dolibarr version 13.x required__
 - Samples: Cloning wasn't working
 - Samples: Label at header wasn't editable with pen-icon
 - Methods: In list view next|previous wasn't working properly
+- Methods: Delete button link now with new token to avoid CSRF protection errors.
 
 ## [0.1.0](https://github.com/NDUWRDC/LIMS/releases/tag/v0.1) - 2020-09-16
 ### Added
