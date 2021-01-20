@@ -37,7 +37,7 @@ __Dolibarr version 13.x required__
 ### Fixed
 - Samples: Change order of lines (results) wasn't working
 - Samples: Modify line values 'Test performed by' wasn't working
-- Limits: Change order of lines (results) wasn't working
+- Limits: Change order of lines wasn't working
 - Limits: Check for multiple methods was faulty
 - Samples: Cloning wasn't working
 - Samples: Label at header wasn't editable with pen-icon
