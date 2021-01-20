@@ -96,6 +96,8 @@ SAlabelGPSlat = Sampling place GPS latitude
 SAlabelGPSlatHelp = Y-coordinate (WGS84), e.g. '32.4569526'
 SAlabelArrivalDateTime = Arrival date and time
 SAlabelArrivalDateTimeHelp = Date when the sample was received
+SAlabelLocation = Current location
+SAlabelLocationHelp = The place where the sample can be found currently, is a value of dictionary LIMS Locations
 SAlabelApprovalDateTime = Approval date and time
 SAlabelApprovalDateTimeHelp = Date when sample was approved for the last time
 SAlabelProject = Project
@@ -349,3 +351,9 @@ MenuListLimits = List Limits
 # Invoice - facture_card
 #
 createsample = CREATE SAMPLE
+
+#
+# Dictionaries
+#
+LIMSUnits = LIMS Units
+LIMSLocations = LIMS Locations

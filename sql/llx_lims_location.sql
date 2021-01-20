@@ -14,7 +14,7 @@
 -- along with this program. If not, see <https://www.gnu.org/licenses/>.
 --
 -- ========================================================================
-CREATE TABLE llx_lims_units(
+CREATE TABLE llx_lims_location(
 	rowid integer AUTO_INCREMENT PRIMARY KEY,
 	code varchar(3),
 	label varchar(50),
@@ -22,12 +22,10 @@ CREATE TABLE llx_lims_units(
 	active tinyint DEFAULT 1 NOT NULL
 )ENGINE=innodb;
 
-ALTER TABLE llx_lims_units ADD UNIQUE uk_lims_units_code(code);
+ALTER TABLE llx_lims_location ADD UNIQUE uk_lims_units_code(code);
 
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('CFU', 'Colony Forming Units / 100ml', 'CFU/100ml', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('GL', 'gramm / liter', 'g/l', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('MGL', 'milli gramm / liter', 'mg/l', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('PH', 'pH', 'pH', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('TCU', 'True Color Units', 'TCU', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('NTU', 'Naphthalometric Turbidity Unit', 'NTU', 1);
-INSERT INTO llx_lims_units (code, label, short_label, active) VALUES ('CON', 'micro Siemens / centimeter', 'µS/cm', 1);
+-- FOR TEST PURPOSE - MUST BE REMOVED!
+INSERT INTO llx_lims_location (code, label, short_label, active) VALUES ('CUS', 'Sample at customer', 'Customer', 1);
+INSERT INTO llx_lims_location (code, label, short_label, active) VALUES ('LAB', 'Sample at own laboratory', 'Laboratory', 1);
+INSERT INTO llx_lims_location (code, label, short_label, active) VALUES ('FRE', 'Sample in freezer', 'Freezer', 1);
+INSERT INTO llx_lims_location (code, label, short_label, active) VALUES ('DIS', 'Sample is disposed', 'Disposed', 1);

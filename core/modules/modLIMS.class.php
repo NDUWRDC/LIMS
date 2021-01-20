@@ -189,23 +189,24 @@ class modLIMS extends DolibarrModules
 		$this->dictionaries = array(
 			'langs'=>'lims@lims',
 			// List of tables we want to see into dictionary editor
-			'tabname'=>array(MAIN_DB_PREFIX."lims_units"),
+			'tabname'=>array(MAIN_DB_PREFIX."lims_units", MAIN_DB_PREFIX."lims_location"),
 			// Label of tables
-			'tablib'=>array("LIMS Units"),
+			'tablib'=>array("LIMSUnits", "LIMSLocations"),
 			// Request to select fields
-			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.short_label, f.active FROM '.MAIN_DB_PREFIX.'lims_units as f'),
+			'tabsql'=>array('SELECT f.rowid as rowid, f.code, f.label, f.short_label, f.active FROM '.MAIN_DB_PREFIX.'lims_units as f',
+							'SELECT f.rowid as rowid, f.code, f.label, f.short_label, f.active FROM '.MAIN_DB_PREFIX.'lims_location as f'),
 			// Sort order
-			'tabsqlsort'=>array("label ASC"),
+			'tabsqlsort'=>array("label ASC", "label ASC"),
 			// List of fields (result of select to show dictionary)
-			'tabfield'=>array("code,label,short_label"),
+			'tabfield'=>array("code,label,short_label", "code,label,short_label"),
 			// List of fields (list of fields to edit a record)
-			'tabfieldvalue'=>array("code,label,short_label"),
+			'tabfieldvalue'=>array("code,label,short_label", "code,label,short_label"),
 			// List of fields (list of fields for insert)
-			'tabfieldinsert'=>array("code,label,short_label"),
+			'tabfieldinsert'=>array("code,label,short_label", "code,label,short_label"),
 			// Name of columns with primary key (try to always name it 'rowid')
-			'tabrowid'=>array("rowid"),
+			'tabrowid'=>array("rowid", "rowid"),
 			// Condition to show each dictionary
-			'tabcond'=>array($conf->lims->enabled)
+			'tabcond'=>array($conf->lims->enabled, $conf->lims->enabled)
 		);
 		/* Example:
 		$this->dictionaries=array(

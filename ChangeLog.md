@@ -19,15 +19,18 @@ __Dolibarr version 13.x required__
 - Samples: Selecet Limit Set is now displayed with label
 - Samples: Lines (results) show selected Product - Method with tooltip
 - Samples: Add lines (results) shows Product-Method now with product reference and label.
+- Samples: Date of validation registered automatically and printed on report instead of current date
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
-- Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...), 
-- New sql file: llx_lims_units.sql
+- Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
+- Dictionaries: LIMS Locations to provide options for the current location of a sample
+- New sql files: llx_lims_units.sql, llx_lims_locations
 - ChangeLog added
 ### Changed
 - __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
   - lims_results.sql: unit varchar(10) added
   - limx_methods.sql: fk_product changed to fk_equipment
 - Samples: Client sampling person is now one of the options empty-yes-no
+- Samples: MODIFY only possible when sample is not validated
 - Methods: At creation (New Method) 'Status' is not visible
 - Limits: At creation (New Limit Set) 'Status' is not visible
 - Results: 'Abnormality' is relabeld to 'Nonconformity'

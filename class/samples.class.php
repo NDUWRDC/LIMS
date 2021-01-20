@@ -117,6 +117,7 @@ class Samples extends CommonObject
 		'label' => array('type'=>'varchar(255)', 'label'=>'SAlabelSampleName', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"SAlabelSampleNameHelp",),
 		'volume' => array('type'=>'real', 'label'=>'SAlabelVolume', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelVolumeHelp",),
 		'qty' => array('type'=>'integer', 'label'=>'SAlabelNumberOfContainers', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"SAlabelNumberOfContainersHelp",),
+		'fk_location' => array('type'=>'sellist:lims_location:short_label', 'label'=>'SAlabelLocation', 'enabled'=>1, 'position'=>95, 'notnull'=>0, 'visible'=>1, 'foreignkey'=>'lims_location.rowid', 'help'=>"SAlabelLocationHelp",),
 		'date' => array('type'=>'datetime', 'label'=>'SAlabelSamplingDateTime', 'enabled'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'help'=>"SAlabelSamplingDateTimeHelp",),
 		'place' => array('type'=>'varchar(128)', 'label'=>'SAlabelSamplingPlace', 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelSamplingPlaceHelp",),
 		'place_lon' => array('type'=>'real', 'label'=>'SAlabelGPSlong', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlongHelp",),
@@ -153,6 +154,7 @@ class Samples extends CommonObject
 	public $place_lat;
 	public $date_arrival;
 	public $date_approval;
+	public $fk_location;
 	public $fk_project;
 	public $description;
 	public $note_public;
