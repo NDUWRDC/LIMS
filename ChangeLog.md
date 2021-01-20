@@ -27,19 +27,21 @@ __Dolibarr version 13.x required__
 - ChangeLog added
 ### Changed
 - __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
-  - lims_results.sql: unit varchar(10) added
-  - limx_methods.sql: fk_product changed to fk_equipment
 - Samples: Client sampling person is now one of the options empty-yes-no
 - Samples: MODIFY only possible when sample is not validated
+- Samples: List view changed: 'Current location', 'Version', 'Approval date' added
 - Methods: At creation (New Method) 'Status' is not visible
 - Limits: At creation (New Limit Set) 'Status' is not visible
 - Results: 'Abnormality' is relabeld to 'Nonconformity'
+- Results: List view changed: 'Start', 'End', 'Unit' added
 - Test Report: Statement of Conformity based on the information whether all results are within the respective measurement range of the method.
+- Test Report: The current version is appended to the file name, e.g. SA2101-0001v2.pdf
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
 - Samples: Proposal selection is now hidden
 - tpl-files (objectline_create/title/view) since they are not used 
 ### Fixed
+- Language keys for all labels
 - Samples: Change order of lines (results) wasn't working
 - Samples: Modify line values 'Test performed by' wasn't working
 - Limits: Change order of lines wasn't working
