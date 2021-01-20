@@ -96,6 +96,8 @@ SAlabelGPSlat = Sampling place GPS latitude
 SAlabelGPSlatHelp = Y-coordinate (WGS84), e.g. '32.4569526'
 SAlabelArrivalDateTime = Arrival date and time
 SAlabelArrivalDateTimeHelp = Date when the sample was received
+SAlabelApprovalDateTime = Approval date and time
+SAlabelApprovalDateTimeHelp = Date when sample was approved for the last time
 SAlabelProject = Project
 SAlabelProjectHelp = If many samples belong to the same project
 # Private and public note use the Dolibarr key

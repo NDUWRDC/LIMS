@@ -169,6 +169,8 @@ if (empty($reshook))
 		}
 		// save person who validated
 		$object->fk_user_approval = $user->id;
+		// save date when validated
+		$object->date_approval = dol_now();
 		$object->update($user);
 	}
 	if ($action == 'update') {
@@ -933,7 +935,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Modify
-			if ($permissiontoadd) {
+			if ($permissiontoadd && ($object->status != $object::STATUS_VALIDATED)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";

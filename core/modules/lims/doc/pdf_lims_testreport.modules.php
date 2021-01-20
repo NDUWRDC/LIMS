@@ -1041,7 +1041,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			
 			$responsible = $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 			$responsible .= '<br />'.$outputlangs->transnoentities("DigitalSigned");
-			$responsible .= dol_print_date(dol_now(),'dayrfc');
+			$responsible .= dol_print_date($object->date_approval,'dayrfc');
 			$pdf->writeHTMLCell($this->page_textwidth/2, 3, $posx, $posy, $responsible, 0, 1);
 			$posy = $pdf->GetY() + 3;
 		}

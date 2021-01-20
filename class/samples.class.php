@@ -122,6 +122,7 @@ class Samples extends CommonObject
 		'place_lon' => array('type'=>'real', 'label'=>'SAlabelGPSlong', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlongHelp",),
 		'place_lat' => array('type'=>'real', 'label'=>'SAlabelGPSlat', 'enabled'=>1, 'position'=>130, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlatHelp",),
 		'date_arrival' => array('type'=>'datetime', 'label'=>'SAlabelArrivalDateTime', 'enabled'=>1, 'position'=>140, 'notnull'=>0, 'visible'=>1, 'help'=>"SAlabelArrivalDateTimeHelp",),
+		'date_approval' => array('type'=>'datetime', 'label'=>'SAlabelApprovalDateTime', 'enabled'=>1, 'position'=>145, 'notnull'=>0, 'visible'=>5,'help'=>"SAlabelApprovalDateTimeHelp",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'SAlabelProject', 'enabled'=>1, 'position'=>150, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"SAlabelProjectHelp",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'position'=>170, 'notnull'=>0, 'visible'=>-1, 'help'=>"SAlabelNotePublicHelp",),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'position'=>180, 'notnull'=>0, 'visible'=>-1, 'help'=>"SAlabelNotePrivateHelp",),
@@ -151,6 +152,7 @@ class Samples extends CommonObject
 	public $place_lon;
 	public $place_lat;
 	public $date_arrival;
+	public $date_approval;
 	public $fk_project;
 	public $description;
 	public $note_public;
