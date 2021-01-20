@@ -110,7 +110,7 @@ class Results extends CommonObject
 		'fk_user_modif' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'UserModif', 'enabled'=>1, 'position'=>511, 'notnull'=>-1, 'visible'=>-2,),
 		'import_key' => array('type'=>'varchar(14)', 'label'=>'ImportId', 'enabled'=>1, 'position'=>1000, 'notnull'=>-1, 'visible'=>-2,),
 		'rang' => array('type'=>'integer', 'label'=>'Rang', 'enabled'=>1, 'position'=>5, 'notnull'=>1, 'visible'=>0, 'help'=>"Position on sample sub table",),
-        'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
+        'status' => array('type'=>'smallint', 'label'=>'Status', 'enabled'=>1, 'position'=>1011, 'notnull'=>1, 'visible'=>2, 'default'=>'0', 'index'=>1, 'arrayofkeyval'=>array('0'=>'Draft', '1'=>'Validated', '9'=>'Canceled'),),
 	);
 	public $rowid;
 	public $ref;
