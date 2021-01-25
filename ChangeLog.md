@@ -16,14 +16,17 @@ __Dolibarr version 13.x required__
 - Equipment: List Equipment view
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
 - Results: List view has 'Units' added.
-- Samples: Selecet Limit Set is now displayed with label
+- Samples and Results: With every approval following the first 'BACK TO DRAFT' a revision counter is increased.
+- Samples and Results: Read-only field 'last_modifications' shows what changed with the a revision.
+- Samples and Results: Each Event is logged: added-validated-modified-invalidated(set to draft)-PDF created 
+- Samples: Selected Limit Set is now displayed with label
 - Samples: Lines (results) show selected Product - Method with tooltip
 - Samples: Add lines (results) shows Product-Method now with product reference and label.
 - Samples: Date of validation registered automatically and printed on report instead of current date
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
 - Dictionaries: LIMS Locations to provide options for the current location of a sample
-- New sql files: llx_lims_units.sql, llx_lims_locations
+- New sql files: llx_lims_units.sql, llx_lims_locations.sql
 - ChangeLog added
 ### Changed
 - __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
@@ -35,7 +38,7 @@ __Dolibarr version 13.x required__
 - Results: 'Abnormality' is relabeld to 'Nonconformity'
 - Results: List view changed: 'Start', 'End', 'Unit' added
 - Test Report: Statement of Conformity based on the information whether all results are within the respective measurement range of the method.
-- Test Report: The current version is appended to the file name, e.g. SA2101-0001v2.pdf
+- Test Report: The revision version is appended to the file name, e.g. SA2101-0001rev2.pdf
 ### Removed
 - Samples: At creation the option to create a contact for client sample taker 
 - Samples: Proposal selection is now hidden

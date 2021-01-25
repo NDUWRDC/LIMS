@@ -116,15 +116,16 @@ class Samples extends CommonObject
 		'description' => array('type'=>'text', 'label'=>'SAlabelDescription', 'enabled'=>1, 'position'=>67, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelDescriptionHelp",),
 		'label' => array('type'=>'varchar(255)', 'label'=>'SAlabelSampleName', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"SAlabelSampleNameHelp",),
 		'volume' => array('type'=>'real', 'label'=>'SAlabelVolume', 'enabled'=>1, 'position'=>80, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelVolumeHelp",),
-		'qty' => array('type'=>'integer', 'label'=>'SAlabelNumberOfContainers', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>1, 'index'=>1, 'isameasure'=>'1', 'help'=>"SAlabelNumberOfContainersHelp",),
+		'qty' => array('type'=>'integer', 'label'=>'SAlabelNumberOfContainers', 'enabled'=>1, 'position'=>90, 'notnull'=>0, 'visible'=>3, 'index'=>1, 'isameasure'=>'1', 'help'=>"SAlabelNumberOfContainersHelp",),
 		'fk_location' => array('type'=>'sellist:lims_location:short_label', 'label'=>'SAlabelLocation', 'enabled'=>1, 'position'=>95, 'notnull'=>0, 'visible'=>1, 'foreignkey'=>'lims_location.rowid', 'help'=>"SAlabelLocationHelp",),
-		'version' => array('type'=>'integer', 'label'=>'SAlabelVersion', 'enabled'=>1, 'position'=>97, 'notnull'=>1, 'default'=>'0', 'visible'=>5, 'index'=>1, 'isameasure'=>'0', 'help'=>"SAlabelVersionHelp",),
+		'revision' => array('type'=>'integer', 'label'=>'SAlabelRevision', 'enabled'=>1, 'position'=>97, 'notnull'=>1, 'default'=>'-1', 'visible'=>5, 'index'=>1, 'isameasure'=>'0', 'help'=>"SAlabelRevisionHelp",),
+		'last_modifications' => array('type'=>'text', 'label'=>'SAlabelLastModification', 'enabled'=>1, 'position'=>98, 'notnull'=>-1, 'visible'=>-5, 'help'=>"SAlabelLastModificationHelp",), 
 		'date' => array('type'=>'datetime', 'label'=>'SAlabelSamplingDateTime', 'enabled'=>1, 'position'=>100, 'notnull'=>0, 'visible'=>1, 'help'=>"SAlabelSamplingDateTimeHelp",),
 		'place' => array('type'=>'varchar(128)', 'label'=>'SAlabelSamplingPlace', 'enabled'=>1, 'position'=>110, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelSamplingPlaceHelp",),
 		'place_lon' => array('type'=>'real', 'label'=>'SAlabelGPSlong', 'enabled'=>1, 'position'=>120, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlongHelp",),
 		'place_lat' => array('type'=>'real', 'label'=>'SAlabelGPSlat', 'enabled'=>1, 'position'=>130, 'notnull'=>-1, 'visible'=>3, 'help'=>"SAlabelGPSlatHelp",),
 		'date_arrival' => array('type'=>'datetime', 'label'=>'SAlabelArrivalDateTime', 'enabled'=>1, 'position'=>140, 'notnull'=>0, 'visible'=>1, 'help'=>"SAlabelArrivalDateTimeHelp",),
-		'date_approval' => array('type'=>'datetime', 'label'=>'SAlabelApprovalDateTime', 'enabled'=>1, 'position'=>145, 'notnull'=>0, 'visible'=>5,'help'=>"SAlabelApprovalDateTimeHelp",),
+		'date_approval' => array('type'=>'datetime', 'label'=>'SAlabelApprovalDateTime', 'enabled'=>1, 'position'=>145, 'notnull'=>0, 'visible'=>5, 'help'=>"SAlabelApprovalDateTimeHelp",),
 		'fk_project' => array('type'=>'integer:Project:projet/class/project.class.php:1', 'label'=>'SAlabelProject', 'enabled'=>1, 'position'=>150, 'notnull'=>-1, 'visible'=>-1, 'index'=>1, 'help'=>"SAlabelProjectHelp",),
 		'note_public' => array('type'=>'html', 'label'=>'NotePublic', 'enabled'=>1, 'position'=>170, 'notnull'=>0, 'visible'=>-1, 'help'=>"SAlabelNotePublicHelp",),
 		'note_private' => array('type'=>'html', 'label'=>'NotePrivate', 'enabled'=>1, 'position'=>180, 'notnull'=>0, 'visible'=>-1, 'help'=>"SAlabelNotePrivateHelp",),
@@ -150,7 +151,8 @@ class Samples extends CommonObject
 	public $volume;
 	public $qty;
 	public $fk_location;
-	public $version;
+	public $revision;
+	public $last_modifications;
 	public $date;
 	public $place;
 	public $place_lon;
@@ -554,6 +556,8 @@ class Samples extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		$this->last_modifications = $this->Modifications();
+		
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -632,7 +636,9 @@ class Samples extends CommonObject
 			$num = $this->ref;
 		}
 		$this->newref = $num;
-		$this->version++;
+
+		// Samples::revision default=-1 -> with first validation it is 0. with second validation revision is set to 1
+		$this->revision++;
 
 		if (!empty($num)) {
 			// Validate
@@ -641,7 +647,9 @@ class Samples extends CommonObject
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."'";
 			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
-			if (!empty($this->fields['version'])) $sql .= ", version = ".$this->version;
+			if (!empty($this->fields['revision'])) $sql .= ", revision = ".$this->revision;
+			//if (!empty($this->fields['last_modifications'])) $sql .= ", last_modifications = ".$this->last_modifications;
+			
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -715,6 +723,7 @@ class Samples extends CommonObject
 			return 1;
 		} else {
 			$this->db->rollback();
+			$this->revision--;
 			return -1;
 		}
 	}
@@ -1305,6 +1314,42 @@ class Samples extends CommonObject
 		dol_syslog(__METHOD__.' result='.$testresult.' fk_method='.$fk_method.' conformity='.$conform, LOG_DEBUG);
 
 		return $conform;
+	}
+
+	/**
+	 *  Check which of the variables from the sample got modified.
+	 *  Method called at Samples::update
+	 *
+	 *  @return     string         				Concatenated string of all modifications
+	 */
+	public function Modifications()
+	{
+		global $langs;
+
+		$obj = new Samples($this->db);
+		$result = $obj->fetch($this->id);
+
+		$changeset = '';
+		if ($result) {
+		
+			$change = 0;
+			$separator = "\r\n";
+
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['enabled'])) {
+					$newval = $this->{$key};
+					$oldval = $obj->{$key};
+
+					if ($oldval != $newval) {
+						$changeset .= ($change > 0) ? $separator : '';
+						$changeset .= $langs->trans($this->fields[$key]['label']).": $oldval -> $newval";
+						$change++;
+					}
+				}
+			}
+		}
+
+		return nl2br($changeset);
 	}
 }
 

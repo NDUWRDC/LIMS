@@ -109,6 +109,11 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+// Hide 'revision' and 'last_modifications' if not relevant
+if ($object->revision <= 0) {
+	$object->fields['revision']['visible'] = 0;
+	$object->fields['last_modifications']['visible'] = 0;
+}
 
 $usercancreate = $user->rights->lims->samples->write;
 
@@ -502,8 +507,7 @@ if (($id || $ref) && $action == 'edit')
 }
 
 // Part to show record
-if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create')))
-{
+if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'create'))) {
 	dol_syslog('Part to show record', LOG_DEBUG);
 	
 	session_start();
@@ -514,8 +518,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 	else $post = $_POST;
 	
-	if (isset($post['origin']) && isset($post['originid']))
-	{
+	if (isset($post['origin']) && isset($post['originid'])) {
 		$origin = $post['origin'];
 		$originid = $post['originid'];
 		$classname = ucfirst($post['origin']);
@@ -524,13 +527,11 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		
 		dol_syslog('Import lines from '.$classname.' with id='.$originid, LOG_DEBUG);
 		
-		if (!empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines'))
-		{
+		if (!empty($objectsrc->lines) && method_exists($objectsrc, 'fetch_lines')) {
 			$objectsrc->fetch_lines();
 			$i = 0;
 			$products_source = array();
-			foreach ($objectsrc->lines as $line)
-			{
+			foreach ($objectsrc->lines as $line) {
 				$product_import = $line->fk_product;
 				if (is_numeric($product_import))
 					$products_source[$i] = $product_import;
@@ -546,19 +547,15 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 
 			// Insert line
 			$resql = $object->db->query($sql);
-			if (!$resql)
-			{
+			if (!$resql) {
 				$object->error = $object->db->lasterror();
-			}
-			else
-			{
+			} 
+			else {
 				$num = $object->db->num_rows($resql);
 				//dol_syslog("query num=".$num, LOG_DEBUG);
 				
-				if ($num > 0) 
-				{
-					while ($obj = $object->db->fetch_object($resql))
-					{
+				if ($num > 0) {
+					while ($obj = $object->db->fetch_object($resql)) {
 						//dol_syslog(" addline obj".var_export($obj, true), LOG_DEBUG);
 						
 						$idprod = $obj->fk_product;
@@ -578,7 +575,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				}
 			}
 		}
-		else{
+		else {
 			dol_syslog('No lines or method fetch_lines not existent', LOG_DEBUG);
 		}
 	}
@@ -605,9 +602,8 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 	}
 
 	// Update line
-	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha'))
-	{
-		dol_syslog('action=updateline ...1',LOG_DEBUG);
+	if ($action == 'updateline' && $usercancreate && !GETPOST('cancel', 'alpha')) {
+		dol_syslog('action=updateline',LOG_DEBUG);
 		$langs->load('errors');
 		$error = 0;
 		
@@ -638,7 +634,6 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 				unset($_POST["options_".$key.$predef]);
 			}
 		}
-		dol_syslog('action=updateline ...2',LOG_DEBUG);
 		
 		// Check parameters
 		if ($date_start > $date_end) {
@@ -650,44 +645,40 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		if ($abnormalities < 0) {
 			$error++;
 		}
-		dol_syslog('action=updateline ...3',LOG_DEBUG);
 		
 		// ERROR HANDLING
 		if ($testresult == '') {
 			setEventMessages($langs->trans('ErrorFieldRequired', $langs->transnoentitiesnoconv('result')), null, 'errors');
 			$error++;
 		}
-		$obj = new Results($object->db);
-		$obj->fetch(GETPOST('lineid', 'int'));
+		$objResults = new Results($object->db);
+		$objResults->fetch(GETPOST('lineid', 'int'));
 		
-		if (is_null($obj->ref))
+		if (is_null($objResults->ref))
 			$error++;
-		dol_syslog('action=updateline ...4',LOG_DEBUG);
 		
 		// No Errors -> Update line
-		if (!$error) 
-		{
+		if (!$error) {
 			// Update line
-			dol_syslog('action=updateline: ref='.$obj->ref.' lineid='.GETPOST('lineid', 'int'), LOG_DEBUG);
+			dol_syslog('action=updateline: ref='.$objResults->ref.' lineid='.GETPOST('lineid', 'int'), LOG_DEBUG);
 			
 			// Those are not changed:
-			//$obj->fk_samples = $this->id;
-			//$obj->fk_method = $fk_method;
-			//$obj->rang = $ranktouse;
-			$obj->status = Results::STATUS_DRAFT; // Line (Result) set to STATUS_DRAFT -> ID is unchanged => no use of it for now
+			//$objResults->fk_samples = $this->id;
+			//$objResults->fk_method = $fk_method;
+			//$objResults->rang = $ranktouse;
+			$objResults->status = Results::STATUS_DRAFT; // Line (Result) set to STATUS_DRAFT -> ID is unchanged => no use of it for now
 			
-			$obj->fk_user		 = $fk_user;
-			$obj->result		 = $testresult;
-			$obj->start			 = $date_start;
-			$obj->end			 = $date_end;
-			$obj->abnormalities	 = $abnormalities;
-			
-			$result = $obj->updateCommon($user);
+			$objResults->fk_user = $fk_user;
+			$objResults->result = $testresult;
+			$objResults->start = $date_start;
+			$objResults->end = $date_end;
+			$objResults->abnormalities = $abnormalities;
+
+			$result = $objResults->update($user);
 			// method not defined:
 			//$object->updateline($abnormalities, $testresult, $fk_user, $date_start, $date_end,);
 		
-			if ($result > 0)
-			{
+			if ($result > 0) {
 				// Generate Document
 				$object->PrintReport();
 
@@ -995,8 +986,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 		$action = 'presend';
 	}
 		
-	if ($action != 'presend')
-	{
+	if ($action != 'presend') {
 		print '<div class="fichecenter"><div class="fichehalfleft">';
 		print '<a name="builddoc"></a>'; // ancre
 

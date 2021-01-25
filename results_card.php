@@ -101,6 +101,11 @@ if (empty($action) && empty($id) && empty($ref)) $action = 'view';
 
 // Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once.
+// Hide 'revision' and 'last_modifications' if not relevant
+if ($object->revision <= 0) {
+	$object->fields['revision']['visible'] = 0;
+	$object->fields['last_modifications']['visible'] = 0;
+}
 
 // Fetch values from other tables		
 $object->unit = $object->getUnit();
@@ -479,7 +484,7 @@ if ($object->id > 0 && (empty($action) || ($action != 'edit' && $action != 'crea
 			}
 
 			// Modify
-			if ($permissiontoadd) {
+			if ($permissiontoadd && ($object->status != $object::STATUS_VALIDATED)) {
 				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$object->id.'&action=edit">'.$langs->trans("Modify").'</a>'."\n";
 			} else {
 				print '<a class="butActionRefused classfortooltip" href="#" title="'.dol_escape_htmltag($langs->trans("NotEnoughPermissions")).'">'.$langs->trans('Modify').'</a>'."\n";

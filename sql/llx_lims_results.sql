@@ -26,6 +26,8 @@ CREATE TABLE llx_lims_results(
 	unit varchar(10),
 	start datetime, 
 	end datetime, 
+	revision tinyint NOT NULL DEFAULT '0',
+	last_modifications text DEFAULT NULL,
 	abnormalities integer NOT NULL, 
 	date_creation datetime NOT NULL, 
 	tms timestamp, 

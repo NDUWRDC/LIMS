@@ -101,6 +101,8 @@ class Results extends CommonObject
 		'fk_method' => array('type'=>'integer:Methods:lims/class/methods.class.php', 'label'=>'MElabelStandard', 'enabled'=>1, 'position'=>25, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"MElabelStandardHelp",),
 		'start' => array('type'=>'datetime', 'label'=>'RElabelStartTime', 'enabled'=>1, 'position'=>30, 'notnull'=>0, 'visible'=>4, 'help'=>"RElabelStartTimeHelp",),
 		'end' => array('type'=>'datetime', 'label'=>'RElabelEndTime', 'enabled'=>1, 'position'=>35, 'notnull'=>0, 'visible'=>4, 'help'=>"RElabelEndTimeHelp",),
+		'revision' => array('type'=>'integer', 'label'=>'SAlabelRevision', 'enabled'=>1, 'position'=>37, 'notnull'=>1, 'default'=>'-1', 'visible'=>5, 'index'=>1, 'isameasure'=>'0', 'help'=>"SAlabelRevisionHelp",),
+		'last_modifications' => array('type'=>'text', 'label'=>'SAlabelLastModification', 'enabled'=>1, 'position'=>38, 'notnull'=>-1, 'visible'=>-5, 'help'=>"SAlabelLastModificationHelp",), 
 		'result' => array('type'=>'real', 'label'=>'RElabelResult', 'enabled'=>1, 'position'=>40, 'notnull'=>1, 'visible'=>1, 'help'=>"RElabelResultHelp",),
 		'unit' => array('type'=>'varchar(10)', 'label'=>'MElabelUnit', 'enabled'=>1, 'position'=>45, 'notnull'=>0, 'noteditable'=>1, 'visible'=>1, 'index'=>0, 'help'=>"MElabelUnitHelp",),
 		'abnormalities' => array('type'=>'integer', 'label'=>'RElabelNonconformity', 'enabled'=>1, 'position'=>50, 'notnull'=>1, 'visible'=>5, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'), 'help'=>'RElabelNonconformityHelp',),
@@ -121,6 +123,8 @@ class Results extends CommonObject
 	public $unit;
 	public $start;
 	public $end;
+	public $revision;
+	public $last_modifications;
 	public $abnormalities;
 	public $date_creation;
 	public $tms;
@@ -436,6 +440,8 @@ class Results extends CommonObject
 	 */
 	public function update(User $user, $notrigger = false)
 	{
+		$this->last_modifications = $this->Modifications();
+	
 		return $this->updateCommon($user, $notrigger);
 	}
 
@@ -515,6 +521,9 @@ class Results extends CommonObject
 		}
 		$this->newref = $num;
 
+		// Results::revision default=-1 -> with first validation it is 0. with second validation revision is set to 1
+		$this->revision++;
+
 		if (!empty($num)) {
 			// Validate
 			$sql = "UPDATE ".MAIN_DB_PREFIX.$this->table_element;
@@ -522,6 +531,7 @@ class Results extends CommonObject
 			$sql .= " status = ".self::STATUS_VALIDATED;
 			if (!empty($this->fields['date_validation'])) $sql .= ", date_validation = '".$this->db->idate($now)."'";
 			if (!empty($this->fields['fk_user_valid'])) $sql .= ", fk_user_valid = ".$user->id;
+			if (!empty($this->fields['revision'])) $sql .= ", revision = ".$this->revision;
 			$sql .= " WHERE rowid = ".$this->id;
 
 			dol_syslog(get_class($this)."::validate()", LOG_DEBUG);
@@ -595,6 +605,7 @@ class Results extends CommonObject
 			return 1;
 		} else {
 			$this->db->rollback();
+			$this->revision--;
 			return -1;
 		}
 	}
@@ -1034,6 +1045,42 @@ class Results extends CommonObject
 		$method->fetch($fk_method);
 		
 		return $method->getUnit();
+	}
+
+	/**
+	 *  Check which of the variables from the sample got modified.
+	 *  Method called at Samples::update
+	 *
+	 *  @return     string         				Concatenated string of all modifications
+	 */
+	public function Modifications()
+	{
+		global $langs;
+
+		$obj = new Results($this->db);
+		$result = $obj->fetch($this->id);
+
+		$changeset = '';
+		if ($result) {
+		
+			$change = 0;
+			$separator = "\r\n";
+
+			foreach ($this->fields as $key => $val) {
+				if (!empty($val['enabled'])) {
+					$newval = $this->{$key};
+					$oldval = $obj->{$key};
+
+					if ($oldval != $newval) {
+						$changeset .= ($change > 0) ? $separator : '';
+						$changeset .= $langs->trans($this->fields[$key]['label']).": $oldval -> $newval";
+						$change++;
+					}
+				}
+			}
+		}
+
+		return nl2br($changeset);
 	}
 }
 

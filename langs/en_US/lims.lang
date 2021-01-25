@@ -88,8 +88,11 @@ SAlabelNumberOfContainers = Number of containers
 SAlabelNumberOfContainersHelp = Amount of containers or bottles, usually '1'
 SAlabelLocation = Current location
 SAlabelLocationHelp = The place where the sample can be found currently, is a value of dictionary LIMS Locations
-SAlabelVersion = Version
-SAlabelVersionHelp = With every VALIDATE the version is increased by 1
+SAlabelRevision = Revision
+SAlabelRevisionHelp = With every VALIDATE the revision is increased by 1
+SAlabelRevisionShort = rev
+SAlabelLastModification = Latest modifications
+SAlabelLastModificationHelp = List of fields changed with last 'MODIFY' in the pattern,<field name>: <old value> -> <new value>
 SAlabelSamplingDateTime = Sampling date and time
 SAlabelSamplingDateTimeHelp = When was the sample taken
 SAlabelSamplingPlace = Sample source
@@ -144,12 +147,16 @@ RElabelTechnicianHelp = Responsible lab technician
 RElabelMethod = Test method
 RElabelMethodHelp = Parameter tested using a specific method
 RElabelResult = Result
-RElabelResultHelp = Test result 
+RElabelResultHelp = Test result
+RElabelResultOld = Old test result
+RElabelResultOldHelp = Previous test result, before it got changed
 # Unit -> MElabelUnit
 RElabelStartTime = Start time
 RElabelStartTimeHelp = Time procedure started
 RElabelEndTime = End time
 RElabelEndTimeHelp = Time procedure fished
+# Revision -> SAlabelRevision
+# Latest Modification -> SAlabelLastModification
 RElabelNonconformity = Nonconformity
 RElabelNonconformityHelp = Yes or No
 # DateCreation, DateModification use the Dolibarr key
@@ -232,7 +239,11 @@ renewed = maintenance renewed or item calibrated (set to READY)
 revoked = maintenance or item calibration status revoked (set to ENABLED)
 PDFcreated = PDF created
 PDFmodified = PDF modified
-
+REresultChanged = Test result changed from->to: 
+REuserChanged = Test user changed from->to:
+REstartChanged = Test start changed from->to:
+REendChanged = Test end changed from->to:
+REconformityChanged = Test conformity changed from->to:
 #
 # Limits (Card: Upper part and MODIFY)
 #
@@ -267,6 +278,7 @@ ErrorMultipleLimitEntries = Method already has limits
 #
 PdfSampleTitle = Test Report
 PDFlims_testreportDescription = PDF to show test results for a sample
+# File-appendix for revision -> SAlabelRevisionShort
 DateReport = Report issued on
 DateSampling = Sampling done on
 DateSamplingUnknown = Not known

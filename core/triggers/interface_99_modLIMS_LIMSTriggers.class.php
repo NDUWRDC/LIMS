@@ -1,4 +1,4 @@
-$msg_text<?php
+<?php
 /* Copyright (C) 2020 David Bensel <david.bensel@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -124,27 +124,35 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				$product->fetch($original_object->fk_product);
 			}
 			else {
-				if (!empty($object->fk_product)) $product->fetch($object->fk_product);
-				if (!empty($object->fk_method)) $method->fetch($object->fk_method);
-				if (!empty($object->fk_result)) $result->fetch($object->fk_result);				
+				if (isset($object->fk_product)) $product->fetch($object->fk_product);
+				if (isset($object->fk_method)) $methods->fetch($object->fk_method);
+				if (isset($object->fk_result)) $results->fetch($object->fk_result);				
 			}
 
 			if ($object->element == 'equipment' || $originalclass == 'equipment') {
-				$msg_label = $langs->transnoentitiesnoconv("EQlabelEquipment")." ";
-				$msg_text = $msg_label." ($product->label) ";
+				$msg_label = $langs->transnoentitiesnoconv("EQlabelEquipment")." $product->label";
+				$msg_text = $msg_label;
 			}
 			if ($object->element == 'samples' || $originalclass == 'samples') {
-				$msg_label = $langs->transnoentitiesnoconv("Sample")." ";
-				$msg_text = $msg_label." (".$object->ref."v".$object->version.") ";
+				$msg_label = $langs->transnoentitiesnoconv("Sample")." $object->ref";
+				if ($object->revision > 0) {
+					$msg_text=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
+				}
+			}
+			if ($object->element == 'results' || $originalclass == 'results') {
+				$msg_label = $langs->transnoentitiesnoconv("RElabelResult")." $object->ref";
+				if ($object->revision > 0) {
+					$msg_text=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
+				}
 			}
 		}
 		else {
-			dol_syslog("Trigger '".$this->name."' launched by ".__FILE__.": Action empty, exit runTrigger");
+			dol_syslog("Trigger $this->name launched by -".__FILE__.": Action empty, exit runTrigger");
 			return 0; // exit if action is empty
 		}
 
 		if ($object->module != 'lims' && $originalmodule != 'lims') { // exit if trigger is called by other module
-			dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". object->module=".$object->module." originalmodule=".$originalmodule." : Call not from LIMS, exit runTrigger");
+			dol_syslog("Trigger $this->name for action $action launched by ".__FILE__.". object->module=$object->module originalmodule=$originalmodule : Call not from LIMS, exit runTrigger");
 			return 0;
 		}
 
@@ -351,56 +359,69 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			//case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
 			
+			case 'RESULTS_CREATE':
 			case 'SAMPLES_CREATE':
 			case 'EQUIPMENT_CREATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("created"); // (note, long text)
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("created"); // (label, short text)
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("created"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("created"); // (label, short text)
 				break;
-			
+
+			case 'RESULTS_VALIDATE':
 			case 'SAMPLES_VALIDATE':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("validated"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("validated"); // (label, short text)
+				break;
+
 			case 'EQUIPMENT_VALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("validated"); // (note, long text)
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("validated"); // (label, short text)
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("validated"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("validated"); // (label, short text)
 				break;
 
 			case 'SAMPLES_UNVALIDATE':
 			case 'EQUIPMENT_INVALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("invalidated"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("invalidated"); // (label, short text)
 				break;
-			
+
+			case 'RESULTS_MODIFY':				
 			case 'SAMPLES_MODIFY':
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = "$msg_text ".$object->last_modifications; // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("modified");  //$langs->transnoentitiesnoconv("modified"); // (label, short text)
+				break;
+
 			case 'EQUIPMENT_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("modified"); // (note, long text)
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("modified"); // (label, short text)
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("modified"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("modified"); // (label, short text)
 				break;
 
 			case 'EQUIPMENT_RENEW':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("renewed");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EQbuttonMaintainRenew");
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("renewed");
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("EQbuttonMaintainRenew");
 				break;
 
 			case 'EQUIPMENT_REVOKE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("revoked");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("EQbuttonMaintainRevoke");
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("revoked");
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("EQbuttonMaintainRevoke");
 				break;
 
 			case 'ECMFILES_CREATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFcreated");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("PDFcreated");
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("PDFcreated");
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("PDFcreated");
 				break;
 
 			case 'ECMFILES_MODIFY':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = $msg_text.$langs->transnoentitiesnoconv("PDFmodified");
-				$actionlabel = $msg_label.$langs->transnoentitiesnoconv("PDFmodified");
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("PDFmodified");
 				break;
 
 			default:
@@ -415,7 +436,8 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		$actioncomm->label = $actionlabel;
 		$actioncomm->note_private = $actionnote;
 		$actioncomm->fk_project = 0;
-		$actioncomm->datep = dol_now();	// Date action start
+		$actioncomm->datep = dol_now();	// planned start date
+		//$actioncomm->datea = dol_now();	// real start date
 		$actioncomm->datef = dol_now();	// Date action end
 		$actioncomm->percentage = -1; // Not applicable
 		$actioncomm->socid = $object->thirdparty->id;

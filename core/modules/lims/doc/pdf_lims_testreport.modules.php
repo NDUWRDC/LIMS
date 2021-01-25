@@ -66,6 +66,11 @@ class pdf_lims_testreport extends CommonDocGenerator
     public $update_main_doc_field;
 
 	/**
+     * @var string file name appendix for 'revision', usually 'rev' (short text)
+     */
+    public $file_name_appendix;
+
+ 	/**
      * @var string document type
      */
     public $type;
@@ -150,6 +155,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->name = "lims_testreport";
 		$this->description = $langs->trans('PDFlims_testreportDescription');
 		$this->update_main_doc_field = 1; // Save the name of generated file as the main doc when generating a doc with this template
+		$this->file_name_appendix = $langs->trans('SAlabelRevisionShort');
 
 		// Dimension page
 		$this->type = 'pdf';
@@ -292,7 +298,11 @@ class pdf_lims_testreport extends CommonDocGenerator
 				// Version of Sample is appended to file name
 				$objectref = dol_sanitizeFileName($object->ref);
 				$dir = $conf->lims->dir_output."/".$object->element."/".$objectref;
-				$file = $dir."/".$objectref.'v'.$object->version.".pdf";
+				if (isset($object->revision)) {
+					$file = $dir."/".$objectref.$this->file_name_appendix.$object->revision.".pdf";
+				} else {
+					$file = $dir."/".$objectref.".pdf";
+				}
 			}
 			if (!file_exists($dir))
 			{
@@ -1138,7 +1148,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$pdf->SetXY($posx, $posy);
 		$pdf->SetTextColor(0, 0, 60);
 		$textref = $outputlangs->transnoentities("Ref")." : ".$outputlangs->convToOutputCharset($object->ref);
-		$textref.=empty($object->version) ? '' : 'v'.$object->version;
+		$textref.=empty($object->revision) ? '' : $langs->trans('SAlabelRevisionShort').$object->revision;
 		if ($object->status != $object::STATUS_VALIDATED)
 		{
 			$pdf->SetTextColor(128, 0, 0);
