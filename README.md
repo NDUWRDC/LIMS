@@ -12,20 +12,26 @@ __Manage your samples and generate test reports following ISO 17025:2017__
 * Calibration and Maintenance Report (Doc template 'standard_equipmentlist') listing all equipment available at ```LIMS - Equipment - List Equipment```
 * Manage Test Methods, where each method has
   * A link to an equipment
-  * A unit, e.g. µS/cm
+  * A unit, e.g. µS/cm (units are managed via a dictionary)
   * Accuracy
   * Measurement Range
   * Resolution of reading
 * Manage Limit Sets, with each entry/line
   * Linked to one method
-  * Minimum and Maximum, where one value may be NULL
+  * Minimum and Maximum, where one value may be empty (NULL)
 * Manage Samples, where each sample has
   * A link to a customer (Module THIRD PARTIES required)
   * A link to a customer invoice (Module INVOICES required)
   * Details on the sample, such as sampling place and time, sampling person, volume, etc.
   * Muliple tests, where each test is linked to one method; each test is linked to the responsible person
-  * Nonconformities
   * A limit set applied to the sample results
+* Manage Results, where each result
+  * Belongs only to one sample
+  * Has a test method, technician, start/end time, result
+  * Has information about nonconformity
+* Technical records with history
+  * Ammendments can be tracked to previous versions
+  * Modifications of results and sample information are stored to Agenda (module EVENTS/AGENDA required) 
 * Test Report (Doc template 'lims_testreport') available at ```LIMS - Samples - Samples List -> Select Sample -> Card Tab```
   * Sample details
   * Results with indication if result is out of the limit range or out of the method's measurement range
@@ -38,6 +44,11 @@ __Manage your samples and generate test reports following ISO 17025:2017__
   * Equipment, default='EQ' => EQ-2104-0001
   * Limits, default='LI' => LI-2104-0001
 * Dictionary for management of units
+  * Use a predefined set of units for methods
+  * Add / change / delete units easily
+* Dictionary for management of locations
+  * Keep track of the current location of the sample 
+  * Add / change / delete locations easily
 <!--
 ![Screenshot lims](img/screenshot_lims.png?raw=true "LIMS"){imgmd}
 -->

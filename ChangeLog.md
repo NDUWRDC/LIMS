@@ -17,7 +17,7 @@ __Dolibarr version 13.x required__
 - Settings: Prefix for Equipment object references can be changed. Default='EQ'
 - Results: List view has 'Units' added.
 - Samples and Results: With every approval following the first 'BACK TO DRAFT' a revision counter is increased.
-- Samples and Results: Read-only field 'last_modifications' shows what changed with the a revision.
+- Samples and Results: Read-only field 'last_modifications' shows what changed with the last modification (MODIFY pressed).
 - Samples and Results: Each Event is logged: added-validated-modified-invalidated(set to draft)-PDF created 
 - Samples: Selected Limit Set is now displayed with label
 - Samples: Lines (results) show selected Product - Method with tooltip
@@ -25,7 +25,7 @@ __Dolibarr version 13.x required__
 - Samples: Date of validation registered automatically and printed on report instead of current date
 - Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
-- Dictionaries: LIMS Locations to provide options for the current location of a sample
+- Dictionaries: LIMS Locations to provide options for the current location of a sample (customer, fridge, laboratory, fridge, ...)
 - New sql files: llx_lims_units.sql, llx_lims_locations.sql
 - ChangeLog added
 ### Changed
