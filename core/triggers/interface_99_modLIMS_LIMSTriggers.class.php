@@ -136,13 +136,13 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			if ($object->element == 'samples' || $originalclass == 'samples') {
 				$msg_label = $langs->transnoentitiesnoconv("Sample")." $object->ref";
 				if ($object->revision > 0) {
-					$msg_text=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
+					$msg_label=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
 				}
 			}
 			if ($object->element == 'results' || $originalclass == 'results') {
 				$msg_label = $langs->transnoentitiesnoconv("RElabelResult")." $object->ref";
 				if ($object->revision > 0) {
-					$msg_text=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
+					$msg_label=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
 				}
 			}
 		}

@@ -1073,6 +1073,13 @@ class Results extends CommonObject
 
 					if ($oldval != $newval) {
 						$changeset .= ($change > 0) ? $separator : '';
+
+						$HTMLTextNEW = $this->showOutputField($val, $key, $newval);
+						$HTMLTextOLD = $this->showOutputField($val, $key, $oldval);
+						// https://stackoverflow.com/questions/1884550/converting-html-to-plain-text-in-php-for-e-mail
+						$newval = preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($HTMLTextNEW))) );
+						$oldval = preg_replace( "/\n\s+/", "\n", rtrim(html_entity_decode(strip_tags($HTMLTextOLD))) );
+
 						$changeset .= $langs->trans($this->fields[$key]['label']).": $oldval -> $newval";
 						$change++;
 					}
