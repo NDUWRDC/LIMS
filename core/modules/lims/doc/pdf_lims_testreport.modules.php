@@ -765,6 +765,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
 				}
 
+me				// ToDo: Output table with eventlogs: Date - Aspect - User
+				$eventlogs = $object->GetEventlogs();
+
 				// Display info area, maximal height=heightforinfotests
 				$posy = $this->tests_info($pdf, $object, $bottomlasttab, $outputlangs);
 

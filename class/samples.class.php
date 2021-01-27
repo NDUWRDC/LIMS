@@ -1359,6 +1359,51 @@ class Samples extends CommonObject
 
 		return nl2br($changeset);
 	}
+
+	/**
+	 *  Get all Eventlog-entries for this object and related Result-objects.
+	 *  
+	 *  @return     string|int         	Concatenated string of all eventlogs if OK | -1 if KO
+	 */
+	public function GetEventlogs()
+	{
+		global $langs;
+
+		require_once DOL_DOCUMENT_ROOT.'/comm/action/class/actioncomm.class.php';
+
+		$ChangeSet = array();
+		$error = 0;
+
+		$actionsSA = array();
+		$actionsSA = ActionComm::getActions($this->db, 0, $this->id, 'samples@lims');
+
+
+		if(!is_array($actionsSA)) {
+			return -1;
+		}
+		
+		$user = new User($this->db);
+		$result = $user->fetchAll();
+		
+		if($result>0) {
+			$user_list = array();
+			foreach ($user->users as $key) {
+				$user_list[$key->id] = $key->getFullName($langs);
+			}
+		} else {
+			$return -1;
+		}
+		
+		$row = 0;
+		foreach ($actionsSA as $key => $value) {
+			$ChangeSet[$row]['Date']   = dol_print_date($value->datep, 'dayhour');
+			$ChangeSet[$row]['Aspect'] = $value->note;
+			$ChangeSet[$row]['User']   = $user_list[$value->authorid];
+			$row++;
+		}
+
+		return $ChangeSet;
+	}
 }
 
 
