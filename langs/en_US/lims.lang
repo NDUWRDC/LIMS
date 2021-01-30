@@ -148,8 +148,6 @@ RElabelMethod = Test method
 RElabelMethodHelp = Parameter tested using a specific method
 RElabelResult = Result
 RElabelResultHelp = Test result
-RElabelResultOld = Old test result
-RElabelResultOldHelp = Previous test result, before it got changed
 # Unit -> MElabelUnit
 RElabelStartTime = Start time
 RElabelStartTimeHelp = Time procedure started

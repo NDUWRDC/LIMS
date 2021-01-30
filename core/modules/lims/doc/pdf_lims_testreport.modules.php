@@ -138,6 +138,15 @@ class pdf_lims_testreport extends CommonDocGenerator
 	 */
 	public $posxprogress;
 
+	/**
+	 * @var array column width of the event log table
+	 */
+	public $eventcolwidth = array();
+
+	/**
+	 * @var array x positions of the event log table
+	 */
+	public $eventposx = array();
 
 	/**
 	 *	Constructor
@@ -217,6 +226,17 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->width_maximum = $this->posxresult - $this->posxmaximum;
 		$this->width_result = $this->posxunit - $this->posxresult;
 		$this->width_unit = $this->page_width - $this->margin_right - $this->posxunit;
+
+		// array for column positions Date=>[0], Aspect=>[1], Author=>[2] 
+		$this->eventposx = array(0,40,170);
+		$this->eventcolwidth = array(38,140,20);
+
+		// To work with US executive format
+		if ($this->page_width < 210) { 
+			$this->eventposx = array(0,40,170-20);
+			$this->eventcolwidth = array(38,140-20,20);
+		}
+		
 	}
 
     // phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -734,23 +754,6 @@ class pdf_lims_testreport extends CommonDocGenerator
 						$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
 					}
-					if (isset($object->lines[$i + 1]->pagebreak) && $object->lines[$i + 1]->pagebreak)
-					{
-						if ($pagenb == 1)
-						{
-							$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
-						}
-						else
-						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
-						}
-						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
-						// New page
-						$pdf->AddPage();
-						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
-						$pagenb++;
-						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
-					}
 				}
 
 				// Show square
@@ -765,9 +768,6 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
 				}
 
-me				// ToDo: Output table with eventlogs: Date - Aspect - User
-				$eventlogs = $object->GetEventlogs();
-
 				// Display info area, maximal height=heightforinfotests
 				$posy = $this->tests_info($pdf, $object, $bottomlasttab, $outputlangs);
 
@@ -775,6 +775,12 @@ me				// ToDo: Output table with eventlogs: Date - Aspect - User
 				$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 				if (method_exists($pdf, 'AliasNbPages')) $pdf->AliasNbPages();
 
+				// If there is a revision -> print eventlog
+				if ($object->revision > 0) {
+					// if $posy=0 table will be printed on a new page
+					// $posy = $pdf->GetY();
+					$this->showeventtable($pdf, $object, $posy=0, $outputlangs);
+				}
 				$pdf->Close();
 
 				$pdf->Output($file, 'F');
@@ -889,7 +895,7 @@ me				// ToDo: Output table with eventlogs: Date - Aspect - User
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxstandard - 1, $tab_top + 1);
-			$pdf->MultiCell($this->posxaccuracy - $this->posxstandard + 3, 2, $outputlangs->transnoentities("MethodMethod"), '', 'L');
+			$pdf->MultiCell($this->posxaccuracy - $this->posxstandard + 3, 2, $outputlangs->transnoentities("MElabelStandard"), '', 'L');
 		}
 		
 		// ACCURACY
@@ -927,7 +933,7 @@ me				// ToDo: Output table with eventlogs: Date - Aspect - User
 		$pdf->line($this->posxresult - 1, $tab_top, $this->posxresult - 1, $tab_top + $tab_height);
 		if (empty($hidetop)) {
 			$pdf->SetXY($this->posxresult, $tab_top + 1);
-			$pdf->MultiCell($this->posxunit - $this->posxresult, 2, $outputlangs->transnoentities("Result"), '', 'C');
+			$pdf->MultiCell($this->posxunit - $this->posxresult, 2, $outputlangs->transnoentities("RElabelResult"), '', 'C');
 		}
 
 		// UNIT
@@ -935,7 +941,7 @@ me				// ToDo: Output table with eventlogs: Date - Aspect - User
 		if (empty($hidetop))
 		{
 			$pdf->SetXY($this->posxunit - 1, $tab_top + 1);
-			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("MethodUnit"), '', 'L');
+			$pdf->MultiCell(30, 2, $outputlangs->transnoentities("MElabelUnit"), '', 'L');
 		}
 	}
 	
@@ -1416,5 +1422,279 @@ me				// ToDo: Output table with eventlogs: Date - Aspect - User
 		$liste = getListOfModels($db, $type, $maxfilenamelength);
 
 		return $liste;
+	}
+
+	/**
+	 *   	Show table with eventlog history
+     *
+	 *   	@param	PDF			$pdf     			PDF
+	 * 		@param	Object		$object				Object to show
+	 * 		@param  int			$posy				Current vertical position
+	 *      @param	Translate	$outputlangs		Object lang for output
+	 *      @return	int								Return current vertical position
+	 */
+	public function showeventtable(&$pdf, $object, $posy=0, $outputlangs)
+	{
+		global $conf, $langs;
+
+		dol_syslog(__METHOD__, LOG_DEBUG);
+		// Load traductions files required by page
+		$outputlangs->loadLangs(array("lims@lims"));
+
+		$eventlogs = array();
+		$eventlogs = $object->GetEventlogs();
+
+		$startonnewpage = ($posy == 0) ? 1 : 0;
+
+		$default_font_size = pdf_getPDFFontSize($outputlangs);
+		$pdf->SetFont('', '', $default_font_size - 1);
+
+		// array for column positions Date=>[0], Aspect=>[1], Author=>[2] 
+//		$posx = array(0,40,170);
+//		$colwidth = array(38,140,20);
+
+		dol_syslog(__METHOD__."eventlog = ".var_export($eventlogs,true), LOG_DEBUG);
+
+		$i = 0;
+		$nblines = count($eventlogs);
+		// Loop on each lines
+		foreach ($eventlogs as $key => $val) {
+
+			$pdf->startTransaction();
+
+			$pageposbefore = $pdf->getPage(); 
+			$this->writeeventtableline($pdf, $key, $val, $posy);
+			$pageposafter = $pdf->getPage();
+
+			if ($startonnewpage) {
+				$startonnewpage = 0;
+				$pageposafter++;
+			}
+
+			if ($pageposafter > $pageposbefore) {
+				// There is a pagebreak
+				$pdf->rollbackTransaction(true);
+				$pdf->AddPage('', '', true);
+				if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);		
+				$pdf->setPage($pageposafter);
+
+				$posy = $this->margin_top;
+	
+				// Print header
+				$posy = $this->writeeventtableheader($pdf, $eventlogs, $posy);
+				$posy += 2; 
+				// Print line
+				$posy = $this->writeeventtableline($pdf, $key, $val, $posy);
+
+				$pageposafter = $pdf->getPage();
+				$posyafter = $pdf->GetY();
+				
+				if ($posyafter > ($this->page_height - $heightforfooter)) {
+					if ($i == ($nblines - 1)) {
+						$pdf->AddPage('', '', true);
+						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pageposafter + 1);
+					}
+				}
+			}
+			else {
+				// No pagebreak
+				$pdf->commitTransaction();
+			}
+
+			$pageposafter = $pdf->getPage();
+			$pdf->setPage($pageposafter);
+			$pdf->setTopMargin($this->margin_top);
+			$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+
+			$posy = $pdf->GetY() + 1;
+			$i++;
+		}
+		/*	
+		$method = new Methods($this->db);
+		
+		for ($i = 0; $i < $nblines; $i++)
+		{
+			$method->fetch($object->lines[$i]->fk_method);
+			
+			$curY = $nexY;
+			$pdf->SetFont('', '', $default_font_size - 1); // Into loop to work with multipage
+			$pdf->SetTextColor(0, 0, 0);
+			$LineHeight = 3;
+
+			// Define size of image if we need it
+			$imglinesize = array();
+			if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
+
+			$pdf->setTopMargin($tab_top_newpage);
+			$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotests); // The only function to edit the bottom margin of current page to set it.
+			$pageposbefore = $pdf->getPage();
+
+			$showpricebeforepagebreak = 1;
+			$posYAfterImage = 0;
+			$posYAfterDescription = 0;
+			
+			// Description of product line
+			$curX = $this->posxdesc - 1;
+
+			$pdf->startTransaction();
+			// hook on pdf_writelinedesc called here
+			pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, $LineHeight, $curX, $curY, $hideref, $hidedesc);
+			$pageposafter = $pdf->getPage();
+			if ($pageposafter > $pageposbefore)	// There is a pagebreak
+			{
+				$pdf->rollbackTransaction(true);
+				$pageposafter = $pageposbefore;
+				//print $pageposafter.'-'.$pageposbefore;exit;
+				$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+				pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, $LineHeight, $curX, $curY, $hideref, $hidedesc);
+				$pageposafter = $pdf->getPage();
+				$posyafter = $pdf->GetY();
+				//var_dump($posyafter); var_dump(($this->page_height - ($heightforfooter+$heightforfreetext+$heightforinfotests))); exit;
+				if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotests)))	// There is no space left for total+free text
+				{
+					if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
+					{
+						$pdf->AddPage('', '', true);
+						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
+						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+						$pdf->setPage($pageposafter + 1);
+					}
+				}
+				else
+				{
+					// We found a page break
+
+					// Allows data in the first page if description is long enough to break in multiples pages
+					if (!empty($conf->global->MAIN_PDF_DATA_ON_FIRST_PAGE))
+						$showpricebeforepagebreak = 1;
+					else
+						$showpricebeforepagebreak = 0;
+				}
+			}
+			else	// No pagebreak
+			{
+				$pdf->commitTransaction();
+			}
+			$posYAfterDescription = $pdf->GetY();
+
+			$nexY = $pdf->GetY();
+			$pageposafter = $pdf->getPage();
+			$pdf->setPage($pageposbefore);
+			$pdf->setTopMargin($this->margin_top);
+			$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+
+			// We suppose that a too long description or photo were moved completely on next page
+			if ($pageposafter > $pageposbefore && empty($showpricebeforepagebreak)) {
+				$pdf->setPage($pageposafter); $curY = $tab_top_newpage;
+			}
+
+			$pdf->SetFont('', '', $default_font_size - 1); // We reposition the default font
+
+			// Standard (ISO...)
+			$standard = $method->standard;
+			$pdf->SetXY($this->posxstandard, $curY);
+			$cellheight = $pdf->getStringHeight($this->width_standard, $standard);
+			$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+			$pdf->MultiCell($this->width_standard, $LineHeight, $standard, 0, 'L');
+
+			// Accuracy 
+			$accuracy = $method->accuracy;
+			$pdf->SetXY($this->posxaccuracy-1, $curY);
+			$cellheight = $pdf->getStringHeight($this->width_accuracy, $accuracy);
+			$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+			$pdf->MultiCell($this->width_accuracy, $LineHeight, $accuracy, 0, 'C');
+
+			// Test-Date
+			$testdate = dol_print_date($object->lines[$i]->end, 'dayrfc');
+			$pdf->SetXY($this->posxtestdate-1, $curY);
+			$cellheight = $pdf->getStringHeight($this->width_testdate,$testdate);
+			$LineHeight = ($cellheight > $LineHeight) ? $cellheight : $LineHeight;
+			$pdf->MultiCell($this->width_testdate, $LineHeight, $testdate, 0, 'C'); // Enough for 6 chars
+
+
+			if ($posYAfterImage > $posYAfterDescription) $nexY = $posYAfterImage;
+
+			// Get height of the line and add it to nexY
+			//$LineHeight = $pdf->GetY() - $curY;
+			$nexY += $LineHeight;
+
+			// Draw dashed line
+			if (!empty($conf->global->MAIN_PDF_DASH_BETWEEN_LINES) && $i < ($nblines - 1))
+			{
+				$pdf->setPage($pageposafter);
+				$pdf->SetLineStyle(array('dash'=>'1,1', 'color'=>array(80, 80, 80)));
+				//$pdf->SetDrawColor(190,190,200);
+				$pdf->line($this->margin_left, $nexY, $this->page_width - $this->margin_right, $nexY);
+				$pdf->SetLineStyle(array('dash'=>0));
+			}
+
+			$nexY += 2; // Add space between lines
+
+			// Detect if some page were added automatically and output _tableau for past pages
+			while ($pagenb < $pageposafter)
+			{
+				$pdf->setPage($pagenb);
+				if ($pagenb == 1)
+				{
+					$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+				}
+				else
+				{
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+				}
+				$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
+				$pagenb++;
+				$pdf->setPage($pagenb);
+				$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+				if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD)) $this->_pagehead($pdf, $object, 0, $outputlangs);
+			}
+		}
+		*/
+		return $posy;
+	}
+
+	/**
+	 *   	Write table header for eventlog history
+	 *
+	 *   	@param	PDF			$pdf     			PDF
+	 * 		@param				$eventlogs			eventlog array
+	 * 		@param  int			$posy				Current vertical position
+	 *      @return	int								Return current vertical position
+	 */
+	public function writeeventtableheader(&$pdf, $eventlogs, $posy)
+	{
+		for ($i = 0; $i<count($this->eventposx); $i++) {
+			$pdf->SetXY($this->margin_left + $this->eventposx[$i], $posy);
+			$pdf->MultiCell($this->eventcolwidth[$i], 2, key($eventlogs[0]), 0, 'L', 0);
+			next($eventlogs[0]);
+		}
+
+		return $pdf->GetY();
+	}
+
+	/**
+	 *   	Write one line of the table with eventlog history
+	 *
+	 *   	@param	PDF			$pdf     			PDF
+	 * 		@param				$key				key to eventlog array
+	 * 		@param				$val				row of eventlog array
+	 * 		@param  int			$posy				Current vertical position
+	 *      @return	int								Return current vertical position
+	 */
+	public function writeeventtableline(&$pdf, $key, $val, $posy)
+	{
+		$pdf->SetXY($this->margin_left + $this->eventposx[0], $posy);
+		$pdf->MultiCell($this->eventcolwidth[0], 2, $val['Date'], 0, 'L', 0);
+
+		$pdf->SetXY($this->margin_left + $this->eventposx[1], $posy);
+		$pdf->MultiCell($this->eventcolwidth[1], 2, $val['Aspect'], 0, 'L', 0);
+
+		$pdf->SetXY($this->margin_left + $this->eventposx[2], $posy);
+		$pdf->MultiCell($this->eventcolwidth[2], 2, $val['User'], 0, 'L', 0);
+	
+		return $pdf->GetY();
 	}
 }
