@@ -1377,6 +1377,8 @@ class Samples extends CommonObject
 		$actionsSA = array();
 		$actionsSA = ActionComm::getActions($this->db, 0, $this->id, 'samples@lims');
 
+		$actionsRE = array();
+		$actionsRE = ActionComm::getActions($this->db, 0, $this->id, 'results@lims');
 
 		if(!is_array($actionsSA)) {
 			return -1;

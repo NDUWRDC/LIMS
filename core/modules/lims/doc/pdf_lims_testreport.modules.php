@@ -1447,7 +1447,8 @@ class pdf_lims_testreport extends CommonDocGenerator
 				} else {
 					$tab_top_newpage = $this->margin_top;	
 				}
-			
+				$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
+
 				$pdf->setTopMargin($tab_top_newpage);
 				$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
 					
@@ -1469,6 +1470,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD))  $top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
 						$pdf->setPage($pageposafter + 1);
+						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 						$posy = $this->margin_top + $top_shift;
 					}
 				} else {
@@ -1502,7 +1504,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 	 */
 	public function writeeventtableheader(&$pdf, $eventlogs, $posy)
 	{
-		$pdf->SetFont('', 'B', $default_font_size); 
+		global $langs;
+
+		$pdf->SetFont('', 'B'); 
+
+		$pdf->SetXY($this->margin_left, $posy-6);
+		$pdf->MultiCell($this->page_width, 2, $langs->trans('HeaderSampleHistory'), 0, 'L', 0);
 
 		for ($i = 0; $i<count($this->eventposx); $i++) {
 			$pdf->SetXY($this->margin_left + $this->eventposx[$i], $posy);

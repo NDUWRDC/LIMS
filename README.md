@@ -29,13 +29,14 @@ __Manage your samples and generate test reports following ISO 17025:2017__
   * Belongs only to one sample
   * Has a test method, technician, start/end time, result
   * Has information about nonconformity
-* Technical records with history
-  * Ammendments can be tracked to previous versions
+* Technical records with revision history
+  * Amendments to samples and test results are tracked
   * Modifications of results and sample information are stored to Agenda (module EVENTS/AGENDA required) 
 * Test Report (Doc template 'lims_testreport') available at ```LIMS - Samples - Samples List -> Select Sample -> Card Tab```
-  * Sample details
+  * Sample details like description, sampling person, sampling place, dates when sampling was done and received
   * Results with indication if result is out of the limit range or out of the method's measurement range
-  * Names of person(s) responsible and manager who authorized the sample.
+  * Names of person(s) responsible and manager who authorized the sample
+  * Revision history showing all modifications to technical records
 * Samples can be created from a validated invoice (module INVOICES required): Details on customer and products which are part of Equipment will be added to the sample. Products/Services listed on the invoice which are part of LIMS Equipment-Sales Items are added as lines (tests) to the sample.
 * Settings: Prefix for object references can be changed. 
   * Samples, default='SA' => SA-2104-0001 (YYMM-nnnn)

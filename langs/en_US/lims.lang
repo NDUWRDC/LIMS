@@ -307,7 +307,7 @@ ReportTestsNonconformitiesNOK = All results are within the respective measuremen
 ReportResponsible = Responsible: 
 ReportAuthorizing = Authorized by:
 DigitalSigned = Digital signed on 
-
+HeaderSampleHistory = History of Amendments
 #
 # Report: Calibration and Maintenance Report (standard_equipmentlist)
 #
