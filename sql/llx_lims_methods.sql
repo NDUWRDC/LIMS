@@ -19,7 +19,7 @@ CREATE TABLE llx_lims_methods(
 	rowid integer AUTO_INCREMENT PRIMARY KEY NOT NULL, 
 	ref varchar(128) DEFAULT '(PROV)' NOT NULL, 
 	label varchar(255), 
-	fk_soc integer, 
+	fk_soc integer DEFAULT NULL, 
 	fk_equipment integer NOT NULL,
 	standard varchar(128),	
 	fk_unit integer NOT NULL,

@@ -1080,6 +1080,39 @@ class Methods extends CommonObject
 			return -1;
 		}
 	}
+
+	/**
+	 *	Returns an array with all methods that have an external laboratory assigned
+	 *
+	 * @return	array|int		-1 if KO, if OK array with methods found ( array(fk_method), array(fk_soc) )
+	 */
+	public function getExternalLabsList()
+	{
+		$sql = 'SELECT rowid, fk_soc FROM ';
+		$sql .= MAIN_DB_PREFIX.'lims_methods';
+		$sql .= ' WHERE fk_soc IS NOT NULL';
+
+		$resql = $this->db->query($sql);
+		if ($resql) {
+			$records = array();
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num) {
+				$obj = $this->db->fetch_object($resql);
+				$records[$obj->rowid] = $obj->fk_soc;
+				
+				$i++;
+			}
+			$this->db->free($resql);
+
+			return $records;
+		} else {
+			$this->errors[] = 'Error '.$this->db->lasterror();
+			dol_syslog(__METHOD__.' '.join(',', $this->errors), LOG_ERR);
+
+			return -1;
+		}
+	}
 }
 
 

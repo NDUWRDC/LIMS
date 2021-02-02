@@ -989,11 +989,14 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementResultsRelateOnly"), 0, 'L', 0);
 		$posy = $pdf->GetY() + 1;
 
-		// Statement: tests conducted at own laboratory without any abnormality
-		$pdf->SetXY($this->margin_left, $posy);
-		$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementOnlyOwnLaboratory"), 0, 'L', 0);
-		$posy = $pdf->GetY() + 1;
-		
+		// If test was done at other lab
+		$listofresultsexternal = $outputlangs->transnoentities("ReportStatementAlsoOtherLaboratory");
+		$externallab_arr = array();
+		$methods = new Methods($this->db);
+		$externallab_arr = $methods->getExternalLabsList();
+		$externallab_in_methoods = is_array($externallab_arr) ? true : false;		
+		$otherlaboratoryused = false;
+
 		// If tests with 'abnormality' set
 		$nblines = count($object->lines);
 		$i = 0;
@@ -1006,26 +1009,41 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$technician_arr = array();
 		$technician_arr_i = 0;
 		
-		while ($i < $nblines)
-		{
-			if ($object->lines[$i]->abnormalities){
-				$nonconformNOK .= "(" . ($i+1) . ")";
+		while ($i < $nblines) {
+			if ($object->lines[$i]->abnormalities) {
+				$nonconformNOK .= " (".($i+1).")";
 				$abnormalitiesfound = true;
 			}
 			
-			if (!in_array($object->lines[$i]->fk_user, $technician_arr)){
+			if (!in_array($object->lines[$i]->fk_user, $technician_arr)) {
 				$technician_arr[$technician_arr_i] = $object->lines[$i]->fk_user;
 				$technician_arr_i++;
-				dol_syslog('technician_arr='.var_export($technician_arr,true), LOG_DEBUG);
+			}		
+			
+			if ($externallab_in_methoods) {
+				if (array_key_exists($object->lines[$i]->fk_method, $externallab_arr)) {
+					$listofresultsexternal .= " (".($i+1).")";
+					$otherlaboratoryused = true;
+				}
 			}
+			
 			$i++;
 		}
 
+		// Statement: tests conducted at own laboratory without any abnormality OR indicate where not
+		$pdf->SetXY($this->margin_left, $posy);
+		if ($otherlaboratoryused) {
+			$pdf->MultiCell($this->page_textwidth, 2, $listofresultsexternal, 0, 'L', 0);
+		} else {
+			$pdf->MultiCell($this->page_textwidth, 2, $outputlangs->transnoentities("ReportStatementOnlyOwnLaboratory"), 0, 'L', 0);
+		}
+		$posy = $pdf->GetY() + 1;
+		
+		// Statement of conformity: All results are within the respective measurement range of the method OR indicate where not
 		$pdf->SetXY($this->margin_left, $posy);
 		if ($abnormalitiesfound) {
 			$pdf->MultiCell($this->page_textwidth, 2, $nonconformNOK, 0, 'L', 0);
-		}
-		else {
+		} else {
 			$pdf->MultiCell($this->page_textwidth, 2, $nonconformOK, 0, 'L', 0);
 		}
 		$posy = $pdf->GetY() + 1;
@@ -1041,8 +1059,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$signingperson = new User($this->db);
 		$i = 0;
 		
-		while ($i < $technician_arr_i)
-		{
+		while ($i < $technician_arr_i) {
 			$signingperson->fetch($technician_arr[$i]);
 			$responsible .= $signingperson->getFullName($outputlangs).' ('.$signingperson->job.')';
 			if ($technician_arr_i > 0 && $i != $technician_arr_i)
@@ -1055,7 +1072,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		
 		$posy = $posy_column;
 		
-		if (is_numeric($object->fk_user_approval)){	
+		if (is_numeric($object->fk_user_approval)) {	
 			$responsible = $outputlangs->transnoentities("ReportAuthorizing");
 			$pdf->SetXY($this->page_textwidth/2, $posy_column);
 			$pdf->write(3,$responsible);
@@ -1424,7 +1441,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$eventlogs = array();
 		$eventlogs = $object->GetEventlogs();
 
-		dol_syslog(__METHOD__." eventlog = ".var_export($eventlogs,true), LOG_DEBUG);
+		//dol_syslog(__METHOD__." eventlog = ".var_export($eventlogs,true), LOG_DEBUG);
 
 		$startonnewpage = ($posy == 0) ? 1 : 0;
 		$top_shift = 0;
