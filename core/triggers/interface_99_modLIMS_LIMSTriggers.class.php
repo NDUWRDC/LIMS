@@ -144,6 +144,7 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				if ($object->revision > 0) {
 					$msg_label=$langs->transnoentitiesnoconv("SAlabelRevision")." $object->revision: ";
 				}
+				$msg_text = $msg_label;
 			}
 		}
 		else {
@@ -369,11 +370,6 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 
 			case 'RESULTS_VALIDATE':
 			case 'SAMPLES_VALIDATE':
-				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("validated"); // (note, long text)
-				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("validated"); // (label, short text)
-				break;
-
 			case 'EQUIPMENT_VALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("validated"); // (note, long text)

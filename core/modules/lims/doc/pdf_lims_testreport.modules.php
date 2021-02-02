@@ -123,6 +123,11 @@ class pdf_lims_testreport extends CommonDocGenerator
 	public $margin_bottom;
 
 	/**
+     * @var int heightforfooter
+     */
+	public $heightforfooter;
+
+	/**
 	 * Issuer
 	 * @var Societe Object that emits
 	 */
@@ -178,6 +183,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$this->margin_bottom = isset($conf->global->MAIN_PDF_MARGIN_BOTTOM) ? $conf->global->MAIN_PDF_MARGIN_BOTTOM : 10;
 		$this->page_textwidth = $this->page_width - $this->margin_right - $this->margin_right; // =196 as opposed to 190 used in code for boxes spanning the whole width.
 		
+		$this->heightforfooter = $this->margin_bottom + 8; // Height reserved to output the footer (value include bottom margin)
+		$this->heightforfooter += isset($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS) ? 6 : 0;
+
 		$this->option_logo = 1; // Display logo
 		$this->option_codeproduitservice = 1; // Display product-service code
 		$this->option_multilang = 1; // Available in several languages
@@ -357,9 +365,6 @@ class pdf_lims_testreport extends CommonDocGenerator
 		        $heightforfreetext = (isset($conf->global->MAIN_PDF_FREETEXT_HEIGHT) ? $conf->global->MAIN_PDF_FREETEXT_HEIGHT : 5); // Height reserved to output the free text on last page
 				if ($this->option_freetext==0) 
 					$heightforfreetext = 0;
-					
-	            $heightforfooter = $this->margin_bottom + 8; // Height reserved to output the footer (value include bottom margin)
-	            if ($conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS > 0) $heightforfooter += 6;
 
                 if (class_exists('TCPDF'))
                 {
@@ -569,7 +574,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					if (!empty($realpatharray[$i])) $imglinesize = pdf_getSizeForImage($realpatharray[$i]);
 
 					$pdf->setTopMargin($tab_top_newpage);
-					$pdf->setPageOrientation('', 1, $heightforfooter + $heightforfreetext + $heightforinfotests); // The only function to edit the bottom margin of current page to set it.
+					$pdf->setPageOrientation('', 1, $this->heightforfooter + $heightforfreetext + $heightforinfotests); // The only function to edit the bottom margin of current page to set it.
 					$pageposbefore = $pdf->getPage();
 
 					$showpricebeforepagebreak = 1;
@@ -577,7 +582,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$posYAfterDescription = 0;
 
 					// We start with Photo of product line
-					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotests)))	// If photo too high, we moved completely on new page
+					if (isset($imglinesize['width']) && isset($imglinesize['height']) && ($curY + $imglinesize['height']) > ($this->page_height - ($this->heightforfooter + $heightforfreetext + $heightforinfotests)))	// If photo too high, we moved completely on new page
 					{
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
@@ -613,12 +618,12 @@ class pdf_lims_testreport extends CommonDocGenerator
 						$pdf->rollbackTransaction(true);
 						$pageposafter = $pageposbefore;
 						//print $pageposafter.'-'.$pageposbefore;exit;
-						$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
+						$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 						pdf_writelinedesc($pdf, $object, $i, $outputlangs, $this->posxpicture - $curX - $progress_width, $LineHeight, $curX, $curY, $hideref, $hidedesc);
 						$pageposafter = $pdf->getPage();
 						$posyafter = $pdf->GetY();
-						//var_dump($posyafter); var_dump(($this->page_height - ($heightforfooter+$heightforfreetext+$heightforinfotests))); exit;
-						if ($posyafter > ($this->page_height - ($heightforfooter + $heightforfreetext + $heightforinfotests)))	// There is no space left for total+free text
+						//var_dump($posyafter); var_dump(($this->page_height - ($this->heightforfooter+$heightforfreetext+$heightforinfotests))); exit;
+						if ($posyafter > ($this->page_height - ($this->heightforfooter + $heightforfreetext + $heightforinfotests)))	// There is no space left for total+free text
 						{
 							if ($i == ($nblines - 1))	// No more lines, and no space left to show total, so we create a new page
 							{
@@ -742,11 +747,11 @@ class pdf_lims_testreport extends CommonDocGenerator
 						$pdf->setPage($pagenb);
 						if ($pagenb == 1)
 						{
-							$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $this->heightforfooter, 0, $outputlangs, 0, 1, $object->multicurrency_code);
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
+							$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $this->heightforfooter, 0, $outputlangs, 1, 1, $object->multicurrency_code);
 						}
 						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
 						$pagenb++;
@@ -759,13 +764,13 @@ class pdf_lims_testreport extends CommonDocGenerator
 				// Show square
 				if ($pagenb == 1)
 				{
-					$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforinfotests - $heightforfreetext - $heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top, $this->page_height - $tab_top - $heightforinfotests - $heightforfreetext - $this->heightforfooter, 0, $outputlangs, 0, 0, $object->multicurrency_code);
+					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $this->heightforfooter + 1;
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforinfotests - $heightforfreetext - $heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
-					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $heightforfooter + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $this->page_height - $tab_top_newpage - $heightforinfotests - $heightforfreetext - $this->heightforfooter, 0, $outputlangs, 1, 0, $object->multicurrency_code);
+					$bottomlasttab = $this->page_height - $heightforinfotests - $heightforfreetext - $this->heightforfooter + 1;
 				}
 
 				// Display info area, maximal height=heightforinfotests
@@ -1364,7 +1369,17 @@ class pdf_lims_testreport extends CommonDocGenerator
 	{
 		global $conf;
 		$showdetails = $conf->global->MAIN_GENERATE_DOCUMENTS_SHOW_FOOT_DETAILS;
-		return pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->issuer, $this->margin_bottom, $this->margin_left, $this->page_height, $object, $showdetails, $hidefreetext);
+		
+		$bMargin = $pdf->getBreakMargin();
+        $auto_page_break = $this->AutoPageBreak;
+		$pdf->SetAutoPageBreak(false, 0);
+	
+		$height = pdf_pagefoot($pdf, $outputlangs, 'INVOICE_FREE_TEXT', $this->issuer, $this->margin_bottom, $this->margin_left, $this->page_height, $object, $showdetails, $hidefreetext);
+
+		$pdf->SetAutoPageBreak($auto_page_break, $bMargin);
+		
+		return $height;
+		
 	}
 
 	// phpcs:disable PEAR.NamingConventions.ValidFunctionName.ScopeNotCamelCaps
@@ -1409,17 +1424,13 @@ class pdf_lims_testreport extends CommonDocGenerator
 		$eventlogs = array();
 		$eventlogs = $object->GetEventlogs();
 
+		dol_syslog(__METHOD__." eventlog = ".var_export($eventlogs,true), LOG_DEBUG);
+
 		$startonnewpage = ($posy == 0) ? 1 : 0;
 		$top_shift = 0;
 
 		$default_font_size = pdf_getPDFFontSize($outputlangs);
 		$pdf->SetFont('', '', $default_font_size - 1);
-
-		// array for column positions Date=>[0], Aspect=>[1], Author=>[2] 
-//		$posx = array(0,40,170);
-//		$colwidth = array(38,140,20);
-
-		dol_syslog(__METHOD__."eventlog = ".var_export($eventlogs,true), LOG_DEBUG);
 
 		$i = 0;
 		$nblines = count($eventlogs);
@@ -1431,6 +1442,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			$pageposbefore = $pdf->getPage(); 
 			$posy = $this->writeeventtableline($pdf, $val, $posy);
 			$pageposafter = $pdf->getPage();
+//			dol_syslog(__METHOD__." line 1430 pageposbefore=$pageposbefore.	Set pageposafter to $pageposafter - posy=$posy", LOG_DEBUG);
 
 			if ($startonnewpage) {
 				$startonnewpage = 0;
@@ -1438,6 +1450,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 
 			if ($pageposafter > $pageposbefore) {
+				$pageposafter = $pageposbefore + 1; // with autopagebreak enabled there are multiple pages added.
 				// There is a pagebreak
 				$pdf->rollbackTransaction(true);
 				$pdf->AddPage('', '', true);
@@ -1447,12 +1460,13 @@ class pdf_lims_testreport extends CommonDocGenerator
 				} else {
 					$tab_top_newpage = $this->margin_top;	
 				}
-				$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
+				$this->_pagefoot($pdf, $object, $outputlangs, 0);
 
 				$pdf->setTopMargin($tab_top_newpage);
-				$pdf->setPageOrientation('', 1, $heightforfooter); // The only function to edit the bottom margin of current page to set it.
-					
+				$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
+//				dol_syslog(__METHOD__." pageposafter>pageposbefore .... set page to $pageposafter ", LOG_DEBUG);
 				$pdf->setPage($pageposafter);
+//				dol_syslog(__METHOD__." line 1453 set pageposafter to $pageposafter ", LOG_DEBUG);
 
 				$posy = $this->margin_top + $tab_top_newpage;
 	
@@ -1463,14 +1477,15 @@ class pdf_lims_testreport extends CommonDocGenerator
 				$posyafter = $this->writeeventtableline($pdf, $val, $posy);
 
 				$pageposafter = $pdf->getPage();
-
-				if ($posyafter > ($this->page_height - $heightforfooter)) {
+//				dol_syslog(__METHOD__." line 1464 set pageposafter to $pageposafter ", LOG_DEBUG);
+				if ($posyafter > ($this->page_height - $this->heightforfooter)) {
 					if ($i == ($nblines - 1)) {
 						$pdf->AddPage('', '', true);
 						if (!empty($tplidx)) $pdf->useTemplate($tplidx);
 						if (empty($conf->global->MAIN_PDF_DONOTREPEAT_HEAD))  $top_shift = $this->_pagehead($pdf, $object, 0, $outputlangs);
+//						dol_syslog(__METHOD__." posyafter > height.... set page to $pageposafter ", LOG_DEBUG);
 						$pdf->setPage($pageposafter + 1);
-						$this->_pagefoot($pdf, $object, $outputlangs, $this->option_freetext);
+						$this->_pagefoot($pdf, $object, $outputlangs, 0);
 						$posy = $this->margin_top + $top_shift;
 					}
 				} else {
@@ -1483,9 +1498,10 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 
 			$pageposafter = $pdf->getPage();
+//			dol_syslog(__METHOD__." end of foreach .... set page to $pageposafter -  counter i=$i/$nblines - posy=$posy", LOG_DEBUG);
 			$pdf->setPage($pageposafter);
 			$pdf->setTopMargin($this->margin_top);
-			$pdf->setPageOrientation('', 1, 0); // The only function to edit the bottom margin of current page to set it.
+			$pdf->setPageOrientation('', 1, $this->heightforfooter); // The only function to edit the bottom margin of current page to set it.
 
 			$posy += 1;
 			$i++;
@@ -1526,7 +1542,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 	 *   	@param	PDF			$pdf     			PDF
 	 * 		@param				$line				line of eventlog array
 	 * 		@param  int			$posy				Current vertical position
-	 *      @return	float								Return current vertical position
+	 *      @return	float							Return current vertical position
 	 */
 	public function writeeventtableline(&$pdf, $line, $posy)
 	{

@@ -1377,12 +1377,21 @@ class Samples extends CommonObject
 		$actionsSA = array();
 		$actionsSA = ActionComm::getActions($this->db, 0, $this->id, 'samples@lims');
 
-		$actionsRE = array();
-		$actionsRE = ActionComm::getActions($this->db, 0, $this->id, 'results@lims');
-
 		if(!is_array($actionsSA)) {
 			return -1;
 		}
+
+		$actionsRE = array();
+		$actionsREline = array();
+
+		$result = $this->fetchLines();
+		if ($result > 0) {
+			foreach ($this->lines as $line) {
+				$actionsREline = ActionComm::getActions($this->db, 0, $line->id, 'results@lims');
+				$actionsRE = array_merge($actionsRE, $actionsREline);
+				//dol_syslog(__METHOD__.' actionsRE='.var_export($actionsRE, true), LOG_DEBUG);		
+			}
+		} 
 		
 		$user = new User($this->db);
 		$result = $user->fetchAll();
@@ -1403,6 +1412,19 @@ class Samples extends CommonObject
 			$ChangeSet[$row]['User']   = $user_list[$value->authorid];
 			$row++;
 		}
+		foreach ($actionsRE as $key => $value) {
+			$ChangeSet[$row]['Date']   = dol_print_date($value->datep, 'dayhour');
+			$ChangeSet[$row]['Aspect'] = $value->note;
+			$ChangeSet[$row]['User']   = $user_list[$value->authorid];
+			$row++;
+		}
+
+		// sorting for date
+		// https://stackoverflow.com/questions/2910611/php-sort-a-multidimensional-array-by-element-containing-date/2910642
+		foreach ($ChangeSet as $key => $part) {
+			$sort[$key] = strtotime($part['Date']);
+	   	}
+		array_multisort($sort, SORT_DESC, $ChangeSet);
 
 		return $ChangeSet;
 	}
