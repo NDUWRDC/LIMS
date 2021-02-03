@@ -1026,6 +1026,9 @@ class Equipment extends CommonObject
 			}
 		}
 
+		// Delete this line once 'standard_equipment' is ready to use
+		if ($modele=='standard_equipment') $includedocgeneration = 0;
+
 		$modelpath = "core/modules/lims/doc/";
 
 		if ($includedocgeneration) {
