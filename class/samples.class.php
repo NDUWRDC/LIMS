@@ -110,8 +110,8 @@ class Samples extends CommonObject
 		'fk_soc' => array('type'=>'integer:Societe:societe/class/societe.class.php:1:status=1 AND entity IN (__SHARED_ENTITIES__)', 'label'=>'SAlabelCustomer', 'enabled'=>1, 'position'=>20, 'notnull'=>1, 'visible'=>1, 'index'=>1, 'help'=>"SAlabelCustomerHelp",),
 		'fk_propal' => array('type'=>'integer:Propal:comm/propal/class/propal.class.php', 'label'=>'SAlabelCustomerProposal', 'enabled'=>0, 'position'=>30, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"SAlabelCustomerProposalHelp",),
 		'fk_facture' => array('type'=>'integer:Facture:compta/facture/class/facture.class.php', 'label'=>'SAlabelCustomerInvoice', 'enabled'=>1, 'position'=>40, 'notnull'=>-1, 'visible'=>1, 'index'=>1, 'help'=>"SAlabelCustomerInvoiceHelp",),
-		'samplingbyclient' => array('type'=>'integer', 'label'=>'SAlabelSamplingByClient', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'default'=>'1', 'index'=>1, 'arrayofkeyval'=>array('0'=>'No', '1'=>'Yes'), 'help'=>"SAlabelSamplingByClientHelp",),
-		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SAlabelSaboratorySampleTaker', 'enabled'=>1, 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"SAlabelSaboratorySampleTakerHelp",),
+		'samplingbyclient' => array('type'=>'boolean', 'label'=>'SAlabelSamplingByClient', 'enabled'=>1, 'position'=>50, 'notnull'=>-1, 'visible'=>3, 'default'=>'1', 'index'=>1, 'help'=>"SAlabelSamplingByClientHelp",),
+		'fk_user' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SAlabelSaboratorySampleTaker', 'enabled'=>0, 'noteditable'=>'1', 'position'=>60, 'notnull'=>-1, 'visible'=>3, 'index'=>1, 'help'=>"SAlabelSaboratorySampleTakerHelp",),
 		'fk_user_approval' => array('type'=>'integer:User:user/class/user.class.php', 'label'=>'SAlabelManager', 'enabled'=>1, 'position'=>65, 'notnull'=>-1, 'visible'=>0, 'default'=>null, 'index'=>1, 'help'=>"SAlabelManagerHelp",),
 		'description' => array('type'=>'text', 'label'=>'SAlabelDescription', 'enabled'=>1, 'position'=>67, 'notnull'=>0, 'visible'=>3, 'help'=>"SAlabelDescriptionHelp",),
 		'label' => array('type'=>'varchar(255)', 'label'=>'SAlabelSampleName', 'enabled'=>1, 'position'=>70, 'notnull'=>0, 'visible'=>1, 'searchall'=>1, 'help'=>"SAlabelSampleNameHelp",),
@@ -715,6 +715,9 @@ class Samples extends CommonObject
 		{
 			$this->ref = $num;
 			$this->status = self::STATUS_VALIDATED;
+
+			// add manager to Contacts/Addresses
+			$this->add_contact($user->id, 'MANAGER', 'internal');
 		}
 
 		if (!$error)

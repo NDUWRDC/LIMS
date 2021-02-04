@@ -597,6 +597,13 @@ class Results extends CommonObject
 		{
 			$this->ref = $num;
 			$this->status = self::STATUS_VALIDATED;
+
+			// add technician to Contacts/Addresses
+			dol_include_once('/lims/class/samples.class.php', 'Samples');
+
+			$sample = new Samples($this->db);
+			$sample->fetch($this->fk_samples);
+			$sample->add_contact($this->fk_user, 'TECHNICIAN', 'internal');
 		}
 
 		if (!$error)

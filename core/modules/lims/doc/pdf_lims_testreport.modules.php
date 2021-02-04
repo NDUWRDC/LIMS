@@ -491,13 +491,20 @@ class pdf_lims_testreport extends CommonDocGenerator
 					$sample_person_user = $outputlangs->transnoentities("HeaderSamplingByClient");
 				}
 				else {
-					if (empty($object->fk_user)) {
+					// If OWNSAMPLER contact defined on sample, we use it
+					$arrayidcontactSampler = array();
+					$arrayidcontactSampler = $object->getIdContact('internal', 'OWNSAMPLER');
+					if (count($arrayidcontactSampler) > 0) {
+						$usecontact = true;
+						$result = $object->fetch_contact($arrayidcontactSampler[0]);
+			
+						if ($result > 0) {
+							$userobj = new User($object->db);
+							$userobj->fetch($arrayidcontactSampler[0]);
+							$sample_person_user = $userobj->getFullName($outputlangs);
+						}
+					} else {
 						$sample_person_user = $outputlangs->transnoentities("HeaderSamplePersonUnknown");
-					} 
-					else {
-						$userobj = new User($object->db);
-						$userobj->fetch($object->fk_user);
-						$sample_person_user = $userobj->getFullName($outputlangs);
 					}
 				}
 				
@@ -1319,9 +1326,9 @@ class pdf_lims_testreport extends CommonDocGenerator
 
 
 
-			// If BILLING contact defined on invoice, we use it
+			// If CUSTOMERREPORT contact defined on sample, we use it
 			$usecontact = false;
-			$arrayidcontact = $object->getIdContact('external', 'BILLING');
+			$arrayidcontact = $object->getIdContact('external', 'CUSTOMERREPORT');
 			if (count($arrayidcontact) > 0)
 			{
 				$usecontact = true;
@@ -1329,7 +1336,7 @@ class pdf_lims_testreport extends CommonDocGenerator
 			}
 
 			//Recipient name
-			// On peut utiliser le nom de la societe du contact
+			// use the name of the contact's company.
 			if ($usecontact && !empty($conf->global->MAIN_USE_COMPANY_NAME_OF_CONTACT)) {
 				$thirdparty = $object->contact;
 			} else {

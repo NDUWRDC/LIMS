@@ -360,6 +360,14 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			//case 'SHIPPING_REOPEN':
 			//case 'SHIPPING_DELETE':
 			
+			case 'SAMPLES_DELETE_CONTACT':
+			case 'SAMPLES_ADD_CONTACT':
+				$langs->loadLangs(array("lims@lims", "users"));
+				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("LinkToCompanyContact"); // (note, long text)
+				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("LinkToCompanyContact"); // (label, short text)
+			break;
+
 			case 'RESULTS_CREATE':
 			case 'SAMPLES_CREATE':
 			case 'EQUIPMENT_CREATE':

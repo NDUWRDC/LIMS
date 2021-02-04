@@ -378,3 +378,4 @@ LIMSLocations = LIMS Locations
 TECHNICIAN = Laboratory technician
 OWNSAMPLER = Sampling technician
 CUSTOMERREPORT = Contact for Report
+MANAGER = Validating laboratory manager

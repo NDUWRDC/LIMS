@@ -19,3 +19,4 @@
 INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active ) values (207150, 'Samples',  'internal', 'TECHNICIAN', 'Laboratory technician', 1);
 INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active ) values (207151, 'Samples',  'internal', 'OWNSAMPLER', 'Sampling technician', 1);
 INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active ) values (207152, 'Samples',  'external', 'CUSTOMERREPORT', 'Contact for Report', 1);
+INSERT INTO llx_c_type_contact (rowid, element, source, code, libelle, active ) values (207153, 'Samples',  'internal', 'MANAGER', 'Laboratory manager', 1);
