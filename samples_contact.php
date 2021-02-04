@@ -45,6 +45,11 @@ if ($conf->categorie->enabled) { require_once DOL_DOCUMENT_ROOT.'/categories/cla
 dol_include_once('/lims/class/samples.class.php');
 dol_include_once('/lims/lib/lims_samples.lib.php');
 
+if (!empty($conf->projet->enabled)) {
+	require_once DOL_DOCUMENT_ROOT.'/projet/class/project.class.php';
+	require_once DOL_DOCUMENT_ROOT.'/core/class/html.formprojet.class.php';
+}
+
 // Load translation files required by the page
 $langs->loadLangs(array("lims@lims", "companies"));
 
@@ -59,6 +64,7 @@ $mine   = GETPOST('mode') == 'mine' ? 1 : 0;
 
 $object = new Samples($db);
 
+// Load object
 include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
 
 // Security check
@@ -166,15 +172,20 @@ if ($id > 0 || !empty($ref))
 	$linkback = '<a href="'.dol_buildpath('/lims/samples_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
 	$morehtmlref = '<div class="refidno">';
-	/*
+	
 	// Title
-	$morehtmlref .= $object->title;
+	$morehtmlref .=$langs->trans('SAlabelSampleName').' : '.$object->thirdparty->label;
 	// Thirdparty
-	if ($object->thirdparty->id > 0)
-	{
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1, 'project');
+	if ($object->thirdparty->id > 0) {
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
 	}
-	*/
+	// Project
+	if (!empty($conf->projet->enabled) && !empty($object->fk_project)) {
+		$proj = new Project($db);
+		$proj->fetch($object->fk_project);
+		$morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
+		$morehtmlref.= $proj->getNomUrl();
+	}
 	$morehtmlref .= '</div>';
 
 	// Define a complementary filter for search of next/prev ref.
@@ -189,109 +200,35 @@ if ($id > 0 || !empty($ref))
 
 
 	print '<div class="fichecenter">';
-/*	print '<div class="fichehalfleft">';
-	print '<div class="underbanner clearboth"></div>';
-
-	print '<table class="border tableforfield centpercent">';
-
-	// Usage
-	print '<tr><td class="tdtop">';
-	print $langs->trans("Usage");
-	print '</td>';
-	print '<td>';
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES))
-	{
-		print '<input type="checkbox" disabled name="usage_opportunity"'.(GETPOSTISSET('usage_opportunity') ? (GETPOST('usage_opportunity', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_opportunity ? ' checked="checked"' : '')).'"> ';
-		$htmltext = $langs->trans("ProjectFollowOpportunity");
-		print $form->textwithpicto($langs->trans("ProjectFollowOpportunity"), $htmltext);
-		print '<br>';
-	}
-	if (empty($conf->global->PROJECT_HIDE_TASKS))
-	{
-		print '<input type="checkbox" disabled name="usage_task"'.(GETPOSTISSET('usage_task') ? (GETPOST('usage_task', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_task ? ' checked="checked"' : '')).'"> ';
-		$htmltext = $langs->trans("ProjectFollowTasks");
-		print $form->textwithpicto($langs->trans("ProjectFollowTasks"), $htmltext);
-		print '<br>';
-	}
-	if (!empty($conf->global->PROJECT_BILL_TIME_SPENT))
-	{
-		print '<input type="checkbox" disabled name="usage_bill_time"'.(GETPOSTISSET('usage_bill_time') ? (GETPOST('usage_bill_time', 'alpha') != '' ? ' checked="checked"' : '') : ($object->usage_bill_time ? ' checked="checked"' : '')).'"> ';
-		$htmltext = $langs->trans("ProjectBillTimeDescription");
-		print $form->textwithpicto($langs->trans("BillTime"), $htmltext);
-		print '<br>';
-	}
-	print '</td></tr>';
-
-	// Visibility
-	print '<tr><td class="titlefield">'.$langs->trans("Visibility").'</td><td>';
-	if ($object->public) print $langs->trans('SharedProject');
-	else print $langs->trans('PrivateProject');
-	print '</td></tr>';
-
-	if (!empty($conf->global->PROJECT_USE_OPPORTUNITIES) && $object->opp_status)
-	{
-		// Opportunity status
-		print '<tr><td>'.$langs->trans("OpportunityStatus").'</td><td>';
-		$code = dol_getIdFromCode($db, $object->opp_status, 'c_lead_status', 'rowid', 'code');
-		if ($code) print $langs->trans("OppStatus".$code);
-		print '</td></tr>';
-
-		// Opportunity percent
-		print '<tr><td>'.$langs->trans("OpportunityProbability").'</td><td>';
-		if (strcmp($object->opp_percent, '')) print price($object->opp_percent, '', $langs, 1, 0).' %';
-		print '</td></tr>';
-
-		// Opportunity Amount
-		print '<tr><td>'.$langs->trans("OpportunityAmount").'</td><td>';
-		if (strcmp($object->opp_amount, '')) print price($object->opp_amount, '', $langs, 0, 0, 0, $conf->currency);
-		print '</td></tr>';
-	}
-
-	// Date start - end
-	print '<tr><td>'.$langs->trans("DateStart").' - '.$langs->trans("DateEnd").'</td><td>';
-	$start = dol_print_date($object->date_start, 'day');
-	print ($start ? $start : '?');
-	$end = dol_print_date($object->date_end, 'day');
-	print ' - ';
-	print ($end ? $end : '?');
-	if ($object->hasDelay()) print img_warning("Late");
-	print '</td></tr>';
-
-	// Budget
-	print '<tr><td>'.$langs->trans("Budget").'</td><td>';
-	if (strcmp($object->budget_amount, '')) print price($object->budget_amount, '', $langs, 0, 0, 0, $conf->currency);
-	print '</td></tr>';
-
+	
+	//print '<div class="fichehalfleft">';
+	//print '<div class="underbanner clearboth"></div>';
+	//print '<table class="border tableforfield centpercent">';
 	// Other attributes
-	$cols = 2;
-	include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	//$cols = 2;
+	//include DOL_DOCUMENT_ROOT.'/core/tpl/extrafields_view.tpl.php';
+	//print "</table>";
+	//print '</div>';
 
-	print "</table>";
-
-	print '</div>';
-*/
 	print '<div class="fichehalfleft">';
 	print '<div class="ficheaddleft">';
 	print '<div class="underbanner clearboth"></div>';
 
 	print '<table class="border tableforfield" width="100%">';
-
 	// Description
 	print '<td class="titlefield tdtop">'.$langs->trans("Description").'</td><td>';
 	print nl2br($object->description);
 	print '</td></tr>';
-
 	// Categories
 	if ($conf->categorie->enabled) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
 	}
-
 	print '</table>';
+	print '</div>';
+	print '</div>';
 
-	print '</div>';
-	print '</div>';
 	print '</div>';
 
 	print '<div class="clearboth"></div>';
