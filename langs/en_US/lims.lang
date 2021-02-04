@@ -374,3 +374,7 @@ createsample = CREATE SAMPLE
 #
 LIMSUnits = LIMS Units
 LIMSLocations = LIMS Locations
+# Dictionary Contact/Address types
+TECHNICIAN = Laboratory technician
+OWNSAMPLER = Sampling technician
+CUSTOMERREPORT = Contact for Report

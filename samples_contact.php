@@ -220,11 +220,12 @@ if ($id > 0 || !empty($ref))
 	print nl2br($object->description);
 	print '</td></tr>';
 	// Categories
+	/* TODO: add categories for samples
 	if ($conf->categorie->enabled) {
 		print '<tr><td class="valignmiddle">'.$langs->trans("Categories").'</td><td>';
 		print $form->showCategories($object->id, Categorie::TYPE_PROJECT, 1);
 		print "</td></tr>";
-	}
+	}*/
 	print '</table>';
 	print '</div>';
 	print '</div>';
@@ -239,7 +240,7 @@ if ($id > 0 || !empty($ref))
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
 	$permission = $user->rights->lims->samples->write;
-	
+	$preselectedtypeofcontact = 'CUSTOMERREPORT';
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
 	foreach ($dirtpls as $reldir)
 	{
