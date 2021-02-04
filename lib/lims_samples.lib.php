@@ -40,6 +40,11 @@ function samplesPrepareHead($object)
 	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'card';
 	$h++;
+	
+	$head[$h][0] = dol_buildpath("/lims/samples_contact.php", 1).'?id='.$object->id;
+	$head[$h][1] = $langs->trans("Contacts");
+	$head[$h][2] = 'contacts';
+	$h++;
 
 	if (isset($object->fields['note_public']) || isset($object->fields['note_private']))
 	{

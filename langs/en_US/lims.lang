@@ -135,6 +135,10 @@ SAlinetitleTestPeriod = Test performed in this period:
 SAlinetitleTestingTechnician = Test perfomed by:
 ErrorStartDateGreaterEnd = Date for 'Start' must be before 'End'
 ErrorSamplingPersonSetTwice = If 'Sampling by client' is set to 'Yes' the laboratory sampling person must not be selected
+#
+# Samples (Contacts)
+#
+SAlabelContact = Contacts
 
 #
 # Results (List Results)
