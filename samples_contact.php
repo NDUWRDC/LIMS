@@ -53,79 +53,60 @@ if (!empty($conf->projet->enabled)) {
 // Load translation files required by the page
 $langs->loadLangs(array("lims@lims", "companies"));
 
-$id     = GETPOST('id', 'int');
+$id     = (GETPOST('id') ? GETPOST('id', 'int') : GETPOST('facid', 'int')); // For backward compatibility
 $ref    = GETPOST('ref', 'alpha');
 $lineid = GETPOST('lineid', 'int');
 $socid  = GETPOST('socid', 'int');
 $action = GETPOST('action', 'aZ09');
 
-$mine   = GETPOST('mode') == 'mine' ? 1 : 0;
-//if (! $user->rights->projet->all->lire) $mine=1;	// Special for projects
-
+// Initialize technical objects
 $object = new Samples($db);
+$extrafields = new ExtraFields($db);
+$diroutputmassaction = $conf->lims->dir_output.'/temp/massgeneration/'.$user->id;
+$hookmanager->initHooks(array('samplescontactcard', 'globalcard'));  // Note that conf->hooks_modules contains array
+// Fetch optionals attributes and labels
+$extrafields->fetch_name_optionals_label($object->table_element);
 
 // Load object
-include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once
+include DOL_DOCUMENT_ROOT.'/core/actions_fetchobject.inc.php'; // Must be include, not include_once$permission = $user->rights->mymodule->myobject->write;
 
 // Security check
-$socid = 0;
+//if ($user->socid > 0) accessforbidden();
 //if ($user->socid > 0) $socid = $user->socid;    // For external user, no check is done on company because readability is managed by public status of project and assignement.
-//$result = restrictedArea($user, 'projet', $id, 'projet&project');
+//$result = restrictedArea($user, 'lims', $object->id);
 
-$hookmanager->initHooks(array('samplescontactcard', 'globalcard'));
-
+$permission = $user->rights->lims->samples->write;
 /*
  * Actions
  */
 
 // Add new contact
-if ($action == 'addcontact' && $user->rights->lims->samples->write)
+if ($action == 'addcontact' && $permission)
 {
-	$result = 0;
-	$result = $object->fetch($id);
+	$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
+	$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
+	$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
 
-	if ($result > 0 && $id > 0)
-	{
-  		$contactid = (GETPOST('userid') ? GETPOST('userid', 'int') : GETPOST('contactid', 'int'));
-  		$typeid = (GETPOST('typecontact') ? GETPOST('typecontact') : GETPOST('type'));
-  		$result = $object->add_contact($contactid, $typeid, GETPOST("source", 'aZ09'));
-	}
-
-	if ($result >= 0)
-	{
+	if ($result >= 0) {
 		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
-		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
+		if ($object->error == 'DB_ERROR_RECORD_ALREADY_EXISTS') {
 			$langs->load("errors");
 			setEventMessages($langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType"), null, 'errors');
 		} else {
 			setEventMessages($object->error, $object->errors, 'errors');
 		}
 	}
-}
+} elseif ($action == 'swapstatut' && $permission) {
+	// Toggle the status of a contact
+	$result = $object->swapContactStatus(GETPOST('ligne'));
+} elseif ($action == 'deletecontact' && $permission) {
+	// Deletes a contact
+	$result = $object->delete_contact($lineid);
 
-// Change contact's status
-if ($action == 'swapstatut' && $user->rights->lims->samples->write)
-{
-	if ($object->fetch($id))
-	{
-		$result = $object->swapContactStatus(GETPOST('ligne', 'int'));
-	} else {
-		dol_print_error($db);
-	}
-}
-
-// Delete a contact
-if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->lims->samples->write)
-{
-	$object->fetch($id);
-	$result = $object->delete_contact(GETPOST("lineid"));
-
-	if ($result >= 0)
-	{
-		header("Location: samples_contact.php?id=".$object->id);
+	if ($result >= 0) {
+		header("Location: ".$_SERVER['PHP_SELF']."?id=".$object->id);
 		exit;
 	} else {
 		dol_print_error($db);
@@ -138,7 +119,6 @@ if (($action == 'deleteline' || $action == 'deletecontact') && $user->rights->li
  */
 
 $title = $langs->trans("SAlabelContact").' - '.$object->ref.' '.$object->name;
-//if (!empty($conf->global->MAIN_HTML_TITLE) && preg_match('/projectnameonly/', $conf->global->MAIN_HTML_TITLE) && $object->name) $title = $object->ref.' '.$object->name.' - '.$langs->trans("SAlabelContact");
 $help_url = '';//"EN:Module_Projects|FR:Module_Projets|ES:M&oacute;dulo_Proyectos";
 llxHeader('', $title, $help_url);
 
@@ -154,20 +134,13 @@ $userstatic = new User($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-if ($id > 0 || !empty($ref))
-{
-	// if (!empty($conf->global->PROJECT_ALLOW_COMMENT_ON_PROJECT) && method_exists($object, 'fetchComments') && empty($object->comments)) $object->fetchComments();
-	// To verify role of users
-	//$userAccess = $object->restrictedProjectArea($user,'read');
-	//$userWrite = $object->restrictedProjectArea($user, 'write');
-	//$userDelete = $object->restrictedProjectArea($user,'delete');
-	//print "userAccess=".$userAccess." userWrite=".$userWrite." userDelete=".$userDelete;
-
+if ($object->id) {
+	/*
+	 * Show tabs
+	 */
 	$head = samplesPrepareHead($object);
+
 	print dol_get_fiche_head($head, 'contact', $langs->trans("Samples"), -1, 'object_'.$object->picto);
-
-
-	// Samples card
 
 	$linkback = '<a href="'.dol_buildpath('/lims/samples_list.php', 1).'?restore_lastsearch_values=1'.(!empty($socid) ? '&socid='.$socid : '').'">'.$langs->trans("BackToList").'</a>';
 
@@ -177,12 +150,13 @@ if ($id > 0 || !empty($ref))
 	$morehtmlref .=$langs->trans('SAlabelSampleName').' : '.$object->thirdparty->label;
 	// Thirdparty
 	if ($object->thirdparty->id > 0) {
-		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.$object->thirdparty->getNomUrl(1);
+		$morehtmlref .= '<br>'.$langs->trans('ThirdParty').' : '.(is_object($object->thirdparty) ? $object->thirdparty->getNomUrl(1) : '');
 	}
 	// Project
 	if (!empty($conf->projet->enabled) && !empty($object->fk_project)) {
 		$proj = new Project($db);
 		$proj->fetch($object->fk_project);
+		$langs->load('project');
 		$morehtmlref.='<br>'.$langs->trans('Project') . ' : ';
 		$morehtmlref.= $proj->getNomUrl();
 	}
@@ -196,7 +170,7 @@ if ($id > 0 || !empty($ref))
 		$object->next_prev_filter = " rowid in (".(count($objectsListId) ?join(',', array_keys($objectsListId)) : '0').")";
 	}
 	*/
-	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref);
+	dol_banner_tab($object, 'ref', $linkback, 1, 'ref', 'ref', $morehtmlref); //, '', 0, '', '', 1);
 
 
 	print '<div class="fichecenter">';
@@ -239,13 +213,13 @@ if ($id > 0 || !empty($ref))
 	print '<br>';
 
 	// Contacts lines (modules that overwrite templates must declare this into descriptor)
-	$permission = $user->rights->lims->samples->write;
 	$preselectedtypeofcontact = 'CUSTOMERREPORT';
 	$dirtpls = array_merge($conf->modules_parts['tpl'], array('/core/tpl'));
-	foreach ($dirtpls as $reldir)
-	{
+	foreach ($dirtpls as $reldir) {
 		$res = @include dol_buildpath($reldir.'/contacts.tpl.php');
-		if ($res) break;
+		if ($res) {
+			break;
+		}
 	}
 }
 
