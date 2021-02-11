@@ -151,6 +151,7 @@ RElabelTechnicianHelp = Responsible lab technician
 RElabelMethod = Test method
 RElabelMethodHelp = Parameter tested using a specific method
 RElabelResult = Result
+RElabelResults = Results
 RElabelResultHelp = Test result
 # Unit -> MElabelUnit
 RElabelStartTime = Start time
@@ -221,6 +222,11 @@ EQlabelNotePrivateHelp = Will not be printed, only for internal references
 # Private and public note use the Dolibarr key
 # DateCreation, DateModification use the Dolibarr key
 # UserAuthor, UserModif use the Dolibarr key 
+EQlabelConsumable = Consumable
+EQlabelFacility = Facility
+EQlabelSalesItem = Sales Item
+EQlabelNoCalNoMaint = No calibration, no maintenance
+EQlabelCalibration = Calibration
 #
 # Equipment page
 #
@@ -379,3 +385,7 @@ TECHNICIAN = Laboratory technician
 OWNSAMPLER = Sampling technician
 CUSTOMERREPORT = Contact for Report
 MANAGER = Validating laboratory manager
+# Dictionary Locations
+Laboratory = Laboratory
+Freezer = Freezer
+Disposed = Disposed
