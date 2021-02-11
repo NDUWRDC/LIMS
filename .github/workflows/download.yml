@@ -20,3 +20,4 @@ jobs:
           # Test that localized files were downloaded by listing 
           # the content of langs folders.
           ls langs/**/*.lang
+          
