@@ -443,10 +443,10 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		$actioncomm->code = 'AC_'.$action;
 		$actioncomm->label = $actionlabel;
 		$actioncomm->note_private = $actionnote;
-		$actioncomm->fk_project = 0;
-		$actioncomm->datep = dol_now();	// planned start date
+		$actioncomm->fk_project = isset($object->fk_project) ? $object->fk_project : 0;
+		$actioncomm->datep = dol_now(); //isset($object->start) ? $object->start : dol_now();	// planned start date
 		//$actioncomm->datea = dol_now();	// real start date
-		$actioncomm->datef = dol_now();	// Date action end
+		$actioncomm->datef = dol_now(); //isset($object->end) ? $object->end : dol_now();	// Date action end
 		$actioncomm->percentage = -1; // Not applicable
 		$actioncomm->socid = $object->thirdparty->id;
 		$actioncomm->contact_id = 0;
