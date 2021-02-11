@@ -1,0 +1,10 @@
+{
+    "upload": {  
+      "type": "properties",
+      "files": "langs/en_US/lims.lang"
+    },
+    
+    "download": {
+      "files": "langs/${languageCode}_${regionCode}/lims.lang"
+    }   
+}
