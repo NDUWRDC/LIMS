@@ -16,8 +16,8 @@ __Manage your samples and generate test reports following ISO 17025:2017__
   * Accuracy
   * Measurement Range
   * Resolution of reading
-* Manage Limit Sets, with each entry/line
-  * Linked to one method
+* Manage Limit Sets, where each entry/line has
+  * A link to one method
   * Minimum and Maximum, where one value may be empty (NULL)
 * Manage Samples, where each sample has
   * A link to a customer (Module THIRD PARTIES required)
@@ -57,17 +57,13 @@ __Manage your samples and generate test reports following ISO 17025:2017__
 Other modules are available on [Dolistore.com](https://www.dolistore.com>).
 
 ## Translations
+LIMS is multi-language ready, no progamming skills are required to add new a language. 
+Translations are managed on [Localazy](https://localazy.com/p/lims-for-dolibarr). 
+If you'd like to contribute, you are more than welcome to do so. Please [sign up](https://localazy.com/register?origin=/p/lims-for-dolibarr) and start adding to your language.
 
-Translations can be defined manually by editing files into directories *langs*. Currently available language files: English.
-
-<!--
-This module contains also a sample configuration for Transifex, under the hidden directory [.tx](.tx), so it is possible to manage translation using this service.
-
-For more informations, see the [translator's documentation](https://wiki.dolibarr.org/index.php/Translator_documentation).
-
-There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-template) for this module.
--->
-
+Currently available language files: 
+  * English
+  * German
 
 ## Installation
 
@@ -78,7 +74,7 @@ There is a [Transifex project](https://transifex.com/projects/p/dolibarr-module-
   * Select tab ```Deploy/install external app/module```
   * Select the zip-file (release package) and click SEND
 
-Note: If this screen tell you there is no custom directory, check your setup is correct:
+Note: If you get a message 'no custom directory', check if your setup is correct:
 
 - In your Dolibarr installation directory, edit the ```htdocs/conf/conf.php``` file and check that following lines are not commented:
 

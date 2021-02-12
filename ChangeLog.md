@@ -23,10 +23,12 @@ __Dolibarr version 13.x required__
 - Samples: Lines (results) show selected Product - Method with tooltip
 - Samples: Add lines (results) shows Product-Method now with product reference and label.
 - Samples: Date of validation registered automatically and printed on report instead of current date
-- Reports: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
+- New Report: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
+- Test Report: All modifications to results and the sample information appended in cronological order.
+- At module Agenda events for Samples, Results, Equipment are listed. E.g., 'Sample SA2101-0001rev5 modified'. In the description of the event details of the modification are given, e.g. 'Result: 602.00 -> 600.00'
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)
 - Dictionaries: LIMS Locations to provide options for the current location of a sample (customer, fridge, laboratory, fridge, ...)
-- New sql files: llx_lims_units.sql, llx_lims_locations.sql
+- Language added: German
 - ChangeLog added
 ### Changed
 - __BREAKING:__ sql files changed, update from 0.1.0 to 0.2.0 not possible, __fresh install required__
