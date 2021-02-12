@@ -320,7 +320,7 @@ ReportAuthorizing = Authorized by:
 DigitalSigned = Digital signed on 
 HeaderSampleHistory = History of Amendments
 #
-# Report: Calibration and Maintenance Report (standard_equipmentlist)
+# Report: Calibration and Maintenance Report (lims_equipmentlist)
 #
 EquipmentListReportTitle = Calibration and Maintenance Report
 EquipmentListReportNumCalibrated = Number of equipment calibrated

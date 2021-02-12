@@ -23,7 +23,7 @@ __Dolibarr version 13.x required__
 - Samples: Lines (results) show selected Product - Method with tooltip
 - Samples: Add lines (results) shows Product-Method now with product reference and label.
 - Samples: Date of validation registered automatically and printed on report instead of current date
-- New Report: Calibration and Maintenance Report (Doc template 'standard_equipmentlist') at Equipment-List
+- New Report: Calibration and Maintenance Report (Doc template 'lims_equipmentlist') at Equipment-List
 - Test Report: All modifications to results and the sample information appended in cronological order.
 - At module Agenda events for Samples, Results, Equipment are listed. E.g., 'Sample SA2101-0001rev5 modified'. In the description of the event details of the modification are given, e.g. 'Result: 602.00 -> 600.00'
 - Dictionaries: LIMS Units for easy management of units  (pH, mg/l, ...)

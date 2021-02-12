@@ -607,7 +607,7 @@ dol_syslog(__METHOD__.' befor builddoc $array ... '.var_export(array('builddoc')
 	$genallowed = $permissiontoread;
 	$delallowed = $permissiontoadd;
 	//showdocuments($modulepart, $modulesubdir, $filedir, $urlsource, $genallowed, $delallowed = 0, $modelselected = '', $allowgenifempty = 1, $forcenomultilang = 0, $iconPDF = 0, $notused = 0, $noform = 0, $param = '', $title = '', $buttonlabel = '', $codelang = '', $morepicto = '', $object = null, $hideifempty = 0, $removeaction = 'remove_file')
-	$object->model_pdf = 'standard_equipmentlist';
+	$object->model_pdf = 'lims_equipmentlist';
 
 	print $formfile->showdocuments('lims:Equipment', $object->element, $diroutputlistreport, $urlsource, $genallowed, $delallowed, $object->model_pdf, 1, 1, 0, 0, 0, $param='', $title='', '', $langs->defaultlang, '', '', $hidegeneratedfilelistifempty);
 	//massfilesarea not working

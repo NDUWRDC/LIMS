@@ -9,7 +9,7 @@ __Manage your samples and generate test reports following ISO 17025:2017__
   * Options 'No calibration, or maintainance', 'maintainance', 'calibration'
   * A maintainance/calibration intervall
   * Events  logged: added-validated-modified-invalidated(set to draft)-Renew Readiness-PDF created-PDF modified
-* Calibration and Maintenance Report (Doc template 'standard_equipmentlist') listing all equipment available at ```LIMS - Equipment - List Equipment```
+* Calibration and Maintenance Report (Doc template 'lims_equipmentlist') listing all equipment available at ```LIMS - Equipment - List Equipment```
 * Manage Test Methods, where each method has
   * A link to an equipment
   * A unit, e.g. µS/cm (units are managed via a dictionary)

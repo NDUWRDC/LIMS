@@ -35,7 +35,7 @@ require_once DOL_DOCUMENT_ROOT.'/core/lib/pdf.lib.php';
 /**
  *	Class to build documents using ODF templates generator
  */
-class pdf_standard_equipmentlist extends ModelePDFStock
+class pdf_lims_equipmentlist extends ModelePDFStock
 {
 	/**
 	 * @var DoliDb Database handler
