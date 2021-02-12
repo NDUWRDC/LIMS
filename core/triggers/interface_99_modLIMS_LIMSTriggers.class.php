@@ -160,6 +160,8 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 			dol_syslog("Trigger $this->name for action $action launched by ".__FILE__.". object->module=$object->module originalmodule=$originalmodule : Call not from LIMS, exit runTrigger");
 			return 0;
 		}
+		
+		$start_datetime = $end_datetime = dol_now();
 
 		switch ($action) {
 			// Users
@@ -370,7 +372,7 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("LinkToCompanyContact"); // (label, short text)
 				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("LinkToCompanyContact"); // (note, long text)
-			break;
+				break;
 
 			case 'RESULTS_CREATE':
 			case 'SAMPLES_CREATE':
@@ -381,11 +383,18 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 				break;
 
 			case 'RESULTS_VALIDATE':
+				// with a validated Test we change Start/End
+				if (isset($object->start)) 
+					$start_datetime = $object->start;
+				if (isset($object->end))
+					$end_datetime = $object->end;
 			case 'SAMPLES_VALIDATE':
 			case 'EQUIPMENT_VALIDATE':
 				dol_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 				$actionlabel = "$msg_label ".$langs->transnoentitiesnoconv("validated"); // (label, short text)
 				$actionnote = "$msg_text ".$langs->transnoentitiesnoconv("validated"); // (note, long text)
+
+				// ToDo: set ActionComm::type_color
 				break;
 
 			case 'SAMPLES_UNVALIDATE':
@@ -444,9 +453,9 @@ class InterfaceLIMSTriggers extends DolibarrTriggers
 		$actioncomm->label = $actionlabel;
 		$actioncomm->note_private = $actionnote;
 		$actioncomm->fk_project = isset($object->fk_project) ? $object->fk_project : 0;
-		$actioncomm->datep = dol_now(); //isset($object->start) ? $object->start : dol_now();	// planned start date
-		//$actioncomm->datea = dol_now();	// real start date
-		$actioncomm->datef = dol_now(); //isset($object->end) ? $object->end : dol_now();	// Date action end
+		$actioncomm->datep = $start_datetime;	// planned start date
+		//$actioncomm->datea = dol_now();		// real start date
+		$actioncomm->datef = $end_datetime;		// Date action end
 		$actioncomm->percentage = -1; // Not applicable
 		$actioncomm->socid = $object->thirdparty->id;
 		$actioncomm->contact_id = 0;

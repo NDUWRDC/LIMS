@@ -1342,7 +1342,7 @@ class Samples extends CommonObject
 				if (!empty($val['enabled'])) {
 					$newval = $this->{$key};
 					$oldval = $obj->{$key};
-
+					//dol_syslog(__METHOD__." $key ... old->new: $newval->$oldval ".gettype($newval).":".gettype($oldval));
 					if ($oldval != $newval) {
 						$changeset .= ($change > 0) ? $separator : '';
 
