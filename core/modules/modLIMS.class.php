@@ -64,7 +64,7 @@ class modLIMS extends DolibarrModules
 		$this->editor_name = 'David Bensel';
 		$this->editor_url = 'https://www.nduwrdc.org';
 		// Possible values for version are: 'development', 'experimental', 'dolibarr', 'dolibarr_deprecated' or a version string like 'x.y.z'
-		$this->version = '0.1.0';
+		$this->version = '0.2.0';
 		// Url to the file with your last numberversion of this module
 		//$this->url_last_version = 'http://www.example.com/versionmodule.txt';
 
@@ -124,7 +124,7 @@ class modLIMS extends DolibarrModules
 		$this->requiredby = array(); // List of module class names as string to disable if this one is disabled. Example: array('modModuleToDisable1', ...)
 		$this->conflictwith = array(); // List of module class names as string this module is in conflict with. Example: array('modModuleToDisable1', ...)
 		$this->langfiles = array("lims@lims");
-		$this->phpmin = array(7, 2); // Minimum version of PHP required by module
+		$this->phpmin = array(5, 6); // Minimum version of PHP required by module
 		$this->need_dolibarr_version = array(13, 0); // Minimum version of Dolibarr required by module
 		$this->warnings_activation = array(); // Warning to show when we activate module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
 		$this->warnings_activation_ext = array(); // Warning to show when we activate an external module. array('always'='text') or array('FR'='textfr','ES'='textes'...)
