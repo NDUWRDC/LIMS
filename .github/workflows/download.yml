@@ -20,4 +20,9 @@ jobs:
           # Test that localized files were downloaded by listing 
           # the content of langs folders.
           ls langs/**/*.lang
-          
+
+      - name: Commit changes
+      - uses: EndBug/add-and-commit@v7
+        with:
+          pull_strategy: NO-PULL
+          default_author: github_actions
