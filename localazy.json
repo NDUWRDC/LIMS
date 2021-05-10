@@ -1,6 +1,6 @@
 {
-    "upload": {  
-      "type": "properties",
+    "upload": {
+      "type": "ini",
       "files": "langs/en_US/lims.lang"
     },
     
