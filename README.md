@@ -1,6 +1,6 @@
 # LABORATORY INFORMATION MANAGEMENT SYSTEM FOR [DOLIBARR ERP CRM](https://www.dolibarr.org)
 
-## Features v0.2.1-tobe
+## Features v0.2.1
 
 __Manage your samples and generate test reports following ISO 17025:2017__ 
 * Manage Equipment, where each equipment has
