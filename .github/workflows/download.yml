@@ -24,6 +24,7 @@ jobs:
       - run: |
           # Test that localized files were downloaded by listing 
           # the content of langs folders.
+          pwd
           ls langs/**/*.lang
 
       - uses: EndBug/add-and-commit@v7
