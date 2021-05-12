@@ -5,7 +5,6 @@
     },
     
     "download": {
-      "type": "ini",
       "files": "langs/${languageCode}_${regionCode}/lims.lang"
     }   
 }
