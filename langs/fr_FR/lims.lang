@@ -1,7 +1,7 @@
 #Tue May 11 20:38:45 GMT+00:00 2021
 SAlabelCustomerInvoiceHelp=Lien vers la facture client
 MElabelRangeMaxHelp=La limite supérieure de la plage de test, par ex. '14 .0', peut être laissé vide (nul) 
-SAlabelRevisionShort=réverend
+SAlabelRevisionShort=rev
 MElabelStandardHelp=Référence à la norme, par exemple « ISO 9308-1:2014 »
 EquipmentListReportTblHeadLastDate=Dernière sur 
 LIMSUnits=Unités LIMS 
