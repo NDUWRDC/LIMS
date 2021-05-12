@@ -1,48 +1,258 @@
-# Copyright (C) 2020 SuperAdmin
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-#
-# Générique
-#
-
-# Module label 'ModuleLIMSName'
-ModuleLIMSName = LIMS
-# Module description 'ModuleLIMSDesc'
-ModuleLIMSDesc = Description de LIMS
-
-#
-# Page d'administration
-#
-LIMSSetup = Configuration du module LIMS
-Settings = Réglages
-LIMSSetupPage = Page de configuration du module LIMS
-
-#
-# Page À propos
-#
-About = À propos
-LIMSAbout = À propos de LIMS
-LIMSAboutPage = Page à propos de LIMS
-
-#
-# Page d'exemple
-#
-MyPageName = Nom de ma page
-
-#
-# Box d'exemple
-#
-MyWidget = Mon widget
-MyWidgetDescription = Description de mon widget
+#Tue May 11 20:38:45 GMT+00:00 2021
+SAlabelCustomerInvoiceHelp=Lien vers la facture client
+MElabelRangeMaxHelp=La limite sup\u00E9rieure de la plage de test, par ex. '14 .0 ', peut \u00EAtre laiss\u00E9 vide (nul) 
+SAlabelRevisionShort=r\u00E9verend
+MElabelStandardHelp=R\u00E9f\u00E9rence \u00E0 la norme, par exemple \u00AB\u00A0ISO 9308-1\:2014\u00A0\u00BB
+EquipmentListReportTblHeadLastDate=Derni\u00E8re sur 
+LIMSUnits=Unit\u00E9s LIMS 
+PermissionViewLimits=Afficher les limites du LIMS 
+SAlabelContact=Contacts
+Laboratory=Le laboratoire
+PermissionCreateUpdateLimits=Cr\u00E9er / mettre \u00E0 jour les limites du LIMS 
+RElabelTechnicianHelp=Technicien de laboratoire responsable 
+EquipmentListReportTblHeadLastUser=Par utilisateur
+HeaderSamplePlaceUnknown=non connu
+ReportLimitsApplied=Les limites affich\u00E9es correspondent \u00E0\:
+MElabelResolution=R\u00E9solution
+LIlabelDescriptionHelp=D\u00E9tails sur la limite fix\u00E9e /norme de qualit\u00E9
+RElabelResult=R\u00E9sultat
+SAlabelNotePrivateHelp=Ne sera pas imprim\u00E9, uniquement pour r\u00E9f\u00E9rence interne
+SAlinetitleMethodLowerLimit=plus faible
+HeaderSampleDescription=Exemple de description
+DateSamplingUnknown=non connu
+MyPageName=Nom de ma page
+SAlabelManagerHelp=Le responsable de laboratoire l\u00E9gitime d'approuver le rapport
+PermissionCreateUpdateEquipment=Cr\u00E9er/Mettre \u00E0 jour l'\u00E9quipement de LIMS
+Method=M\u00E9thode
+CUSTOMERREPORT=Contact pour le rapport
+EQConfirmTitle=Confirmation
+MyWidgetDescription=Description de mon widget
+ReportStatementOnlyOwnLaboratory=Tous les tests ont \u00E9t\u00E9 effectu\u00E9s dans notre propre laboratoire.
+EQConfirmRenew=Veuillez confirmer que l'article a le statut READY (maintenu, \u00E9talonn\u00E9).
+MElabelExternalLaboratoryHelp=Lien vers le tiers o\u00F9 cette m\u00E9thode est effectu\u00E9e
+ReportTitleNum=N\u00B0
+LIlinetitleMinimum=Minimum
+SAlabelSamplingByClient=\u00C9chantillonnage par client
+MElabelUnitHelp=Unit\u00E9 dans laquelle le param\u00E8tre est quantifi\u00E9, est une valeur du dictionnaire LIMS Units
+SAlabelSaboratorySampleTaker=Pr\u00E9l\u00E8vement d'\u00E9chantillons de laboratoire
+SAlinetitleProductMethod=Produit - M\u00E9thode
+LIMS_PREFIX_SAMPLESTooltip=R\u00E9glez sur \u00AB\u00A0SA\u00A0\u00BB pour obtenir\u00A0\: SA-2004-0001
+EquipmentListReportTblHeadDescription=Description de la proc\u00E9dure
+LIMS_PREFIX_EQUIPMENTTooltip=R\u00E9glez sur 'EQ' pour obtenir\u00A0\: EQ-2004-0001
+ReportTitleAccuracy=Pr\u00E9cision
+SAlabelLocationHelp=L'endroit o\u00F9 l'\u00E9chantillon peut \u00EAtre trouv\u00E9 actuellement, est une valeur du dictionnaire LIMS Locations
+HeaderSamplePersonUnknown=non connu
+SAlabelNumberOfContainers=Nombre de conteneurs
+MElabelUnit=Unit\u00E9
+ReportTestsNonconformitiesNOK=Tous les r\u00E9sultats se situent dans la plage de mesure respective de la m\u00E9thode, \u00E0 l'exception des num\u00E9ros de ligne\u00A0\:  
+HeaderSampleNote=Remarque
+EQlabelEquipment=Le mat\u00E9riel
+PermissionValidateDeleteLimits=Validation et suppression et limites des SGIL
+DateSampling=\u00C9chantillonnage effectu\u00E9 le
+ReportTitleDate=Date
+SAlabelSamplingByClientHelp=Si le client a effectu\u00E9 l'\u00E9chantillonnage
+LIlabelDescription=Description
+MenuMethods=M\u00E9thodes
+PermissionViewReports=Voir les rapports de LIMS
+REresultChanged=R\u00E9sultat du test modifi\u00E9 de\u2014>\u00E0\u00A0\: 
+MElabelEquipmentSalesItemHelp=Lien vers l'article de vente r\u00E9pertori\u00E9 dans \u00C9quipement
+SAlabelProject=Projet
+EQlabelUserMaintainRenew=Dernier utilisateur
+SAlabelRevisionHelp=Avec chaque VALIDATE la r\u00E9vision est augment\u00E9e de 1
+SAlabelGPSlat=Lieu d'\u00E9chantillonnage Latitude GPS
+RElabelMethodHelp=Param\u00E8tre test\u00E9 \u00E0 l'aide d'une m\u00E9thode sp\u00E9cifique
+EQlabelMaintenance=Entretien
+RElabelTechnician=Technicien
+SAlabelArrivalDateTimeHelp=Date de r\u00E9ception de l'\u00E9chantillon
+EQlabelFacility=Facilit\u00E9
+EQbuttonMaintainRenew=Renouveler le
+ReportStatementResultsRelateOnly=Les r\u00E9sultats ne concernent que les \u00E9l\u00E9ments test\u00E9s.
+PermissionViewMethods=Afficher les m\u00E9thodes de LIMS
+SAlabelSampleName=Exemple Nom
+EquipmentListReportNumMaintained=Nombre d'\u00E9quipements entretenus
+PermissionValidateDeleteMethods=Valider et supprimer et m\u00E9thodes de LIMS
+PDFmodified=PDF modifi\u00E9
+ReportTitleMinimum=min
+ModuleLIMSName=LIMS
+SAlabelArrivalDateTime=Date et heure d'arriv\u00E9e
+Disposed=Dispos\u00E9e
+RElabelResults=R\u00E9sultats
+ReportTitleAbnormalities=Nonconformit\u00E9s
+ModuleLIMSDesc=Syst\u00E8me de gestion de l'information de laboratoire pour Dolibarr
+SAlabelLocation=Localisation actuelle
+ErrorSamplingPersonSetTwice=Si \u00AB\u00A0\u00C9chantillonnage par client\u00A0\u00BB est r\u00E9gl\u00E9 sur \u00AB\u00A0Oui\u00A0\u00BB, la personne charg\u00E9e de l'\u00E9chantillonnage de laboratoire ne doit pas \u00EAtre s\u00E9lectionn\u00E9e.
+EQlabelMaintenanceHelp=D\u00E9finir si l'article n\u00E9cessite un entretien r\u00E9gulier ou un \u00E9talonnage
+LIMS_PREFIX_LIMITSTooltip=R\u00E9glez sur 'LI' pour obtenir\u00A0\: LI-2004-0001
+SAlabelCustomerHelp=Lien vers un tiers
+SAlabelDescriptionHelp=Caract\u00E9risation de l'\u00E9chantillon, p.ex. odeur, couleur, turbidit\u00E9, source
+EQlabelEquipmentHelp=Produit ou service
+About=\u00C0 propos
+EQlabelCategoryHelp=\u00C9quipement ou consommable, installation ou article de vente
+HeaderSamplingByClient=\u00C9chantillonnage effectu\u00E9 par le client
+REuserChanged=L'utilisateur de test est pass\u00E9 dem->\u00E0\u00A0\:
+LIMS_PREFIX_SAMPLES=Pr\u00E9fixe pour les r\u00E9f\u00E9rences d'\u00E9chantillons
+createsample=CR\u00C9ER UN EXEMPLE
+ErrorStartDateGreaterEnd=La date de d\u00E9but doit \u00EAtre avant \u00AB\u00A0Fin\u00A0\u00BB.
+RElabelResultHelp=R\u00E9sultat du test
+DateSampleReceived=\u00C9chantillon re\u00E7u le
+MenuListMethods=M\u00E9thodes de liste
+SAlabelGPSlatHelp=Coordonn\u00E9e Y (WGS84), p.ex. '32.4569526'
+MyWidget=Mon widget
+EQlabelSalesItem=Article de vente
+SAlabelSamplingPlaceHelp=Emplacement de la source d'eau
+MenuLimits=Limites
+EquipmentListReportTblHeadLabel=\u00C9tiquette de
+MElabelRangeMax=Port\u00E9e max
+SAlinetitleMethodRange=Port\u00E9e
+MenuNewLimitSet=Nouveau jeu de limites
+PermissionCreateUpdateResults=Cr\u00E9er/mettre \u00E0 jour les r\u00E9sultats du SGIL
+MenuNewMethod=Nouvelle m\u00E9thode
+ReportTitleDescription=Param\u00E8tre de test
+SAlabelNumberOfContainersHelp=Quantit\u00E9 de r\u00E9cipients ou de bouteilles, g\u00E9n\u00E9ralement \u00AB\u00A01\u00A0\u00BB
+LIMS_PREFIX_LIMITS=Pr\u00E9fixe pour les r\u00E9f\u00E9rences de limites
+EquipmentListReportNumCalibrated=Nombre d'\u00E9quipements \u00E9talonn\u00E9s
+SAlabelGPSlong=Lieu d'\u00E9chantillonnage longitude GPS
+Sample=\u00E9chantillon
+LIMS_PREFIX_RESULTS=Pr\u00E9fixe pour les r\u00E9f\u00E9rences de r\u00E9sultats
+MElabelAccuracyHelp=La proximit\u00E9 de l'accord entre un r\u00E9sultat d'essai et la valeur de r\u00E9f\u00E9rence accept\u00E9e, par exemple \u00AB\u00A00,2\u00A0\u00BB ou \u00AB\u00A01,5\u00A0%\u00A0\u00BB
+EQlabelNotePublicHelp=Commentaires sur cet \u00E9quipement
+renewed=maintenance renouvel\u00E9e ou \u00E9talonnage de l'article (r\u00E9gl\u00E9 sur READY)
+SAlabelDescription=Description
+MElabelAccuracy=Exactitude
+SAlabelSampleNameHelp=Le conteneur est \u00E9tiquet\u00E9 \u00E0 des fins d'identification
+LIlabelLabelHelp=Nom de la limite fix\u00E9e ou de la norme de qualit\u00E9, par exemple \u00AB\u00A0Ligne directrice de l'OMS pour la qualit\u00E9 de l'eau de boisson (QQEG)\u00A0\u00BB
+MenuSamples=Les \u00E9chantillons
+MElabelNotePublicHelp=Commentaires sur la m\u00E9thode 
+ReportAuthorizing=Autoris\u00E9 par\u00A0\:
+MElabelNotePrivateHelp=Ne sera pas imprim\u00E9, uniquement pour r\u00E9f\u00E9rence interne
+EquipmentListReportTblHeadStatus=Statut
+PermissionCreateUpdateSamples=Cr\u00E9er/mettre \u00E0 jour des \u00E9chantillons de LIMS
+EQlabelDateLastMaintained=Date de derni\u00E8re
+ErrorMinimumGreaterMaximum=Limite pour minimum sup\u00E9rieur au maximum
+HeaderSamplePlace=Lieu d'\u00E9chantillonnage
+revoked=\u00E9tat de maintenance ou d'\u00E9talonnage d'article r\u00E9voqu\u00E9 (d\u00E9fini sur ACTIV\u00C9)
+EquipmentListReportTitle=Rapport d'\u00E9talonnage et de maintenance
+SAlabelCustomer=Client
+ErrorNumberNotValue=La limite doit \u00EAtre un nombre.
+MenuListResults=R\u00E9sultats de la liste
+SAlabelApprovalDateTime=Date et heure d'approbation
+LIlabelLabel=\u00C9tiquette
+EQlabelUserMaintainRenewHelp=Utilisateur ayant appuy\u00E9 pour la derni\u00E8re fois sur 'RENOUVELER LA READINESS'
+SAlabelCustomerProposalHelp=Lien vers la proposition 
+SAlabelLastModificationHelp=Liste des champs modifi\u00E9s avec le dernier 'MODIFIER' dans le mod\u00E8le 'CHAMP-NOM\u00A0\: VIEUX-> NOUVEAU'
+SAlabelSaboratorySampleTakerHelp=Techicien de laboratoire
+MANAGER=Validation du gestionnaire de laboratoire
+SAlabelLastModification=Derni\u00E8res modifications
+RElabelEndTime=Heure de fin
+LIlabelNotePublicHelp=Commentaires sur cet ensemble de limites
+TECHNICIAN=Technicien de laboratoire
+Settings=Param\u00E8tres
+MenuEquipment=Le mat\u00E9riel
+PermissionCreateUpdateMethods=Cr\u00E9er/Mettre \u00E0 jour les m\u00E9thodes de LIMS
+EQlabelNotePrivateHelp=Ne sera pas imprim\u00E9, uniquement pour les r\u00E9f\u00E9rences internes
+EQConfirmRevoke=Veuillez confirmer que vous r\u00E9voquez le statut PR\u00CAT et d\u00E9finissez l'heure de la derni\u00E8re confirmation sur 0
+SAlabelSamplingDateTime=Date et heure de l'\u00E9chantillonnage
+EQlabelLabelHelp=Nom parlant de l'\u00E9quipement, p. ex. \u00AB\u00A0pH-m\u00E8tre portable \u00BB
+SAlabelVolumeHelp=Volume total en litres de tous les r\u00E9cipients et bouteilles
+LIlinetitleMaximum=Maximum
+SAlabelCustomerProposal=Proposition du client
+EQlabelIntervallMaintenance=Intervall [jours]
+SAlabelVolume=Volume [litre]
+ErrorLowerLimit=Limite pour minimum doit \u00EAtre vide ou un nombre
+LIMSAbout=\u00C0 propos de LIMS
+EQlabelNoCalNoMaint=Pas d'\u00E9talonnage, pas d'entretien
+SAlabelApprovalDateTimeHelp=Date \u00E0 laquelle l'\u00E9chantillon a \u00E9t\u00E9 approuv\u00E9 pour la derni\u00E8re fois
+SAlinetitleLimits=Limites
+SAlabelSamplingDateTimeHelp=Quand l'\u00E9chantillon a \u00E9t\u00E9 pr\u00E9lev\u00E9
+SAlinetitleTestPeriod=Test effectu\u00E9 au cours de cette p\u00E9riode\u00A0\:
+MElabelLabel=\u00C9tiquette
+PermissionValidateDeleteEquipment=Validation et suppression et \u00E9quipement des LIMS
+MenuNewEquipment=Nouveaux \u00E9quipements
+RElabelNonconformity=Non-conformit\u00E9
+DateReport=Rapport publi\u00E9 le
+EQlabelConsumable=Consommables
+ReportTitleMaximum=Max.
+HeaderSampleDescriptionUnknown=non connu
+SAlabelLimitSetHelp=Jeu de limites appliqu\u00E9es pour juger les r\u00E9sultats
+LIMS_PREFIX_RESULTSTooltip=R\u00E9glez sur \u00AB\u00A0RE\u00A0\u00BB pour obtenir\u00A0\: RE-2004-0001
+EQlabelCalibration=\u00C9talonnage
+MElabelRangeMinHelp=La limite inf\u00E9rieure de la plage d'essai, par exemple '0,0', peut \u00EAtre laiss\u00E9e vide (vide)
+SAlinetitleMethodUpperLimit=sup\u00E9rieur
+ModuleLIMSkeywords=LIMS, ISO-17025, Laboratoire, Gestion 
+LIMSSetup=Configuration de LIMS
+LIMSSetupPage=Page de configuration LIMS
+MenuListLimits=Limites de liste
+MElabelExternalLaboratory=Laboratoire externe
+DateSampleReceivedUnknown=Non connu
+EquipmentListReportTblHeadIntervall=Intervalle
+MElabelResolutionHelp=Nombre de chiffres d\u00E9crivant la r\u00E9solution, par exemple \u00AB\u00A02\u00A0\u00BB pour une valeur de \u00AB\u00A02,99\u00A0\u00BB
+LIMSMassAction=Action de masse LIMS
+MElabelEquipmentSalesItem=\u00C9quipement/ Article de vente
+RElabelStartTime=Heure de d\u00E9but
+HeaderSampleHistory=Historique des modifications
+SAlabelCustomerInvoice=Facture client
+MElabelDescription=Description
+REconformityChanged=Conformit\u00E9 d'essai pass\u00E9e de-> \u00E0\u00A0\:
+ReportResponsible=Responsables \: 
+SAlabelManager=Le/La gestionnaire
+LIMSLocations=Emplacements LIMS
+EQlabelDescriptionHelp=D\u00E9tails sur la proc\u00E9dure d'entretien et d'\u00E9talonnage
+SAlabelNotePublicHelp=Commentaires sur les r\u00E9sultats des tests. Sera imprim\u00E9 sur le rapport en tant que remarque 
+LIlabelNotePrivateHelp=Ne sera pas imprim\u00E9, uniquement pour les r\u00E9f\u00E9rences internes
+PermissionValidateDeleteSamples=Valider et supprimer et \u00E9chantillons de LIMS
+ErrorMaximumNotSet=Limite pour maximum pas un nombre ou non d\u00E9fini
+SAlabelLimitSet=Jeu de limites
+modified=Modifi\u00E9
+PDFlims_testreportDescription=PDF pour afficher les r\u00E9sultats des tests pour un \u00E9chantillon
+MenuNewSample=Nouvel \u00E9chantillon
+MElabelDescriptionHelp=Bref r\u00E9sum\u00E9 de la m\u00E9thode
+HeaderSamplePerson=Personne \u00E9chantillonneur
+RElabelMethod=M\u00E9thode d'essai
+Freezer=Cong\u00E9lateur
+EQlabelIntervallMaintenanceHelp=Apr\u00E8s ce nombre de jours, l'entretien ou l'\u00E9talonnage doit \u00EAtre r\u00E9ex\u00E9cut\u00E9
+PermissionViewEquipment=Voir l'\u00E9quipement de LIMS
+created=Ajout\u00E9
+LIMSAboutPage=LIMS \u00E0 propos de la page
+ReportTestsNonconformitiesOK=Tous les r\u00E9sultats se situent dans la plage de mesure respective de la m\u00E9thode.
+MenuListSamples=Liste des \u00E9chantillons
+PdfSampleTitle=Rapport d'essai
+LIMS_PREFIX_METHODSTooltip=R\u00E9glez sur \u00AB\u00A0ME\u00A0\u00BB pour obtenir\u00A0\: ME-2004-0001
+LIlinecreateMethod=M\u00E9thode
+SAlabelProjectHelp=Si de nombreux \u00E9chantillons appartiennent au m\u00EAme projet
+ErrorMinimumEqualsMaximum=La limite pour le maximum et le minimum sont les m\u00EAmes
+LIlinetitleDescription=Description
+Samples=Les \u00E9chantillons
+LIMS_PREFIX_METHODS=Pr\u00E9fixe pour les r\u00E9f\u00E9rences de m\u00E9thodes
+PermissionViewSamples=Afficher des exemples de LIMS
+OWNSAMPLER=Technicien d'\u00E9chantillonnage
+invalidated=invalid\u00E9 (d\u00E9fini sur PR\u00C9LIMINAIRE)
+LIMS_PREFIX_EQUIPMENT=Pr\u00E9fixe pour les r\u00E9f\u00E9rences d'\u00E9quipement
+Methods=M\u00E9thodes
+ErrorMultipleLimitEntries=La m\u00E9thode a d\u00E9j\u00E0 des limites
+ReportNoLimits=Aucun jeu de limites s\u00E9lectionn\u00E9.
+REstartChanged=D\u00E9but du test modifi\u00E9 de->\u00E0\u00A0\:
+PermissionValidateDeleteResults=Valider et supprimer les r\u00E9sultats (lignes d'\u00E9chantillonnage) de LIMS
+SAlabelGPSlongHelp=Coordonn\u00E9e X (WGS84), p.ex. '0,5959513'
+EQlabelCategory=Cat\u00E9gorie
+EquipmentListReportTblHeadEquipment=Le mat\u00E9riel
+RElabelNonconformityHelp=Oui ou Non
+EQlabelLabel=\u00C9tiquette
+validated=Valid\u00E9
+PDFcreated=PDF cr\u00E9\u00E9
+SAlinetitleTestingTechnician=Essai perfom\u00E9 par\u00A0\:
+SAlabelRevision=R\u00E9vision
+MElabelStandard=La norme
+EQbuttonMaintainRevoke=R\u00E9voquer la pr\u00E9paration
+RElabelEndTimeHelp=Proc\u00E9dure de temps p\u00EAch\u00E9e
+PermissionViewResults=Afficher les r\u00E9sultats de LIMS
+EQlabelDateLastMaintainedHelp=Derni\u00E8re fois que l'article a \u00E9t\u00E9 entretenu ou \u00E9talonn\u00E9
+DigitalSigned=Num\u00E9rique sign\u00E9 
+REendChanged=Fin de test modifi\u00E9e de-> \u00E0\u00A0\:
+ReportStatementAlsoOtherLaboratory=Tous les tests ont \u00E9t\u00E9 effectu\u00E9s dans notre propre laboratoire, \u00E0 l'exception du (s) num\u00E9ro (s) de ligne (s)\u00A0\:
+RElabelStartTimeHelp=Heure d\u00E9marr\u00E9e
+ReportTestsStatementConformity=D\u00E9claration de conformit\u00E9\u00A0\:
+EQlabelDescription=Description
+SAlabelSamplingPlace=Source de l'\u00E9chantillon
+MenuListEquipment=Liste de l'\u00E9quipement
+MElabelLabelHelp=Nom parlant de la m\u00E9thode, par exemple \u00AB\u00A0E. Coli (m\u00E9thode de filtration)\u00A0\u00BB
+MElabelRangeMin=Plage min
