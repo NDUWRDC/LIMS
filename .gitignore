@@ -15,7 +15,7 @@
 /.buildpath
 /.project
 # Localization, github-actions pull from localazy.com/p/lims-for-dolibarr/
-/langs/**/lims.lang
+#/langs/**/lims.lang
 !/langs/en_US/lims.lang
 # Other
 *.back
